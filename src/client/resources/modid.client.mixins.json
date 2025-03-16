@@ -1,0 +1,11 @@
+{
+	"required": true,
+	"package": "com.snek.fancyplayershops.mixin.client",
+	"compatibilityLevel": "JAVA_21",
+	"client": [
+		"FancyPlayerShopsClientMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
