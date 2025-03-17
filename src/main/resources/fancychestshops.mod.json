@@ -1,1 +1,0 @@
-{"required":true,"package":"net.snek.fancychestshops.mixin","compatibilityLevel":"JAVA_21","mixins":["FancyPlayerShopsMixin"],"injectors":{"defaultRequire":1},"client":[]}

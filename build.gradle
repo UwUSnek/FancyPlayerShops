@@ -22,9 +22,9 @@ loom {
 	splitEnvironmentSourceSets()
 
 	mods {
-		"modid" {
+		"fancyplayershops" {
 			sourceSet sourceSets.main
-			// sourceSet sourceSets.client
+			sourceSet sourceSets.client
 		}
 	}
 
@@ -32,13 +32,13 @@ loom {
 
 dependencies {
 	// To change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	minecraft "net.minecraft:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
+	
 }
 
 processResources {

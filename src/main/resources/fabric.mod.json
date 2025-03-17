@@ -1,1 +1,30 @@
-{"schemaVersion":1,"id":"fancychestshops","version":"${version}","name":"Fancy Player Shops","description":"Player shop mod by UwU_Snek. ","authors":["UwU_Snek"],"contact":{},"license":"CC0-1.0","icon":"assets/modid/icon.png","environment":"*","entrypoints":{"main":["net.snek.fancychestshops.FancyPlayerShops"],"mixins":["fancychestshops.mixins.json"],"depends":{"fabricloader":">=0.16.10","minecraft":"~1.20.1","java":">=17","fabric-api":"*"},"suggests":{}}}
+{
+    "schemaVersion":1,
+    "id":"fancyplayershops",
+    "version":"${version}",
+    "name":"Fancy Player Shops",
+    "description":"Player shop mod by UwU_Snek",
+    "authors":["UwU_Snek"],
+    "contact":{},
+    "license":"CC0-1.0",
+    "icon":"assets/fancyplayershops/icon.png",
+    "environment":"*",
+    "entrypoints":{
+        "main":[
+            "com.snek.fancyplayershops.FancyPlayerShops"
+        ],
+		"client": [
+			"com.snek.fancyplayershops.FancyPlayerShopsClient"
+		],
+        "mixins":[
+            "fancyplayershops.mixins.json"
+        ]
+    },
+	"depends": {
+		"fabricloader": ">=0.16.10",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+    "suggests":{}
+}
