@@ -24,32 +24,13 @@ public class ShopCommand {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(LiteralArgumentBuilder.<ServerCommandSource>literal("shop")
                 .then(LiteralArgumentBuilder.<ServerCommandSource>literal("create").executes(context -> {
-                    ServerCommandSource source = context.getSource();
-                    ServerWorld world = source.getWorld();
-                    BlockPos blockPos = source.getPlayer().getBlockPos();
-                    Vec3d pos = blockPos.toCenterPos();
+                    context.getSource().getEntity().dropStack(FancyPlayerShops.shopItem.copy());
+                //     ServerCommandSource source = context.getSource();
+                //     ServerWorld world = source.getWorld();
+                //     BlockPos blockPos = source.getPlayer().getBlockPos();
+                //     new Shop(world, blockPos);
 
-
-                    // Set barrier block
-                    world.setBlockState(blockPos, Blocks.BARRIER.getDefaultState());
-
-                    // Create and setup the Text Display entity
-                    CustomTextDisplay textDisplay = new CustomTextDisplay(world);
-                    textDisplay.getRawDisplay().setPosition(pos.getX(), pos.getY() + 0.4, pos.getZ());
-                    textDisplay.setText(Text.of("Empty shop\n$0"));
-                    textDisplay.setBillboardMode(BillboardMode.CENTER);
-                    textDisplay.getRawDisplay().setGlowing(true);
-                    world.spawnEntity(textDisplay.getRawDisplay());
-
-                    // Create and setup the Item Display entity
-                    CustomItemDisplay itemDisplay = new CustomItemDisplay(world);
-                    itemDisplay.getRawDisplay().setPosition(pos.getX(), pos.getY() - 0.1, pos.getZ());
-                    itemDisplay.setItemStack(new ItemStack(Items.BARRIER, 1));
-                    itemDisplay.getRawDisplay().setGlowing(true);
-                    world.spawnEntity(itemDisplay.getRawDisplay());
-
-
-                    source.sendFeedback(() -> Text.of("New shop created! Right click to configure."), false);
+                //     source.sendFeedback(() -> Text.of("New shop created! Right click to configure."), false);
                     return 1;
                 }))
 
@@ -78,8 +59,9 @@ public class ShopCommand {
                     ServerCommandSource source = context.getSource();
                     source.sendFeedback(() -> Text.of(
                         "Use /shop create to create a new shop!\n" +
-                        "you can rotate existing shops using a wrench or pick them up by shift-rclicking them with it.\n" +
-                        "You can see details about your shops using the command /shop stats."
+                        "You can rotate existing shops using a wrench or pick them up by shift-rclicking them with it.\n" +
+                        "Right click a shop to set the item and price and restock it. Each shop can contain up to 1000 of the same item.\n" +
+                        "You can see details about your shops and sales history using the command /shop stats."
                     ), false);
                     return 1;
                 }))

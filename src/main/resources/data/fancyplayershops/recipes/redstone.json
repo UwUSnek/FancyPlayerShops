@@ -1,0 +1,26 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "category": "misc",
+    "group": "wooden_sign",
+    "key": {
+        "G": {
+            "item": "minecraft:glass_pane"
+        },
+        "S": {
+            "tag": "minecraft:signs"
+        },
+        "R": {
+            "item": "minecraft:redstone"
+        }
+    },
+    "pattern": [
+        "GGG",
+        "GSG",
+        "RRR"
+    ],
+    "result": {
+        "count": 1,
+        "item": "minecraft:redstone"
+    },
+    "show_notification": false
+}

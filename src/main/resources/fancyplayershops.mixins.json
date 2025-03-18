@@ -4,7 +4,8 @@
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
 		"TextDisplayAccessor",
-		"FancyPlayerShopsMixin"
+		"FancyPlayerShopsMixin",
+		"RecipeModifier"
 	],
 	"injectors": {
 		"defaultRequire": 1
