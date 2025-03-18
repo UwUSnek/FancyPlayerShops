@@ -7,16 +7,15 @@ import org.joml.Vector3f;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.DisplayEntity;
-import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
-import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity;
-import net.minecraft.text.Text;
+import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AffineTransformation;
 import net.minecraft.world.World;
 
 
 
 
-public class CustomTextDisplay {
+public class CustomItemDisplay {
     AffineTransformation defaultTransformation = new AffineTransformation(
         null,  // Translation (null = no change)
         null,  // Rotation (null = no change)
@@ -24,49 +23,33 @@ public class CustomTextDisplay {
         null   // Left rotation (null = no change)
     );
 
-    TextDisplayEntity rawDisplay;
-    public TextDisplayEntity getRawDisplay() { return rawDisplay; }
-    static private Method method_setText;
-    static private Method method_setBillboardMode;
+    ItemDisplayEntity rawDisplay;
+    public ItemDisplayEntity getRawDisplay() { return rawDisplay; }
+    static Method method_setItemStack;
     static Method method_setTransformation;
     static {
         try {
-            method_setText          = TextDisplayEntity.class.getDeclaredMethod("setText",                   Text.class);
-            method_setBillboardMode =     DisplayEntity.class.getDeclaredMethod("setBillboardMode", BillboardMode.class);
+            method_setItemStack = ItemDisplayEntity.class.getDeclaredMethod("setItemStack", ItemStack.class);
             method_setTransformation = DisplayEntity.class.getDeclaredMethod("setTransformation", AffineTransformation.class);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (SecurityException e) {
             e.printStackTrace();
         }
-        method_setText.setAccessible(true);
-        method_setBillboardMode.setAccessible(true);
+        method_setItemStack.setAccessible(true);
         method_setTransformation.setAccessible(true);
     }
 
 
-    public CustomTextDisplay(World world) {
-        rawDisplay = new TextDisplayEntity(EntityType.TEXT_DISPLAY, world);
+    public CustomItemDisplay(World world) {
+        rawDisplay = new ItemDisplayEntity(EntityType.ITEM_DISPLAY, world);
         this.setTransformation(defaultTransformation);
     }
 
 
-    public void setText(Text text) {
+    public void setItemStack(ItemStack itemStack) {
         try {
-            method_setText.invoke(rawDisplay, text);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public void setBillboardMode(BillboardMode billboardMode) {
-        try {
-            method_setBillboardMode.invoke(rawDisplay, billboardMode);
+            method_setItemStack.invoke(rawDisplay, itemStack);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (IllegalArgumentException e) {

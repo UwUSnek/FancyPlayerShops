@@ -8,13 +8,13 @@ import org.slf4j.LoggerFactory;
 
 
 public class FancyPlayerShops implements ModInitializer {
-	public static final String MOD_ID = "fancyplayershops";
-	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    public static final String MOD_ID = "fancyplayershops";
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-	@Override
-	public void onInitialize() {
-        TestCommand.register();
+    @Override
+    public void onInitialize() {
+        ShopCommand.register();
 
-		LOGGER.info("FancyPlayerShops initialized. :3");
-	}
+        LOGGER.info("FancyPlayerShops initialized. :3");
+    }
 }
