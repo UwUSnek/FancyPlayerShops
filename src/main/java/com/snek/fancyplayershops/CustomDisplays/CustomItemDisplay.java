@@ -28,9 +28,13 @@ public class CustomItemDisplay extends CustomDisplay {
     }
 
 
-    public CustomItemDisplay(World world) {
+    public CustomItemDisplay(World world, ItemStack itemStack, Boolean customNameVisible, Boolean glowing) {
         super(new ItemDisplayEntity(EntityType.ITEM_DISPLAY, world));
         rawDisplay = (ItemDisplayEntity)heldEntity;
+        setItemStack(itemStack);
+        rawDisplay.setCustomNameVisible(customNameVisible);
+        rawDisplay.setGlowing(glowing);
+        world.spawnEntity(rawDisplay);
     }
 
 

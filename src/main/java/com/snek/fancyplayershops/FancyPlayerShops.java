@@ -78,13 +78,26 @@ public class FancyPlayerShops implements ModInitializer {
         // RecipeManager.setRecipes(List.of(shopItemRecipe));
 
 
-        // Register click event
+        // // Create and register shop item rclick event
+        // UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
+        //     if(world. hitResult.getBlockPos())
+        //     ItemStack stack = player.getStackInHand(hand);
+        //     if (stack.getItem() == shopItemId && stack.getNbt().contains(shopItemNbtTagKey)) {
+        //         BlockPos blockPos = hitResult.getBlockPos().add(hitResult.getSide().getVector());
+        //         new Shop(world, blockPos, player);
+        //         player.sendMessage(Text.of("New shop created! Right click it to configure."));
+        //         return ActionResult.SUCCESS;
+        //     }
+        //     return ActionResult.PASS;
+        // });
+
+        // Create and register shop block rclick event
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             ItemStack stack = player.getStackInHand(hand);
             if (stack.getItem() == shopItemId && stack.getNbt().contains(shopItemNbtTagKey)) {
                 BlockPos blockPos = hitResult.getBlockPos().add(hitResult.getSide().getVector());
-                new Shop(world, blockPos);
-                player.sendMessage(Text.of("New shop created! Right click to configure."));
+                new Shop(world, blockPos, player);
+                player.sendMessage(Text.of("New shop created! Right click it to configure."));
                 return ActionResult.SUCCESS;
             }
             return ActionResult.PASS;

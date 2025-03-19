@@ -23,18 +23,12 @@ public class ShopCommand {
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(LiteralArgumentBuilder.<ServerCommandSource>literal("shop")
+
+                //TODO replace with crafting recipe
                 .then(LiteralArgumentBuilder.<ServerCommandSource>literal("create").executes(context -> {
                     context.getSource().getEntity().dropStack(FancyPlayerShops.shopItem.copy());
-                //     ServerCommandSource source = context.getSource();
-                //     ServerWorld world = source.getWorld();
-                //     BlockPos blockPos = source.getPlayer().getBlockPos();
-                //     new Shop(world, blockPos);
-
-                //     source.sendFeedback(() -> Text.of("New shop created! Right click to configure."), false);
                     return 1;
                 }))
-
-
 
 
                 .then(LiteralArgumentBuilder.<ServerCommandSource>literal("claim").executes(context -> {
@@ -44,8 +38,6 @@ public class ShopCommand {
                 }))
 
 
-
-
                 .then(LiteralArgumentBuilder.<ServerCommandSource>literal("stats").executes(context -> {
                     ServerCommandSource source = context.getSource();
                     source.sendFeedback(() -> Text.of("opened stats //todo remove message"), false);
@@ -53,14 +45,13 @@ public class ShopCommand {
                 }))
 
 
-
-
                 .then(LiteralArgumentBuilder.<ServerCommandSource>literal("help").executes(context -> {
                     ServerCommandSource source = context.getSource();
+                    //TODO add colors and styles
                     source.sendFeedback(() -> Text.of(
-                        "Use /shop create to create a new shop!\n" +
-                        "You can rotate existing shops using a wrench or pick them up by shift-rclicking them with it.\n" +
-                        "Right click a shop to set the item and price and restock it. Each shop can contain up to 1000 of the same item.\n" +
+                        "Craft shop blocks using glass panes, a sign and redstone.\n" +
+                        "You can rotate shops using a wrench or pick them up by shift-rclicking them with it.\n" +
+                        "Right click a shop to configure and restock it. Each shop can contain up to a set amount of the same item.\n" +
                         "You can see details about your shops and sales history using the command /shop stats."
                     ), false);
                     return 1;
