@@ -12,6 +12,7 @@ import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
 import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.AffineTransformation;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 
@@ -37,9 +38,14 @@ public class CustomTextDisplay extends CustomDisplay {
     }
 
 
-    public CustomTextDisplay(World world) {
+    public CustomTextDisplay(World world, Text text, Vec3d pos, BillboardMode billboardMode, Boolean glowing) {
         super(new TextDisplayEntity(EntityType.TEXT_DISPLAY, world));
         rawDisplay = (TextDisplayEntity)heldEntity;
+        rawDisplay.setGlowing(glowing);
+        rawDisplay.setPosition(pos);
+        setText(text);
+        setBillboardMode(billboardMode);
+        world.spawnEntity(rawDisplay);
     }
 
 

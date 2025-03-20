@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 
@@ -28,12 +29,13 @@ public class CustomItemDisplay extends CustomDisplay {
     }
 
 
-    public CustomItemDisplay(World world, ItemStack itemStack, Boolean customNameVisible, Boolean glowing) {
+    public CustomItemDisplay(World world, ItemStack itemStack, Vec3d pos, Boolean customNameVisible, Boolean glowing) {
         super(new ItemDisplayEntity(EntityType.ITEM_DISPLAY, world));
         rawDisplay = (ItemDisplayEntity)heldEntity;
         setItemStack(itemStack);
         rawDisplay.setCustomNameVisible(customNameVisible);
         rawDisplay.setGlowing(glowing);
+        rawDisplay.setPosition(pos);
         world.spawnEntity(rawDisplay);
     }
 
