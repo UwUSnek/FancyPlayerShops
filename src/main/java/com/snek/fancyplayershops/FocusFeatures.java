@@ -79,7 +79,7 @@ public class FocusFeatures {
 
             // Add block to list if not present
             Vec3i currentPosInt = new Vec3i((int)currentPos.x, (int)currentPos.y, (int)currentPos.z);
-            if(!blockPositionsInt.isEmpty() && blockPositionsInt.get(blockPositionsInt.size() - 1) != currentPosInt) {
+            if(blockPositionsInt.isEmpty() || blockPositionsInt.get(blockPositionsInt.size() - 1) != currentPosInt) {
                 blockPositionsInt.add(currentPosInt);
                 blockPositions.add(currentPos);
             }
@@ -101,7 +101,7 @@ public class FocusFeatures {
      * @param player The player.
      * @return The Shop instance of the shop block, or null if the player is not looking at one.
      */
-    public static Shop getLookedAtShop(PlayerEntity player) {
+    public static Shop getLookedAtShop(PlayerEntity player, ServerWorld world) {
 
         // Get the list of nearby item display entities
         final Vec3d playerEyePos = player.getEyePos();
@@ -110,18 +110,16 @@ public class FocusFeatures {
 
             // Calculate ray casting max distance, then find and sort colliding blocks
             final Vec3d targetBlock = getTargetBlockPrecise(player);
-            final double maxDistance = targetBlock != null ? targetBlock.distanceTo(playerEyePos) + 0.1 : MAX_DISTANCE;
-            System.out.println("max dist:" + String.valueOf(maxDistance));
+            final double maxDistance = targetBlock != null ? targetBlock.distanceTo(playerEyePos) + STEP_SIZE * 1.2 : MAX_DISTANCE;
             final List<Vec3d> collidingBlocks = getViewCollisisons(player, maxDistance);
-            System.out.println("collisions:" + collidingBlocks.toString());
             Collections.sort(collidingBlocks, Comparator.comparingDouble(b -> b.squaredDistanceTo(playerEyePos)));
 
             // Find target shop block
             for (Vec3d pos : collidingBlocks) {
-                Vec3i posInt = new Vec3i((int)pos.x, (int)pos.y, (int)pos.z);
+                Vec3i blockPos = Utils.doubleToBlockCoords(pos);
                 for (ItemDisplayEntity e : entitiyList) {
-                    if(e.getBlockPos().equals(posInt)) {
-                        return Shop.findShop(new BlockPos(posInt));
+                    if(e.getBlockPos().equals(blockPos)) {
+                        return Shop.findShop(new BlockPos(blockPos), world.getRegistryKey().getValue().toString());
                     }
                 }
             }
@@ -139,7 +137,7 @@ public class FocusFeatures {
      * Tick operations. This function spawns and removes the focus displays depending on what players are currently looking at.
      * @param server The server instance.
      */
-    public static void tick(ServerWorld serverWorld) {
+    public static void tick(Iterable<ServerWorld> serverWorlds) {
 
         // Set all previously focused shops's next focus state to false
         for (Shop shop : targetedShopsOld) {
@@ -148,22 +146,22 @@ public class FocusFeatures {
 
         // Find currently focused shops and set their next focus state to true
         final List<Shop> targetedShops = new ArrayList<>();
-        for (PlayerEntity player : serverWorld.getPlayers()) {
-            System.out.println("checking player");
-            Shop targetShop = FocusFeatures.getLookedAtShop(player);
-            if(targetShop != null) {
-                System.out.println("shops found");
-                targetShop.focusedStateNext = true;
-                targetedShops.add(targetShop);
+        for (ServerWorld serverWorld : serverWorlds) {
+            for (PlayerEntity player : serverWorld.getPlayers()) {
+                Shop targetShop = FocusFeatures.getLookedAtShop(player, serverWorld);
+                if(targetShop != null) {
+                    targetShop.focusedStateNext = true;
+                    targetedShops.add(targetShop);
+                }
             }
         }
 
         // Update the displays of all the previously and currently focused shops to their next state and update the targeted shops list
-        for (Shop shop : targetedShops) {
-            shop.updateFocusDisplay(serverWorld);
-        }
         for (Shop shop : targetedShopsOld) {
-            shop.updateFocusDisplay(serverWorld);
+            shop.updateFocusDisplay();
+        }
+        for (Shop shop : targetedShops) {
+            shop.updateFocusDisplay();
         }
         targetedShopsOld = targetedShops;
     }

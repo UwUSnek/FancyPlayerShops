@@ -3,17 +3,14 @@ package com.snek.fancyplayershops;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,27 +59,18 @@ public class FancyPlayerShops implements ModInitializer {
         // RecipeManager.setRecipes(List.of(shopItemRecipe));
 
 
-        // // Create and register shop item rclick event
-        // UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-        //     if(world. hitResult.getBlockPos())
-        //     ItemStack stack = player.getStackInHand(hand);
-        //     if (stack.getItem() == shopItemId && stack.getNbt().contains(shopItemNbtTagKey)) {
-        //         BlockPos blockPos = hitResult.getBlockPos().add(hitResult.getSide().getVector());
-        //         new Shop(world, blockPos, player);
-        //         player.sendMessage(Text.of("New shop created! Right click it to configure."));
-        //         return ActionResult.SUCCESS;
-        //     }
-        //     return ActionResult.PASS;
-        // });
-
         // Create and register shop block rclick event
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             ItemStack stack = player.getStackInHand(hand);
             if (stack.getItem() == SHOP_ITEM_ID && stack.getNbt().contains(SHOP_ITEM_NBT_KEY)) {
-                BlockPos blockPos = hitResult.getBlockPos().add(hitResult.getSide().getVector());
-                new Shop(world, blockPos, player);
-                FocusFeatures.getLookedAtShop(player);
-                player.sendMessage(Text.of("New shop created! Right click it to configure."));
+                if(world instanceof ServerWorld) {
+                    BlockPos blockPos = hitResult.getBlockPos().add(hitResult.getSide().getVector());
+                    new Shop((ServerWorld)world, blockPos, player);
+                    player.sendMessage(Text.of("New shop created! Right click it to configure."));
+                }
+                else {
+                    player.sendMessage(Text.of("You cannot create a shop here!"));
+                }
                 return ActionResult.SUCCESS;
             }
             return ActionResult.PASS;
@@ -90,9 +78,9 @@ public class FancyPlayerShops implements ModInitializer {
 
 
         // Create and register focus features
-        ServerTickEvents.END_WORLD_TICK.register(server -> {
-            if(tickNumber % 5 == 0) { // Execute 4 times per second
-                FocusFeatures.tick(server);
+        ServerTickEvents.END_SERVER_TICK.register(server -> {
+            if(tickNumber % 5  == 0) {
+                FocusFeatures.tick(server.getWorlds());
             }
             tickNumber++;
         });
