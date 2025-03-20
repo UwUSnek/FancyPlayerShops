@@ -1,19 +1,9 @@
 package com.snek.fancyplayershops;
 
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
-import net.minecraft.item.ItemConvertible;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.snek.fancyplayershops.CustomDisplays.CustomTextDisplay;
-import com.snek.fancyplayershops.CustomDisplays.CustomItemDisplay;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 
 

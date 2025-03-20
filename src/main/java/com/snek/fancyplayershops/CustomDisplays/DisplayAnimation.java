@@ -1,4 +1,4 @@
-package com.snek.fancyplayershops;
+package com.snek.fancyplayershops.CustomDisplays;
 
 import net.minecraft.util.math.AffineTransformation;
 

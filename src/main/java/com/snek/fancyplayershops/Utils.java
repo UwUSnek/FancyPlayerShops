@@ -4,7 +4,11 @@ import java.text.DecimalFormat;
 
 import org.apache.logging.log4j.core.config.builder.api.Component;
 
+import com.snek.fancyplayershops.CustomDisplays.CustomTextDisplay;
+
+import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
@@ -18,6 +22,44 @@ import net.minecraft.util.math.Vec3i;
 
 public class Utils {
     public Utils() { throw new UnsupportedOperationException("Utility class \"FocusFeatures\" cannot be instantiated"); }
+
+
+
+
+    /**
+     * Runs a task on a secondary thread after a specified delay.
+     * @param delay The delay expressed in milliseconds.
+     * @param task The task to run.
+     */
+    public static void runDelayedAsync(int delay, Runnable task) {
+        new Thread(() -> {
+            try {
+                Thread.sleep(delay);
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
+            task.run();
+        }).start();
+    }
+
+
+
+    /**
+     * Runs a task on the main thread after a specified delay.
+     * @param server The server instance.
+     * @param delay The delay expressed in milliseconds.
+     * @param task The task to run.
+     */
+    public static void runDelayedSync(MinecraftServer server, int delay, Runnable task) {
+        new Thread(() -> {
+            try {
+                Thread.sleep(delay);
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
+            server.execute(task);
+        }).start();
+    }
 
 
 

@@ -28,7 +28,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.ServerTask;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -44,7 +43,7 @@ import net.minecraft.util.math.Vec3d;
 
 
 // TODO fix broken shops and blocks if they don't exist in the world when the map is loaded
-// TODO purge stray focus displays on chunk loading (use custom entity data)
+// TODO purge stray focus displays on entity loading (use custom entity data)
 public class Shop {
     private static final File SHOP_STORAGE_DIR;
     static {
@@ -248,25 +247,14 @@ public class Shop {
                 }
                 List<CustomTextDisplay> focusDisplaysTmp = focusDisplays;
                 focusDisplays = new ArrayList<>();
-                new Thread(() -> {
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e1) {
-                        e1.printStackTrace();
+                Utils.runDelayedSync(world.getServer(), 500, () -> {
+                    for (CustomTextDisplay e : focusDisplaysTmp) {
+                        e.getRawDisplay().remove(RemovalReason.KILLED);
                     }
-                    world.getServer().execute(() -> {
-                        try {
-                            for (CustomTextDisplay e : focusDisplaysTmp) {
-                                e.getRawDisplay().remove(RemovalReason.KILLED);
-                            }
-                            findDisplayEntityIfNeeded();
-                            if(itemDisplay != null) itemDisplay.getRawDisplay().setCustomNameVisible(true);
-                            System.out.println("HERE");
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
-                        }
-                    });
-                }).start();
+                    findDisplayEntityIfNeeded();
+                    if(itemDisplay != null) itemDisplay.getRawDisplay().setCustomNameVisible(true);
+                    System.out.println("HERE");
+                });
             }
             focusedState = focusedStateNext;
         }
