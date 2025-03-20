@@ -28,6 +28,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.ServerTask;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -247,21 +248,25 @@ public class Shop {
                 }
                 List<CustomTextDisplay> focusDisplaysTmp = focusDisplays;
                 focusDisplays = new ArrayList<>();
-                // new Thread(() -> {
-                    // try {
-                    //     Thread.sleep(500);
-                    // } catch (InterruptedException e1) {
-                    //     e1.printStackTrace();
-                    // }
-
-                    // world.getServer().executeSync(() -> {
-                        for (CustomTextDisplay e : focusDisplaysTmp) {
-                            e.getRawDisplay().remove(RemovalReason.KILLED);
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
+                    world.getServer().execute(() -> {
+                        try {
+                            for (CustomTextDisplay e : focusDisplaysTmp) {
+                                e.getRawDisplay().remove(RemovalReason.KILLED);
+                            }
+                            findDisplayEntityIfNeeded();
+                            if(itemDisplay != null) itemDisplay.getRawDisplay().setCustomNameVisible(true);
+                            System.out.println("HERE");
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
                         }
-                        findDisplayEntityIfNeeded();
-                        if(itemDisplay != null) itemDisplay.getRawDisplay().setCustomNameVisible(true);
-                    // });
-                // });
+                    });
+                }).start();
             }
             focusedState = focusedStateNext;
         }

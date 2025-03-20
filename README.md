@@ -1,9 +1,20 @@
-# Fabric Example Mod
+# Fancy Player Shops
 
-## Setup
+A server-side mod that allows players to create unobstructive, customizable, portable shops.<br>
+**!! Not yet available for public use !!**
 
-For setup instructions please see the [fabric documentation page](https://docs.fabricmc.net/develop/getting-started/setting-up-a-development-environment) that relates to the IDE that you are using.
+<br>
 
-## License
+**Main features:**
 
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+- No client mod needed :3
+- Sell items for a configurable price.
+- Buy items in bulk.
+- Move shops freely without losing data.
+- View transaction history and shop statistics.
+
+<br>
+
+## Credits
+
+Made by UwU_Snek.
