@@ -231,8 +231,8 @@ public class Shop {
                     false
                 );
                 focusDisplay.setInterpolationDuration(10);
-                focusDisplay.startInterpolation();
                 focusDisplay.setBackground(200, 0, 0, 0);
+                focusDisplay.startInterpolation();
                 focusDisplays.add(focusDisplay);
 
                 findDisplayEntityIfNeeded();
@@ -242,8 +242,9 @@ public class Shop {
 
                 // Remove text display entities, stop and reset item rotation and turn the CustomName back on
                 for (CustomTextDisplay e : focusDisplays) {
-                    e.startInterpolation();
+                    e.setInterpolationDuration(10);
                     e.setBackground(64, 0, 0, 0); //! 64 is the default value displays spawns with
+                    e.startInterpolation();
                 }
                 List<CustomTextDisplay> focusDisplaysTmp = focusDisplays;
                 focusDisplays = new ArrayList<>();
@@ -253,7 +254,6 @@ public class Shop {
                     }
                     findDisplayEntityIfNeeded();
                     if(itemDisplay != null) itemDisplay.getRawDisplay().setCustomNameVisible(true);
-                    System.out.println("HERE");
                 });
             }
             focusedState = focusedStateNext;

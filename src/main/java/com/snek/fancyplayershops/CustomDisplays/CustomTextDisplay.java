@@ -3,15 +3,11 @@ package com.snek.fancyplayershops.CustomDisplays;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.joml.Vector3f;
-
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
-import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
 import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.AffineTransformation;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 

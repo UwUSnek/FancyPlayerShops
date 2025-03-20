@@ -61,7 +61,6 @@ public class FancyPlayerShops implements ModInitializer {
 
         // Create and register shop block rclick event
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-            player.sendMessage(Text.of(world.isClient ? "client" : "server"));
             ItemStack stack = player.getStackInHand(hand);
             if (stack.getItem() == SHOP_ITEM_ID && stack.getNbt().contains(SHOP_ITEM_NBT_KEY)) {
                 if(world instanceof ServerWorld) {
@@ -80,9 +79,9 @@ public class FancyPlayerShops implements ModInitializer {
 
         // Create and register focus features
         ServerTickEvents.END_SERVER_TICK.register(server -> {
-            if(tickNumber % 5  == 0) {
+            // if(tickNumber % 5  == 0) {
                 FocusFeatures.tick(server.getWorlds());
-            }
+            // }
             tickNumber++;
         });
 
