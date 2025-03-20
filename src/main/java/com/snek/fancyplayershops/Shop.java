@@ -64,8 +64,8 @@ public class Shop {
 
     // Style data
     final int BG_TRANSITION_TIME = 5; // Measured in ticks
-    final Vector4i BG_FOCUSED   = new Vector4i(256, 170, 160, 170);
-    final Vector4i BG_UNFOCUSED = new Vector4i(64,  0, 0, 0);
+    final Vector4i BG_FOCUSED   = new Vector4i(255, 40, 40, 40);
+    final Vector4i BG_UNFOCUSED = new Vector4i(64,  0, 0, 0); //! Default nametag color
 
 
 
@@ -234,7 +234,7 @@ public class Shop {
                         .append(Text.literal("\nStock: ")).append(Text.literal(Utils.formatAmount(stock)).setStyle(Style.EMPTY.withColor(Formatting.DARK_AQUA).withBold(true)))
                     ,
                     new Vec3d(pos.getX() + 0.5, pos.getY() + 0.6, pos.getZ() + 0.5),
-                    BillboardMode.CENTER,
+                    BillboardMode.VERTICAL,
                     false
                 );
                 focusDisplay.animateBackground(BG_FOCUSED, BG_TRANSITION_TIME, 1);

@@ -140,11 +140,12 @@ public class CustomTextDisplay extends CustomDisplay {
      */
     public void animateBackground(Vector4i argb, int time, int step) {
         Vector4i from = getBackground();
-        Vector4i to = argb;
-        Vector4i diff = to.sub(from);
+        Vector4i diff = new Vector4i(argb).sub(from);
 
+        System.out.println("started animation @ " + from.toString());
         for(int i = 0; i < time; i += step) {
-            double d = ((double)i) / time;
+            double d = Math.min(1.0d, ((double)i) / time);
+            System.out.println(new Vector4i(from).add((int)(diff.x * d), (int)(diff.y * d), (int)(diff.z * d), (int)(diff.w * d)).toString());
             Scheduler.schedule(i, () -> {
                 setBackground(new Vector4i(from).add((int)(diff.x * d), (int)(diff.y * d), (int)(diff.z * d), (int)(diff.w * d)));
             });
