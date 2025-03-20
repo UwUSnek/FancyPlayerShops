@@ -3,6 +3,10 @@ package com.snek.fancyplayershops.CustomDisplays;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.joml.Vector4i;
+
+import com.snek.fancyplayershops.Scheduler;
+
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
@@ -20,6 +24,7 @@ public class CustomTextDisplay extends CustomDisplay {
     static private Method method_setText;
     static private Method method_setTextOpacity;
     static private Method method_setBackground;
+    static private Method method_getBackground;
     static private Method method_setBillboardMode;
     static Method method_setTransformation;
     static {
@@ -27,6 +32,7 @@ public class CustomTextDisplay extends CustomDisplay {
             method_setText          = TextDisplayEntity.class.getDeclaredMethod("setText",                   Text.class);
             method_setTextOpacity   = TextDisplayEntity.class.getDeclaredMethod("setTextOpacity",            byte.class);
             method_setBackground   = TextDisplayEntity.class.getDeclaredMethod("setBackground",               int.class);
+            method_getBackground   = TextDisplayEntity.class.getDeclaredMethod("getBackground");
             method_setBillboardMode =     DisplayEntity.class.getDeclaredMethod("setBillboardMode", BillboardMode.class);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -36,6 +42,7 @@ public class CustomTextDisplay extends CustomDisplay {
         method_setText.setAccessible(true);
         method_setTextOpacity.setAccessible(true);
         method_setBackground.setAccessible(true);
+        method_getBackground.setAccessible(true);
         method_setBillboardMode.setAccessible(true);
     }
 
@@ -94,15 +101,53 @@ public class CustomTextDisplay extends CustomDisplay {
     }
 
 
-    public void setBackground(int a, int r, int g, int b) {
+    public void setBackground(Vector4i argb) {
         try {
-            method_setBackground.invoke(rawDisplay, (a << 24) | (r << 16) | (g << 8) | b);
+            method_setBackground.invoke(rawDisplay, (argb.x << 24) | (argb.y << 16) | (argb.z << 8) | argb.w);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
             e.printStackTrace();
+        }
+    }
+
+
+    public Vector4i getBackground() {
+        try {
+            int bg = (int)method_getBackground.invoke(rawDisplay);
+            return new Vector4i((bg >> 24) & 0xFF, (bg >> 16) & 0xFF, (bg >> 8) & 0xFF, bg & 0xFF);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return new Vector4i(0);
+    }
+
+
+
+
+    /**
+     * Gradually changes the background color to simulate a linear interpolation.
+     * The interpolation starts at the end of the current tick.
+     * @param time The duration of the interpolation, expressed in server ticks.
+     * @param step The duration of each step of the interpolation, expressed in server ticks.
+     *     Lower values create a smoother transition, but are more expensive.
+     */
+    public void animateBackground(Vector4i argb, int time, int step) {
+        Vector4i from = getBackground();
+        Vector4i to = argb;
+        Vector4i diff = to.sub(from);
+
+        for(int i = 0; i < time; i += step) {
+            double d = ((double)i) / time;
+            Scheduler.schedule(i, () -> {
+                setBackground(new Vector4i(from).add((int)(diff.x * d), (int)(diff.y * d), (int)(diff.z * d), (int)(diff.w * d)));
+            });
         }
     }
 }

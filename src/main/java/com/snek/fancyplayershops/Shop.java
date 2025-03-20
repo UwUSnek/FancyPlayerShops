@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.joml.Vector4i;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
@@ -59,6 +61,11 @@ public class Shop {
     // Stores the shops of players, identifying them by their owner's UUID and their coordinates and world in the format "x,y,z,worldId"
     private static final Map<String, Shop> shopsByCoords = new HashMap<>();
     private static final Map<String, Shop> shopsByOwner = new HashMap<>();
+
+    // Style data
+    final int BG_TRANSITION_TIME = 5; // Measured in ticks
+    final Vector4i BG_FOCUSED   = new Vector4i(256, 170, 160, 170);
+    final Vector4i BG_UNFOCUSED = new Vector4i(64,  0, 0, 0);
 
 
 
@@ -230,9 +237,7 @@ public class Shop {
                     BillboardMode.CENTER,
                     false
                 );
-                focusDisplay.setInterpolationDuration(10);
-                focusDisplay.setBackground(200, 0, 0, 0);
-                focusDisplay.startInterpolation();
+                focusDisplay.animateBackground(BG_FOCUSED, BG_TRANSITION_TIME, 1);
                 focusDisplays.add(focusDisplay);
 
                 findDisplayEntityIfNeeded();
@@ -242,13 +247,11 @@ public class Shop {
 
                 // Remove text display entities, stop and reset item rotation and turn the CustomName back on
                 for (CustomTextDisplay e : focusDisplays) {
-                    e.setInterpolationDuration(10);
-                    e.setBackground(64, 0, 0, 0); //! 64 is the default value displays spawns with
-                    e.startInterpolation();
+                    e.animateBackground(BG_UNFOCUSED, BG_TRANSITION_TIME, 1);
                 }
                 List<CustomTextDisplay> focusDisplaysTmp = focusDisplays;
                 focusDisplays = new ArrayList<>();
-                Utils.runDelayedSync(world.getServer(), 500, () -> {
+                Scheduler.schedule(BG_TRANSITION_TIME, () -> {
                     for (CustomTextDisplay e : focusDisplaysTmp) {
                         e.getRawDisplay().remove(RemovalReason.KILLED);
                     }

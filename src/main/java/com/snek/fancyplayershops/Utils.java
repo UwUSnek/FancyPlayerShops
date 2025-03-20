@@ -31,7 +31,7 @@ public class Utils {
      * @param delay The delay expressed in milliseconds.
      * @param task The task to run.
      */
-    public static void runDelayedAsync(int delay, Runnable task) {
+    public static void runAsync(int delay, Runnable task) {
         new Thread(() -> {
             try {
                 Thread.sleep(delay);
@@ -39,25 +39,6 @@ public class Utils {
                 e1.printStackTrace();
             }
             task.run();
-        }).start();
-    }
-
-
-
-    /**
-     * Runs a task on the main thread after a specified delay.
-     * @param server The server instance.
-     * @param delay The delay expressed in milliseconds.
-     * @param task The task to run.
-     */
-    public static void runDelayedSync(MinecraftServer server, int delay, Runnable task) {
-        new Thread(() -> {
-            try {
-                Thread.sleep(delay);
-            } catch (InterruptedException e1) {
-                e1.printStackTrace();
-            }
-            server.execute(task);
         }).start();
     }
 
