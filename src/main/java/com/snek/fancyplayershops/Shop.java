@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.management.RuntimeErrorException;
+
 import org.joml.Vector4i;
 
 import com.google.gson.Gson;
@@ -107,13 +109,19 @@ public class Shop {
     private void calcSerializedWorldId() {
         worldId = world.getRegistryKey().getValue().toString();
     }
-    private void calcDeserializedWorldId(MinecraftServer server) {
+    /**
+     * Tries to deserialize the world Identifier and find the ServerWorld it belongs to.
+     * @param server The server instance.
+     * @throws RuntimeException if the world Identifier is invalid or the ServerWorld cannot be found.
+     */
+    private void calcDeserializedWorldId(MinecraftServer server) throws RuntimeException {
         for (ServerWorld w : server.getWorlds()) {
             if(w.getRegistryKey().getValue().toString().equals(worldId)) {
                 world = w;
                 return;
             }
         }
+        throw new RuntimeException("Invalid shop data: Specified world \"" + worldId + "\" was not found");
     }
 
 
@@ -193,10 +201,11 @@ public class Shop {
 
     /**
      * Loads all the player shops into the runtime map.
-     * Must be called on server starting event.
+     * Must be called on server started event (After the worlds are loaded!).
      */
     public static void loadData(MinecraftServer server) {
         for (File shopStorageFile : new File(SHOP_STORAGE_DIR.toString()).listFiles()) {
+
 
             // Read file
             Shop retrievedShop = null;
@@ -206,10 +215,15 @@ public class Shop {
                 e.printStackTrace();
             }
 
+            // Update shop maps
             // Recalculate transient members and update shop maps
             retrievedShop.cacheShopIdentifier();
             retrievedShop.calcDeserializedItem();
-            retrievedShop.calcDeserializedWorldId(server);
+            try {
+                retrievedShop.calcDeserializedWorldId(server);
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
             retrievedShop.focusDisplays = new ArrayList<>();
             shopsByOwner.put(retrievedShop.ownerUUID.toString(), retrievedShop);
             shopsByCoords.put(retrievedShop.shopIdentifierCache, retrievedShop);
@@ -250,10 +264,10 @@ public class Shop {
                     false,
                     null
                 );
+                activeFocusDisplays.add(focusDisplay.getRawDisplay().getUuid()); //! Must be added before spawning the entity into the world to stop it from getting purged
                 focusDisplay.spawn(world);
                 focusDisplay.animateBackground(BG_FOCUSED, BG_TRANSITION_TIME, 1);
                 focusDisplays.add(focusDisplay);
-                activeFocusDisplays.add(focusDisplay.getRawDisplay().getUuid());
 
                 findDisplayEntityIfNeeded();
                 if(itemDisplay != null) itemDisplay.getRawDisplay().setCustomNameVisible(false);
@@ -308,7 +322,6 @@ public class Shop {
         if (entity instanceof TextDisplayEntity) {
             World world = entity.getWorld();
             if(world != null && !activeFocusDisplays.contains(entity.getUuid()) && findShop(entity.getBlockPos(), world.getRegistryKey().getValue().toString()) != null) {
-                System.out.println("KEY DETECTED");
                 entity.remove(RemovalReason.KILLED);
             }
         }
