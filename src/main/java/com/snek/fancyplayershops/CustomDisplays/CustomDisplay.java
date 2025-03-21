@@ -14,6 +14,7 @@ import net.minecraft.util.math.AffineTransformation;
 public abstract class CustomDisplay {
     DisplayEntity heldEntity;
     AffineTransformation defaultTransformation;
+    DisplayAnimation animation;
 
 
     static Method method_setTransformation;
@@ -35,7 +36,7 @@ public abstract class CustomDisplay {
     }
 
 
-    public CustomDisplay(DisplayEntity _heldEntity, float scale) {
+    public CustomDisplay(DisplayEntity _heldEntity, float scale, DisplayAnimation _animation) {
         defaultTransformation = new AffineTransformation(
             null,                              // Translation
             null,                              // Rotation
@@ -43,11 +44,24 @@ public abstract class CustomDisplay {
             null                               // Left rotation
         );
         heldEntity = _heldEntity;
+        animation = _animation;
         this.setTransformation(defaultTransformation);
     }
 
 
-    public void setTransformation(AffineTransformation transformation) {
+    /**
+     * Applies a new transformation to the display and starts the linear interpolation at the end of the current tick.
+     * @param transformation The transformation to apply.
+     * @param duration The duration of the interpolation.
+     */
+    public void applyTransform(AffineTransformation transformation, int duration) {
+        setStartInterpolation();
+        setInterpolationDuration(duration);
+        setTransformation(transformation);
+    }
+
+
+    private void setTransformation(AffineTransformation transformation) {
         try {
             method_setTransformation.invoke(heldEntity, transformation);
         } catch (IllegalAccessException e) {
@@ -63,7 +77,7 @@ public abstract class CustomDisplay {
     /**
      * @param duration The duration in ticks
      */
-    public void setInterpolationDuration(int duration) {
+    private void setInterpolationDuration(int duration) {
         try {
             method_setInterpolationDuration.invoke(heldEntity, duration);
         } catch (IllegalAccessException e) {
@@ -76,7 +90,7 @@ public abstract class CustomDisplay {
     }
 
 
-    public void startInterpolation() {
+    private void setStartInterpolation() {
         try {
             method_setStartInterpolation.invoke(heldEntity, -1);
         } catch (IllegalAccessException e) {

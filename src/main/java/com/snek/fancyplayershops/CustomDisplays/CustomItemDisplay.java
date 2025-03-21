@@ -29,12 +29,12 @@ public class CustomItemDisplay extends CustomDisplay {
     }
 
 
-    public CustomItemDisplay(ItemDisplayEntity _rawDisplay) {
-        super(_rawDisplay, 0.5f);
+    public CustomItemDisplay(ItemDisplayEntity _rawDisplay, DisplayAnimation _animation) {
+        super(_rawDisplay, 0.5f, _animation);
         rawDisplay = _rawDisplay;
     }
-    public CustomItemDisplay(World world, ItemStack itemStack, Vec3d pos, Boolean customNameVisible, Boolean glowing) {
-        super(new ItemDisplayEntity(EntityType.ITEM_DISPLAY, world), 0.5f);
+    public CustomItemDisplay(World world, ItemStack itemStack, Vec3d pos, Boolean customNameVisible, Boolean glowing, DisplayAnimation _animation) {
+        super(new ItemDisplayEntity(EntityType.ITEM_DISPLAY, world), 0.5f, _animation);
         rawDisplay = (ItemDisplayEntity)heldEntity;
         setItemStack(itemStack);
         rawDisplay.setCustomNameVisible(customNameVisible);

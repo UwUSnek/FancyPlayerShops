@@ -30,7 +30,7 @@ import net.minecraft.world.World;
 public class FocusFeatures {
     public FocusFeatures() { throw new UnsupportedOperationException("Utility class \"FocusFeatures\" cannot be instantiated"); }
     private static final double MAX_DISTANCE = 5;  // Maximum distance to check
-    private static final double STEP_SIZE = 0.1;
+    private static final double STEP_SIZE = 0.2;
     public static List<Shop> targetedShopsOld = new ArrayList<>();
 
 
@@ -66,7 +66,7 @@ public class FocusFeatures {
      */
     private static List<Vec3d> getViewCollisisons(PlayerEntity player, double maxDistance) {
         List<Vec3d> blockPositions = new ArrayList<>();
-        List<Vec3i> blockPositionsInt = new ArrayList<>();
+        Vec3i lastBlockPosition = new Vec3i(0, 0, 0);
 
         Vec3d lookDirection = player.getRotationVec(1.0F);
         Vec3d step = lookDirection.normalize().multiply(STEP_SIZE);
@@ -79,8 +79,8 @@ public class FocusFeatures {
 
             // Add block to list if not present
             Vec3i currentPosInt = new Vec3i((int)currentPos.x, (int)currentPos.y, (int)currentPos.z);
-            if(blockPositionsInt.isEmpty() || blockPositionsInt.get(blockPositionsInt.size() - 1) != currentPosInt) {
-                blockPositionsInt.add(currentPosInt);
+            if(lastBlockPosition != currentPosInt) {
+                lastBlockPosition = currentPosInt;
                 blockPositions.add(currentPos);
             }
 

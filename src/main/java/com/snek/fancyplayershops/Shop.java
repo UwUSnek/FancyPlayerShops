@@ -21,6 +21,7 @@ import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
 import com.snek.fancyplayershops.CustomDisplays.CustomItemDisplay;
 import com.snek.fancyplayershops.CustomDisplays.CustomTextDisplay;
+import com.snek.fancyplayershops.CustomDisplays.DisplayAnimation;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.Entity;
@@ -136,7 +137,8 @@ public class Shop {
             item,
             new Vec3d(pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5),
             true,
-            false
+            false,
+            null //FIXME
         );
         itemDisplay.getRawDisplay().setCustomName(Text.of("[Empty shop]"));
         itemDisplayUUID = itemDisplay.getRawDisplay().getUuid();
@@ -240,7 +242,8 @@ public class Shop {
                     ,
                     new Vec3d(pos.getX() + 0.5, pos.getY() + 0.6, pos.getZ() + 0.5),
                     BillboardMode.VERTICAL,
-                    false
+                    false,
+                    null //FIXME
                 );
                 NbtCompound focusDisplayNbt = new NbtCompound();
                 focusDisplay.getRawDisplay().writeNbt(focusDisplayNbt);
@@ -283,7 +286,7 @@ public class Shop {
         if(itemDisplay == null) {
             ItemDisplayEntity rawItemDisplay = (ItemDisplayEntity)(world.getEntity(itemDisplayUUID));
             if(rawItemDisplay != null) {
-                itemDisplay = new CustomItemDisplay(rawItemDisplay);
+                itemDisplay = new CustomItemDisplay(rawItemDisplay, null); //FIXME
             }
         }
     }
