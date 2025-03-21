@@ -68,10 +68,10 @@ public class FancyPlayerShops implements ModInitializer {
         // // Registry.register(Registries.RECIPE_SERIALIZER, recipeIdentifier, shopItemRecipe.getSerializer());
 
         // RecipeManager.setRecipes(List.of(shopItemRecipe));
-        ServerLifecycleEvents.SERVER_STARTED.register((server) -> {
+        ServerLifecycleEvents.SERVER_STARTING.register((server) -> {
 
             // Load shop data
-            Shop.load(server);
+            Shop.loadData(server);
 
             // Log initialization success
             LOGGER.info("FancyPlayerShops initialized. :3");

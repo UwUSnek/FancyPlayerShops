@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -41,6 +42,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 
 
 
@@ -68,7 +70,7 @@ public class Shop {
     private static final Map<String, Shop> shopsByOwner  = new HashMap<>();
 
     // Focus display data
-    private static final String FOCUS_DISPLAY_NBT_KEY = FancyPlayerShops.MOD_ID + ".isFocusDisplayEntity";
+    private static final HashSet<UUID> activeFocusDisplays = new HashSet<>(); //! Used to avoid purges. Stray displays won't be in here
     private static final int BG_TRANSITION_TIME = 5; // Measured in ticks
     private static final Vector4i BG_FOCUSED   = new Vector4i(255, 40, 40, 40);
     private static final Vector4i BG_UNFOCUSED = new Vector4i(64,  0, 0, 0); //! Default nametag color
@@ -191,8 +193,9 @@ public class Shop {
 
     /**
      * Loads all the player shops into the runtime map.
+     * Must be called on server starting event.
      */
-    public static void load(MinecraftServer server) {
+    public static void loadData(MinecraftServer server) {
         for (File shopStorageFile : new File(SHOP_STORAGE_DIR.toString()).listFiles()) {
 
             // Read file
@@ -248,17 +251,9 @@ public class Shop {
                     null
                 );
                 focusDisplay.spawn(world);
-                NbtCompound focusDisplayNbt = new NbtCompound();
-                focusDisplay.getRawDisplay().writeNbt(focusDisplayNbt);
-                focusDisplayNbt.putInt(FOCUS_DISPLAY_NBT_KEY, 1);
-                focusDisplay.getRawDisplay().readNbt(focusDisplayNbt);
                 focusDisplay.animateBackground(BG_FOCUSED, BG_TRANSITION_TIME, 1);
                 focusDisplays.add(focusDisplay);
-
-                NbtCompound focusDisplayNbt2 = new NbtCompound();
-                focusDisplay.getRawDisplay().writeNbt(focusDisplayNbt2);
-                System.out.println("entity nbt: " + focusDisplayNbt2.toString());
-
+                activeFocusDisplays.add(focusDisplay.getRawDisplay().getUuid());
 
                 findDisplayEntityIfNeeded();
                 if(itemDisplay != null) itemDisplay.getRawDisplay().setCustomNameVisible(false);
@@ -274,6 +269,7 @@ public class Shop {
                 Scheduler.schedule(BG_TRANSITION_TIME + 2, () -> {
                     for (CustomTextDisplay e : focusDisplaysTmp) {
                         e.getRawDisplay().remove(RemovalReason.KILLED);
+                        activeFocusDisplays.remove(e.getRawDisplay().getUuid());
                     }
                     findDisplayEntityIfNeeded();
                     if(itemDisplay != null) itemDisplay.getRawDisplay().setCustomNameVisible(true);
@@ -302,11 +298,16 @@ public class Shop {
 
 
 
+    /**
+     * Checks for stray focus displays and purges them.
+     * Any TextDisplayEntity not registered as active display and in the same block as a shop is considered a stray display.
+     * Must be called on entity load event.
+     * @param entity
+     */
     public static void onEntityLoad(Entity entity) {
         if (entity instanceof TextDisplayEntity) {
-            NbtCompound nbt = new NbtCompound();
-            entity.writeNbt(nbt);
-            if(nbt.contains(FOCUS_DISPLAY_NBT_KEY)) {
+            World world = entity.getWorld();
+            if(world != null && !activeFocusDisplays.contains(entity.getUuid()) && findShop(entity.getBlockPos(), world.getRegistryKey().getValue().toString()) != null) {
                 System.out.println("KEY DETECTED");
                 entity.remove(RemovalReason.KILLED);
             }
