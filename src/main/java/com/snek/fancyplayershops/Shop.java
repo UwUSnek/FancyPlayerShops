@@ -251,9 +251,14 @@ public class Shop {
                 NbtCompound focusDisplayNbt = new NbtCompound();
                 focusDisplay.getRawDisplay().writeNbt(focusDisplayNbt);
                 focusDisplayNbt.putInt(FOCUS_DISPLAY_NBT_KEY, 1);
-                focusDisplay.getRawDisplay().writeNbt(focusDisplayNbt);
+                focusDisplay.getRawDisplay().readNbt(focusDisplayNbt);
                 focusDisplay.animateBackground(BG_FOCUSED, BG_TRANSITION_TIME, 1);
                 focusDisplays.add(focusDisplay);
+
+                NbtCompound focusDisplayNbt2 = new NbtCompound();
+                focusDisplay.getRawDisplay().writeNbt(focusDisplayNbt2);
+                System.out.println("entity nbt: " + focusDisplayNbt2.toString());
+
 
                 findDisplayEntityIfNeeded();
                 if(itemDisplay != null) itemDisplay.getRawDisplay().setCustomNameVisible(false);
@@ -302,6 +307,7 @@ public class Shop {
             NbtCompound nbt = new NbtCompound();
             entity.writeNbt(nbt);
             if(nbt.contains(FOCUS_DISPLAY_NBT_KEY)) {
+                System.out.println("KEY DETECTED");
                 entity.remove(RemovalReason.KILLED);
             }
         }

@@ -81,7 +81,7 @@ public class FancyPlayerShops implements ModInitializer {
         // Create and register shop block rclick event
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             ItemStack stack = player.getStackInHand(hand);
-            if (stack.getItem() == SHOP_ITEM_ID && stack.getNbt().contains(SHOP_ITEM_NBT_KEY)) {
+            if (stack.getItem() == SHOP_ITEM_ID && stack.hasNbt() && stack.getNbt().contains(SHOP_ITEM_NBT_KEY)) {
                 if(world instanceof ServerWorld) {
                     BlockPos blockPos = hitResult.getBlockPos().add(hitResult.getSide().getVector());
                     new Shop((ServerWorld)world, blockPos, player);
