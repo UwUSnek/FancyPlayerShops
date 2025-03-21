@@ -23,12 +23,15 @@ import com.snek.fancyplayershops.CustomDisplays.CustomItemDisplay;
 import com.snek.fancyplayershops.CustomDisplays.CustomTextDisplay;
 
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
+import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Style;
@@ -62,7 +65,8 @@ public class Shop {
     private static final Map<String, Shop> shopsByCoords = new HashMap<>();
     private static final Map<String, Shop> shopsByOwner  = new HashMap<>();
 
-    // Style data
+    // Focus display data
+    private static final String FOCUS_DISPLAY_NBT_KEY = FancyPlayerShops.MOD_ID + ".isFocusDisplayEntity";
     private static final int BG_TRANSITION_TIME = 5; // Measured in ticks
     private static final Vector4i BG_FOCUSED   = new Vector4i(255, 40, 40, 40);
     private static final Vector4i BG_UNFOCUSED = new Vector4i(64,  0, 0, 0); //! Default nametag color
@@ -238,6 +242,10 @@ public class Shop {
                     BillboardMode.VERTICAL,
                     false
                 );
+                NbtCompound focusDisplayNbt = new NbtCompound();
+                focusDisplay.getRawDisplay().writeNbt(focusDisplayNbt);
+                focusDisplayNbt.putInt(FOCUS_DISPLAY_NBT_KEY, 1);
+                focusDisplay.getRawDisplay().writeNbt(focusDisplayNbt);
                 focusDisplay.animateBackground(BG_FOCUSED, BG_TRANSITION_TIME, 1);
                 focusDisplays.add(focusDisplay);
 
@@ -276,6 +284,19 @@ public class Shop {
             ItemDisplayEntity rawItemDisplay = (ItemDisplayEntity)(world.getEntity(itemDisplayUUID));
             if(rawItemDisplay != null) {
                 itemDisplay = new CustomItemDisplay(rawItemDisplay);
+            }
+        }
+    }
+
+
+
+
+    public static void onEntityLoad(Entity entity) {
+        if (entity instanceof TextDisplayEntity) {
+            NbtCompound nbt = new NbtCompound();
+            entity.writeNbt(nbt);
+            if(nbt.contains(FOCUS_DISPLAY_NBT_KEY)) {
+                entity.remove(RemovalReason.KILLED);
             }
         }
     }

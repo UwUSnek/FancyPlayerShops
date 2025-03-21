@@ -1,8 +1,10 @@
 package com.snek.fancyplayershops;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -96,6 +98,12 @@ public class FancyPlayerShops implements ModInitializer {
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             Scheduler.tick(server);
             FocusFeatures.tick(server.getWorlds());
+        });
+
+
+        // Register focus display purge
+        ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
+            Shop.onEntityLoad(entity);
         });
     }
 }
