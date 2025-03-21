@@ -2,10 +2,13 @@ package com.snek.fancyplayershops.CustomDisplays;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.joml.Vector4i;
 
-import com.snek.fancyplayershops.Scheduler;
+import com.snek.fancyplayershops.utils.Scheduler;
+import com.snek.fancyplayershops.utils.TaskHandler;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.DisplayEntity;
@@ -18,9 +21,16 @@ import net.minecraft.world.World;
 
 
 
+
+
+
+
 public class CustomTextDisplay extends CustomDisplay {
+    List<TaskHandler> handlers = new ArrayList<>();
     TextDisplayEntity rawDisplay;
     public TextDisplayEntity getRawDisplay() { return rawDisplay; }
+
+
     static private Method method_setText;
     static private Method method_setTextOpacity;
     static private Method method_setBackground;
@@ -47,6 +57,8 @@ public class CustomTextDisplay extends CustomDisplay {
     }
 
 
+
+
     public CustomTextDisplay(TextDisplayEntity _rawDisplay, DisplayAnimation _animation) {
         super(_rawDisplay, 1, _animation);
         rawDisplay = _rawDisplay;
@@ -58,8 +70,9 @@ public class CustomTextDisplay extends CustomDisplay {
         rawDisplay.setPosition(pos);
         setText(text);
         setBillboardMode(billboardMode);
-        world.spawnEntity(rawDisplay);
     }
+
+
 
 
     public void setText(Text text) {
@@ -75,6 +88,8 @@ public class CustomTextDisplay extends CustomDisplay {
     }
 
 
+
+
     public void setBillboardMode(BillboardMode billboardMode) {
         try {
             method_setBillboardMode.invoke(rawDisplay, billboardMode);
@@ -86,6 +101,8 @@ public class CustomTextDisplay extends CustomDisplay {
             e.printStackTrace();
         }
     }
+
+
 
 
     public void setTextOpacity(byte opacity) {
@@ -101,6 +118,8 @@ public class CustomTextDisplay extends CustomDisplay {
     }
 
 
+
+
     public void setBackground(Vector4i argb) {
         try {
             method_setBackground.invoke(rawDisplay, (argb.x << 24) | (argb.y << 16) | (argb.z << 8) | argb.w);
@@ -112,6 +131,8 @@ public class CustomTextDisplay extends CustomDisplay {
             e.printStackTrace();
         }
     }
+
+
 
 
     public Vector4i getBackground() {
@@ -134,19 +155,24 @@ public class CustomTextDisplay extends CustomDisplay {
     /**
      * Gradually changes the background color to simulate a linear interpolation.
      * The interpolation starts at the end of the current tick.
+     * Calling this function while another animation is active will interrupt it and start the new interpolation from the current color.
      * @param time The duration of the interpolation, expressed in server ticks.
      * @param step The duration of each step of the interpolation, expressed in server ticks.
      *     Lower values create a smoother transition, but are more expensive.
      */
     public void animateBackground(Vector4i argb, int time, int step) {
+        for (TaskHandler handler : handlers) {
+            handler.cancel();
+        }
+        handlers.clear();
         Vector4i from = getBackground();
         Vector4i diff = new Vector4i(argb).sub(from);
 
         for(int i = 0; i < time; i += step) {
             double d = Math.min(1.0d, ((double)i) / time);
-            Scheduler.schedule(i, () -> {
+            handlers.add(Scheduler.schedule(i, () -> {
                 setBackground(new Vector4i(from).add((int)(diff.x * d), (int)(diff.y * d), (int)(diff.z * d), (int)(diff.w * d)));
-            });
+            }));
         }
     }
 }

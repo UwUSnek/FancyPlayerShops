@@ -6,7 +6,13 @@ import java.lang.reflect.Method;
 import org.joml.Vector3f;
 
 import net.minecraft.entity.decoration.DisplayEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.AffineTransformation;
+import net.minecraft.world.World;
+
+
+
+
 
 
 
@@ -36,6 +42,8 @@ public abstract class CustomDisplay {
     }
 
 
+
+
     public CustomDisplay(DisplayEntity _heldEntity, float scale, DisplayAnimation _animation) {
         defaultTransformation = new AffineTransformation(
             null,                              // Translation
@@ -47,6 +55,15 @@ public abstract class CustomDisplay {
         animation = _animation;
         this.setTransformation(defaultTransformation);
     }
+
+
+
+
+    public void spawn(World world) {
+        world.spawnEntity(heldEntity);
+    }
+
+
 
 
     /**
@@ -61,6 +78,8 @@ public abstract class CustomDisplay {
     }
 
 
+
+
     private void setTransformation(AffineTransformation transformation) {
         try {
             method_setTransformation.invoke(heldEntity, transformation);
@@ -72,6 +91,8 @@ public abstract class CustomDisplay {
             e.printStackTrace();
         }
     }
+
+
 
 
     /**
@@ -88,6 +109,8 @@ public abstract class CustomDisplay {
             e.printStackTrace();
         }
     }
+
+
 
 
     private void setStartInterpolation() {

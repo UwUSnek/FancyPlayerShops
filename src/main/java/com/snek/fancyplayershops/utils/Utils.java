@@ -1,4 +1,4 @@
-package com.snek.fancyplayershops;
+package com.snek.fancyplayershops.utils;
 
 import java.text.DecimalFormat;
 

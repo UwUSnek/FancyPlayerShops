@@ -12,6 +12,10 @@ import net.minecraft.world.World;
 
 
 
+
+
+
+
 public class CustomItemDisplay extends CustomDisplay {
 
     ItemDisplayEntity rawDisplay;
@@ -29,6 +33,8 @@ public class CustomItemDisplay extends CustomDisplay {
     }
 
 
+
+
     public CustomItemDisplay(ItemDisplayEntity _rawDisplay, DisplayAnimation _animation) {
         super(_rawDisplay, 0.5f, _animation);
         rawDisplay = _rawDisplay;
@@ -40,8 +46,9 @@ public class CustomItemDisplay extends CustomDisplay {
         rawDisplay.setCustomNameVisible(customNameVisible);
         rawDisplay.setGlowing(glowing);
         rawDisplay.setPosition(pos);
-        world.spawnEntity(rawDisplay);
     }
+
+
 
 
     public void setItemStack(ItemStack itemStack) {
