@@ -142,10 +142,8 @@ public class CustomTextDisplay extends CustomDisplay {
         Vector4i from = getBackground();
         Vector4i diff = new Vector4i(argb).sub(from);
 
-        System.out.println("started animation @ " + from.toString());
         for(int i = 0; i < time; i += step) {
             double d = Math.min(1.0d, ((double)i) / time);
-            System.out.println(new Vector4i(from).add((int)(diff.x * d), (int)(diff.y * d), (int)(diff.z * d), (int)(diff.w * d)).toString());
             Scheduler.schedule(i, () -> {
                 setBackground(new Vector4i(from).add((int)(diff.x * d), (int)(diff.y * d), (int)(diff.z * d), (int)(diff.w * d)));
             });

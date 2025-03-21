@@ -60,12 +60,12 @@ public class Shop {
 
     // Stores the shops of players, identifying them by their owner's UUID and their coordinates and world in the format "x,y,z,worldId"
     private static final Map<String, Shop> shopsByCoords = new HashMap<>();
-    private static final Map<String, Shop> shopsByOwner = new HashMap<>();
+    private static final Map<String, Shop> shopsByOwner  = new HashMap<>();
 
     // Style data
-    final int BG_TRANSITION_TIME = 5; // Measured in ticks
-    final Vector4i BG_FOCUSED   = new Vector4i(255, 40, 40, 40);
-    final Vector4i BG_UNFOCUSED = new Vector4i(64,  0, 0, 0); //! Default nametag color
+    private static final int BG_TRANSITION_TIME = 5; // Measured in ticks
+    private static final Vector4i BG_FOCUSED   = new Vector4i(255, 40, 40, 40);
+    private static final Vector4i BG_UNFOCUSED = new Vector4i(64,  0, 0, 0); //! Default nametag color
 
 
 
@@ -199,6 +199,7 @@ public class Shop {
             retrievedShop.cacheShopIdentifier();
             retrievedShop.calcDeserializedItem();
             retrievedShop.calcDeserializedWorldId(server);
+            retrievedShop.focusDisplays = new ArrayList<>();
             shopsByOwner.put(retrievedShop.ownerUUID.toString(), retrievedShop);
             shopsByCoords.put(retrievedShop.shopIdentifierCache, retrievedShop);
         }
@@ -251,7 +252,7 @@ public class Shop {
                 }
                 List<CustomTextDisplay> focusDisplaysTmp = focusDisplays;
                 focusDisplays = new ArrayList<>();
-                Scheduler.schedule(BG_TRANSITION_TIME, () -> {
+                Scheduler.schedule(BG_TRANSITION_TIME + 2, () -> {
                     for (CustomTextDisplay e : focusDisplaysTmp) {
                         e.getRawDisplay().remove(RemovalReason.KILLED);
                     }
@@ -271,8 +272,8 @@ public class Shop {
      * @param world The world search the the entity in.
      */
     private void findDisplayEntityIfNeeded(){
-        if(itemDisplay != null) {
-            ItemDisplayEntity rawItemDisplay = (ItemDisplayEntity)world.getEntity(itemDisplayUUID);
+        if(itemDisplay == null) {
+            ItemDisplayEntity rawItemDisplay = (ItemDisplayEntity)(world.getEntity(itemDisplayUUID));
             if(rawItemDisplay != null) {
                 itemDisplay = new CustomItemDisplay(rawItemDisplay);
             }

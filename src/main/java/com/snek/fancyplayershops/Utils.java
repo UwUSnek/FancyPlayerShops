@@ -2,13 +2,7 @@ package com.snek.fancyplayershops;
 
 import java.text.DecimalFormat;
 
-import org.apache.logging.log4j.core.config.builder.api.Component;
-
-import com.snek.fancyplayershops.CustomDisplays.CustomTextDisplay;
-
-import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;

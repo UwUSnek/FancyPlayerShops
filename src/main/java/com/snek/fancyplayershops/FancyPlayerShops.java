@@ -1,6 +1,7 @@
 package com.snek.fancyplayershops;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.item.Item;
@@ -18,10 +19,13 @@ import org.slf4j.LoggerFactory;
 
 
 
+
+
+
+
 public class FancyPlayerShops implements ModInitializer {
     public static final String MOD_ID = "fancyplayershops";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-    public static long tickNumber = 0;
 
     public static final Item SHOP_ITEM_ID = Items.REDSTONE;
     public static final ItemStack shopItem = new ItemStack(SHOP_ITEM_ID);
@@ -33,9 +37,12 @@ public class FancyPlayerShops implements ModInitializer {
     }
 
 
+
+
     @Override
     public void onInitialize() {
         ShopCommand.register();
+
 
 
 
@@ -57,6 +64,14 @@ public class FancyPlayerShops implements ModInitializer {
         // // Registry.register(Registries.RECIPE_SERIALIZER, recipeIdentifier, shopItemRecipe.getSerializer());
 
         // RecipeManager.setRecipes(List.of(shopItemRecipe));
+        ServerLifecycleEvents.SERVER_STARTED.register((server) -> {
+
+            // Load shop data
+            Shop.load(server);
+
+            // Log initialization success
+            LOGGER.info("FancyPlayerShops initialized. :3");
+        });
 
 
         // Create and register shop block rclick event
@@ -81,11 +96,6 @@ public class FancyPlayerShops implements ModInitializer {
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             Scheduler.tick(server);
             FocusFeatures.tick(server.getWorlds());
-            tickNumber++;
         });
-
-
-        // Log initialization success
-        LOGGER.info("FancyPlayerShops initialized. :3");
     }
 }

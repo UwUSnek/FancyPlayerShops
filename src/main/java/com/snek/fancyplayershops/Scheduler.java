@@ -1,7 +1,6 @@
 package com.snek.fancyplayershops;
 
 import java.util.AbstractMap;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -48,13 +47,5 @@ public class Scheduler {
     public static void schedule(int delay, Runnable task) {
         assert delay > 0 : "Delay must be greater than 0";
         taskQueue.add(new AbstractMap.SimpleEntry<>(tickNum + delay, task));
-        // new Thread(() -> {
-        //     try {
-        //         Thread.sleep(delay);
-        //     } catch (InterruptedException e1) {
-        //         e1.printStackTrace();
-        //     }
-        //     server.execute(task);
-        // }).start();
     }
 }
