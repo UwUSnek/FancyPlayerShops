@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.management.RuntimeErrorException;
-
 import org.joml.Vector4i;
 
 import com.google.gson.Gson;
@@ -36,12 +34,14 @@ import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -73,9 +73,12 @@ public class Shop {
 
     // Focus display data
     private static final HashSet<UUID> activeFocusDisplays = new HashSet<>(); //! Used to avoid purges. Stray displays won't be in here
-    private static final int BG_TRANSITION_TIME = 5; // Measured in ticks
+    private static final int BG_TRANSITION_TIME_IN = 5; // Measured in ticks
+    private static final int BG_TRANSITION_TIME_OUT = 10; // Measured in ticks
     private static final Vector4i BG_FOCUSED   = new Vector4i(255, 40, 40, 40);
     private static final Vector4i BG_UNFOCUSED = new Vector4i(64,  0, 0, 0); //! Default nametag color
+    private static final int FG_ALPHA_FOCUSED = 255;
+    private static final int FG_ALPHA_UNFOCUSED = 0;
 
 
 
@@ -215,7 +218,6 @@ public class Shop {
                 e.printStackTrace();
             }
 
-            // Update shop maps
             // Recalculate transient members and update shop maps
             retrievedShop.cacheShopIdentifier();
             retrievedShop.calcDeserializedItem();
@@ -264,10 +266,12 @@ public class Shop {
                     false,
                     null
                 );
-                activeFocusDisplays.add(focusDisplay.getRawDisplay().getUuid()); //! Must be added before spawning the entity into the world to stop it from getting purged
-                focusDisplay.spawn(world);
-                focusDisplay.animateBackground(BG_FOCUSED, BG_TRANSITION_TIME, 1);
+                activeFocusDisplays.add(focusDisplay.getRawDisplay().getUuid()); //! Must be added before spawning the entity into the world to stop it from intantly getting purged
                 focusDisplays.add(focusDisplay);
+                focusDisplay.setTextOpacity(FG_ALPHA_UNFOCUSED);
+                focusDisplay.spawn(world);
+                focusDisplay.animateBackground(BG_FOCUSED, BG_TRANSITION_TIME_IN, 1);
+                focusDisplay.animateTextOpacity(FG_ALPHA_FOCUSED, BG_TRANSITION_TIME_IN, 1);
 
                 findDisplayEntityIfNeeded();
                 if(itemDisplay != null) itemDisplay.getRawDisplay().setCustomNameVisible(false);
@@ -276,13 +280,14 @@ public class Shop {
 
                 // Remove text display entities, stop and reset item rotation and turn the CustomName back on
                 for (CustomTextDisplay e : focusDisplays) {
-                    e.animateBackground(BG_UNFOCUSED, BG_TRANSITION_TIME, 1);
+                    e.animateBackground(BG_UNFOCUSED, BG_TRANSITION_TIME_OUT, 1);
+                    e.animateTextOpacity(FG_ALPHA_UNFOCUSED, BG_TRANSITION_TIME_OUT, 1);
                 }
                 List<CustomTextDisplay> focusDisplaysTmp = focusDisplays;
                 focusDisplays = new ArrayList<>();
-                Scheduler.schedule(BG_TRANSITION_TIME + 2, () -> {
+                Scheduler.schedule(BG_TRANSITION_TIME_OUT, () -> {
                     for (CustomTextDisplay e : focusDisplaysTmp) {
-                        e.getRawDisplay().remove(RemovalReason.KILLED);
+                        e.despawn();
                         activeFocusDisplays.remove(e.getRawDisplay().getUuid());
                     }
                     findDisplayEntityIfNeeded();
@@ -325,5 +330,27 @@ public class Shop {
                 entity.remove(RemovalReason.KILLED);
             }
         }
+    }
+
+
+
+
+    /**
+     * Checks if the held item is a shop item. If it is, it spawns a new shop.
+     */
+    public static ActionResult onItemUse(World world, PlayerEntity player, Hand hand, BlockHitResult hitResult){
+        ItemStack stack = player.getStackInHand(hand);
+        if (stack.getItem() == FancyPlayerShops.SHOP_ITEM_ID && stack.hasNbt() && stack.getNbt().contains(FancyPlayerShops.SHOP_ITEM_NBT_KEY)) {
+            if(world instanceof ServerWorld) {
+                BlockPos blockPos = hitResult.getBlockPos().add(hitResult.getSide().getVector());
+                new Shop((ServerWorld)world, blockPos, player);
+                player.sendMessage(Text.of("New shop created! Right click it to configure."));
+            }
+            else {
+                player.sendMessage(Text.of("You cannot create a shop here!"));
+            }
+            return ActionResult.SUCCESS;
+        }
+        return ActionResult.PASS;
     }
 }

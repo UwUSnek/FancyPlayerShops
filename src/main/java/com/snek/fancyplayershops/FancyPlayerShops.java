@@ -80,19 +80,7 @@ public class FancyPlayerShops implements ModInitializer {
 
         // Create and register shop block rclick event
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-            ItemStack stack = player.getStackInHand(hand);
-            if (stack.getItem() == SHOP_ITEM_ID && stack.hasNbt() && stack.getNbt().contains(SHOP_ITEM_NBT_KEY)) {
-                if(world instanceof ServerWorld) {
-                    BlockPos blockPos = hitResult.getBlockPos().add(hitResult.getSide().getVector());
-                    new Shop((ServerWorld)world, blockPos, player);
-                    player.sendMessage(Text.of("New shop created! Right click it to configure."));
-                }
-                else {
-                    player.sendMessage(Text.of("You cannot create a shop here!"));
-                }
-                return ActionResult.SUCCESS;
-            }
-            return ActionResult.PASS;
+            return Shop.onItemUse(world, player, hand, hitResult);
         });
 
 

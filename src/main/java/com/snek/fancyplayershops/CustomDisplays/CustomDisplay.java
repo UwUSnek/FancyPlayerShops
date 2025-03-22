@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 
 import org.joml.Vector3f;
 
+import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.AffineTransformation;
@@ -61,6 +62,14 @@ public abstract class CustomDisplay {
 
     public void spawn(World world) {
         world.spawnEntity(heldEntity);
+
+    }
+
+
+
+
+    public void despawn() {
+        heldEntity.remove(RemovalReason.KILLED);
     }
 
 
@@ -80,7 +89,7 @@ public abstract class CustomDisplay {
 
 
 
-    private void setTransformation(AffineTransformation transformation) {
+    public void setTransformation(AffineTransformation transformation) {
         try {
             method_setTransformation.invoke(heldEntity, transformation);
         } catch (IllegalAccessException e) {
@@ -98,7 +107,7 @@ public abstract class CustomDisplay {
     /**
      * @param duration The duration in ticks
      */
-    private void setInterpolationDuration(int duration) {
+    public void setInterpolationDuration(int duration) {
         try {
             method_setInterpolationDuration.invoke(heldEntity, duration);
         } catch (IllegalAccessException e) {
@@ -113,7 +122,7 @@ public abstract class CustomDisplay {
 
 
 
-    private void setStartInterpolation() {
+    public void setStartInterpolation() {
         try {
             method_setStartInterpolation.invoke(heldEntity, -1);
         } catch (IllegalAccessException e) {
