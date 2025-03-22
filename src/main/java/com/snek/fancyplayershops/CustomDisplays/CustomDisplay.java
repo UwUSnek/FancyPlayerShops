@@ -4,6 +4,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.joml.Vector3f;
+import org.joml.Vector4i;
+
+import com.snek.fancyplayershops.utils.Scheduler;
+import com.snek.fancyplayershops.utils.TaskHandler;
 
 import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.decoration.DisplayEntity;
@@ -24,6 +28,10 @@ public abstract class CustomDisplay {
     DisplayAnimation animation;
 
 
+    private int TMP_interpolationDuration = 0;
+    TaskHandler interpolationDispatcherHandler;
+
+
     static Method method_setTransformation;
     static Method method_setInterpolationDuration;
     static Method method_setStartInterpolation;
@@ -31,7 +39,7 @@ public abstract class CustomDisplay {
         try {
             method_setTransformation        = DisplayEntity.class.getDeclaredMethod("setTransformation", AffineTransformation.class);
             method_setInterpolationDuration = DisplayEntity.class.getDeclaredMethod("setInterpolationDuration",           int.class);
-            method_setStartInterpolation    = DisplayEntity.class.getDeclaredMethod("setInterpolationDuration",           int.class);
+            method_setStartInterpolation    = DisplayEntity.class.getDeclaredMethod("setStartInterpolation",              int.class);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (SecurityException e) {
@@ -54,7 +62,8 @@ public abstract class CustomDisplay {
         );
         heldEntity = _heldEntity;
         animation = _animation;
-        this.setTransformation(defaultTransformation);
+        setTransformation(defaultTransformation);
+        apply(0);
     }
 
 
@@ -63,27 +72,44 @@ public abstract class CustomDisplay {
     public void spawn(World world) {
         world.spawnEntity(heldEntity);
 
+        // Schedule transitions if present
+        if(animation != null && animation.spawn != null) {
+            int totScheduledDuration = 0;
+            for (TransformTransition t : animation.spawn) {
+                if(totScheduledDuration == 0) {
+                    setTransformation(t.transform);
+                    apply(t.duration);
+                }
+                else Scheduler.schedule(totScheduledDuration, () -> {
+                    setTransformation(t.transform);
+                    apply(t.duration);
+                });
+                totScheduledDuration += t.duration;
+            }
+        }
     }
 
 
 
 
     public void despawn() {
-        heldEntity.remove(RemovalReason.KILLED);
-    }
+        // Schedule transitions if present
+        int totScheduledDuration = 0;
+        if(animation != null && animation.despawn != null) {
+            for (TransformTransition t : animation.despawn) {
+                if(totScheduledDuration == 0) {
+                    setTransformation(t.transform);
+                    apply(t.duration);
+                }
+                else Scheduler.schedule(totScheduledDuration, () -> {
+                    setTransformation(t.transform);
+                    apply(t.duration);
+                });
+                totScheduledDuration += t.duration;
+            }
+        }
 
-
-
-
-    /**
-     * Applies a new transformation to the display and starts the linear interpolation at the end of the current tick.
-     * @param transformation The transformation to apply.
-     * @param duration The duration of the interpolation.
-     */
-    public void applyTransform(AffineTransformation transformation, int duration) {
-        setStartInterpolation();
-        setInterpolationDuration(duration);
-        setTransformation(transformation);
+        Scheduler.schedule(totScheduledDuration, () -> { heldEntity.remove(RemovalReason.KILLED); });
     }
 
 
@@ -105,9 +131,33 @@ public abstract class CustomDisplay {
 
 
     /**
+     * Sets the duration of the interpolation and starts it at the end of the current tick.
+     * Multiple calls only update the duration. The interpolation is started exactly 1 time.
+     * @param duration The duration of the interpolation.
+     */
+    public void apply(int duration) {
+
+        // Update duration
+        TMP_interpolationDuration = duration;
+
+        // Cancel previous tasks and schedule a new one on the current tick
+        if(interpolationDispatcherHandler != null) interpolationDispatcherHandler.cancel();
+        final int saved_TMP_interpolationDuration = TMP_interpolationDuration;
+        interpolationDispatcherHandler = Scheduler.run(() -> {
+            setInterpolationDuration(saved_TMP_interpolationDuration);
+            setStartInterpolation();
+            System.out.println("started interpolation with delay " + saved_TMP_interpolationDuration);
+        });
+        System.out.println("queued interpolation with delay " + saved_TMP_interpolationDuration);
+    }
+
+
+
+
+    /**
      * @param duration The duration in ticks
      */
-    public void setInterpolationDuration(int duration) {
+    private void setInterpolationDuration(int duration) {
         try {
             method_setInterpolationDuration.invoke(heldEntity, duration);
         } catch (IllegalAccessException e) {
@@ -122,9 +172,9 @@ public abstract class CustomDisplay {
 
 
 
-    public void setStartInterpolation() {
+    private void setStartInterpolation() {
         try {
-            method_setStartInterpolation.invoke(heldEntity, -1);
+            method_setStartInterpolation.invoke(heldEntity, 0);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (IllegalArgumentException e) {

@@ -27,7 +27,7 @@ public class Scheduler {
      */
     public static void tick(MinecraftServer server) {
         while(taskQueue.peek() != null && taskQueue.peek().targetTick <= tickNum) {
-            taskQueue.poll().exec();
+            taskQueue.poll().compute();
         }
 
         tickNum++;
@@ -43,10 +43,21 @@ public class Scheduler {
      * @return The handler of the newly created task schedule.
      */
     public static TaskHandler schedule(int delay, Runnable task) {
-        assert delay > 0 : "Delay must be greater than 0";
         TaskHandler handler = new TaskHandler(tickNum + delay, task);
         taskQueue.add(handler);
         return handler;
+    }
+
+
+
+
+    /**
+     * Runs a task on the main thread at the end of the current tick. Equivalent to calling TaskHandler.schedule with delay 0.
+     * @param task The task to run.
+     * @return The handler of the newly created task schedule.
+     */
+    public static TaskHandler run(Runnable task) {
+        return schedule(0, task);
     }
 
 

@@ -10,4 +10,9 @@ import net.minecraft.util.math.AffineTransformation;
 public class TransformTransition {
     AffineTransformation transform;
     int duration;
+
+    public TransformTransition(AffineTransformation _transform, int _duration) {
+        transform = _transform;
+        duration = _duration;
+    }
 }

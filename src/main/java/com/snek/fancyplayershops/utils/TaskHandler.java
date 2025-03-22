@@ -43,7 +43,7 @@ public class TaskHandler {
     /**
      * Immediately runs the task if it hasn't been cancelled.
      */
-    public void exec(){
+    public void compute(){
         if(!cancelled) task.run();
     }
 }

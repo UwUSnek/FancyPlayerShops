@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import org.joml.Vector4i;
 
 import com.google.gson.Gson;
@@ -22,6 +24,8 @@ import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
 import com.snek.fancyplayershops.CustomDisplays.CustomItemDisplay;
 import com.snek.fancyplayershops.CustomDisplays.CustomTextDisplay;
+import com.snek.fancyplayershops.CustomDisplays.DisplayAnimation;
+import com.snek.fancyplayershops.CustomDisplays.TransformTransition;
 import com.snek.fancyplayershops.utils.Scheduler;
 import com.snek.fancyplayershops.utils.Utils;
 
@@ -42,6 +46,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.math.AffineTransformation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -75,10 +80,10 @@ public class Shop {
     private static final HashSet<UUID> activeFocusDisplays = new HashSet<>(); //! Used to avoid purges. Stray displays won't be in here
     private static final int BG_TRANSITION_TIME_IN = 5; // Measured in ticks
     private static final int BG_TRANSITION_TIME_OUT = 10; // Measured in ticks
-    private static final Vector4i BG_FOCUSED   = new Vector4i(255, 40, 40, 40);
-    private static final Vector4i BG_UNFOCUSED = new Vector4i(64,  0, 0, 0); //! Default nametag color
+    private static final Vector4i BG_FOCUSED   = new Vector4i(200, 20, 20, 20);
+    private static final Vector4i BG_UNFOCUSED = new Vector4i(0,  0, 0, 0); //! Default nametag color
     private static final int FG_ALPHA_FOCUSED = 255;
-    private static final int FG_ALPHA_UNFOCUSED = 0;
+    private static final int FG_ALPHA_UNFOCUSED = 128;
 
 
 
@@ -264,15 +269,40 @@ public class Shop {
                     new Vec3d(pos.getX() + 0.5, pos.getY() + 0.6, pos.getZ() + 0.5),
                     BillboardMode.VERTICAL,
                     false,
-                    null
+                    new DisplayAnimation(
+                        List.of(new TransformTransition(
+                            new AffineTransformation(
+                                new Vector3f(0, 0.05f, 0),
+                                new Quaternionf(),
+                                new Vector3f(1.02f, 1.02f, 1.02f),
+                                new Quaternionf()
+                            ),
+                            BG_TRANSITION_TIME_IN
+                        )),
+                        null,
+                        List.of(new TransformTransition(
+                            new AffineTransformation(
+                                new Vector3f(0, 0, 0),
+                                new Quaternionf(),
+                                new Vector3f(1.0f, 1.0f, 1.0f),
+                                new Quaternionf()
+                            ),
+                            BG_TRANSITION_TIME_OUT
+                        ))
+                    )
                 );
                 activeFocusDisplays.add(focusDisplay.getRawDisplay().getUuid()); //! Must be added before spawning the entity into the world to stop it from intantly getting purged
                 focusDisplays.add(focusDisplay);
                 focusDisplay.setTextOpacity(FG_ALPHA_UNFOCUSED);
-                focusDisplay.spawn(world);
-                focusDisplay.animateBackground(BG_FOCUSED, BG_TRANSITION_TIME_IN, 1);
-                focusDisplay.animateTextOpacity(FG_ALPHA_FOCUSED, BG_TRANSITION_TIME_IN, 1);
+                focusDisplay.setBackground(BG_UNFOCUSED);
+                focusDisplay.apply(0);
 
+                Scheduler.schedule(1, () -> {
+                    focusDisplay.spawn(world);
+                    focusDisplay.setBackground(BG_FOCUSED);
+                    focusDisplay.setTextOpacity(FG_ALPHA_FOCUSED);
+                    focusDisplay.apply(BG_TRANSITION_TIME_IN);
+                });
                 findDisplayEntityIfNeeded();
                 if(itemDisplay != null) itemDisplay.getRawDisplay().setCustomNameVisible(false);
             }
@@ -280,16 +310,14 @@ public class Shop {
 
                 // Remove text display entities, stop and reset item rotation and turn the CustomName back on
                 for (CustomTextDisplay e : focusDisplays) {
-                    e.animateBackground(BG_UNFOCUSED, BG_TRANSITION_TIME_OUT, 1);
-                    e.animateTextOpacity(FG_ALPHA_UNFOCUSED, BG_TRANSITION_TIME_OUT, 1);
+                    e.despawn();
+                    e.setTextOpacity(FG_ALPHA_UNFOCUSED);
+                    e.setBackground(BG_UNFOCUSED);
+                    e.apply(BG_TRANSITION_TIME_OUT);
+                    activeFocusDisplays.remove(e.getRawDisplay().getUuid());
                 }
-                List<CustomTextDisplay> focusDisplaysTmp = focusDisplays;
-                focusDisplays = new ArrayList<>();
+                focusDisplays.clear();
                 Scheduler.schedule(BG_TRANSITION_TIME_OUT, () -> {
-                    for (CustomTextDisplay e : focusDisplaysTmp) {
-                        e.despawn();
-                        activeFocusDisplays.remove(e.getRawDisplay().getUuid());
-                    }
                     findDisplayEntityIfNeeded();
                     if(itemDisplay != null) itemDisplay.getRawDisplay().setCustomNameVisible(true);
                 });

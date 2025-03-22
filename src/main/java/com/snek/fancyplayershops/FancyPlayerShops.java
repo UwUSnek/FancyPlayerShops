@@ -86,8 +86,8 @@ public class FancyPlayerShops implements ModInitializer {
 
         // Create and register focus features
         ServerTickEvents.END_SERVER_TICK.register(server -> {
+            Scheduler.run(() -> { FocusFeatures.tick(server.getWorlds()); });
             Scheduler.tick(server);
-            FocusFeatures.tick(server.getWorlds());
         });
 
 
