@@ -35,9 +35,9 @@ public abstract class CustomDisplay {
     TaskHandler interpolationDispatcherHandler;
 
 
-    static Method method_setTransformation;
-    static Method method_setInterpolationDuration;
-    static Method method_setStartInterpolation;
+    static private Method method_setTransformation;
+    static private Method method_setInterpolationDuration;
+    static private Method method_setStartInterpolation;
     static {
         try {
             method_setTransformation        = DisplayEntity.class.getDeclaredMethod("setTransformation", AffineTransformation.class);
@@ -117,11 +117,13 @@ public abstract class CustomDisplay {
 
     public void despawn() {
         // Schedule transitions if present
-        int totScheduledDuration = 0;
         if(animation != null && animation.despawn != null) {
             scheduleTransitions(animation.despawn);
         }
 
+        // Schedule entity removal
+        int totScheduledDuration = 0;
+        for (TransformTransition t : animation.despawn) totScheduledDuration += t.duration; //TODO this should prob be a method of a custom transition list class
         Scheduler.schedule(totScheduledDuration, () -> { heldEntity.remove(RemovalReason.KILLED); });
     }
 

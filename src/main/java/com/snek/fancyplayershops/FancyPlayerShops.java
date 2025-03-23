@@ -78,6 +78,9 @@ public class FancyPlayerShops implements ModInitializer {
             // Load shop data
             Shop.loadData(server);
 
+            // Schedule focus features look
+            Scheduler.loop(0, 2, () -> { FocusFeatures.tick(server.getWorlds()); });
+
             // Log initialization success
             LOGGER.info("FancyPlayerShops initialized. :3");
         });
@@ -89,9 +92,8 @@ public class FancyPlayerShops implements ModInitializer {
         });
 
 
-        // Create and register focus features
+        // Register scheduler
         ServerTickEvents.END_SERVER_TICK.register(server -> {
-            Scheduler.run(() -> { FocusFeatures.tick(server.getWorlds()); });
             Scheduler.tick(server);
         });
 

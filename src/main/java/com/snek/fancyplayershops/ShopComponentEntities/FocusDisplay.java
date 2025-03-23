@@ -48,7 +48,6 @@ public class FocusDisplay extends CustomTextDisplay {
     public  static final int TRANSITION_DURATION_DESPAWN = 8; // Measured in ticks. MUST BE EVEN
     private static final Vector4i BG_FOCUSED             = new Vector4i(200, 20, 20, 20);
     private static final Vector4i BG_UNFOCUSED           = new Vector4i(0,  0, 0, 0);
-    private static final Vector4i BG_AVG                 = new Vector4i(BG_FOCUSED).add(BG_UNFOCUSED).div(2);
 
 
 
@@ -57,7 +56,7 @@ public class FocusDisplay extends CustomTextDisplay {
         super(
             world,
             Text.empty()
-                .append(item.getItem() != Items.BARRIER ? Utils.getItemName(item) : Text.literal("[Empty shop]").setStyle(Style.EMPTY.withItalic(true)))
+                .append(Utils.getItemName(item))
                 .append(Text.literal("\nPrice: ")).append(Text.literal(Utils.formatPrice (price)).setStyle(Style.EMPTY.withColor(Formatting.GOLD).withBold(true)))
                 .append(Text.literal("\nStock: ")).append(Text.literal(Utils.formatAmount(stock)).setStyle(Style.EMPTY.withColor(Formatting.DARK_AQUA).withBold(true)))
             ,
@@ -87,8 +86,8 @@ public class FocusDisplay extends CustomTextDisplay {
             )
         );
 
-        activeFocusDisplays.add(getRawDisplay().getUuid()); //! Must be added before spawning the entity into the world to stop it from instantly getting purged
-        setTextOpacity(0);
+        activeFocusDisplays.add(rawDisplay.getUuid()); //! Must be added before spawning the entity into the world to stop it from instantly getting purged
+        setTextOpacity(128);
         setBackground(BG_UNFOCUSED);
     }
 
@@ -100,21 +99,10 @@ public class FocusDisplay extends CustomTextDisplay {
         super.spawn(world);
 
 
-        // Transition first half
-        setTextOpacity(127);
-        setBackground(BG_AVG);
-        apply(TRANSITION_DURATION_SPAWN / 2);
-
-
-        // Transition second half
-        Scheduler.schedule(TRANSITION_DURATION_SPAWN / 2, () -> {
-            setTextOpacity(128);
-        });
-        Scheduler.schedule(TRANSITION_DURATION_SPAWN / 2 + 1, () -> {
-            setTextOpacity(255);
-            setBackground(BG_FOCUSED);
-            apply(TRANSITION_DURATION_SPAWN / 2);
-        });
+        // Transition
+        setTextOpacity(255);
+        setBackground(BG_FOCUSED);
+        apply(TRANSITION_DURATION_SPAWN);
     }
 
 
@@ -123,24 +111,12 @@ public class FocusDisplay extends CustomTextDisplay {
     @Override
     public void despawn(){
         super.despawn();
-        activeFocusDisplays.remove(getRawDisplay().getUuid());
+        activeFocusDisplays.remove(rawDisplay.getUuid());
 
-
-        // Transition first half
+        // Transition
         setTextOpacity(128);
-        setBackground(BG_AVG);
+        setBackground(BG_UNFOCUSED);
         apply(TRANSITION_DURATION_DESPAWN);
-
-
-        // Transition second half
-        Scheduler.schedule(TRANSITION_DURATION_DESPAWN / 2, () -> {
-            setTextOpacity(127);
-        });
-        Scheduler.schedule(TRANSITION_DURATION_DESPAWN / 2 + 1, () -> {
-            setTextOpacity(0);
-            setBackground(BG_UNFOCUSED);
-            apply(TRANSITION_DURATION_DESPAWN / 2);
-        });
     }
 
 

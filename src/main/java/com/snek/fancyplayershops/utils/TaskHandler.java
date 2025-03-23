@@ -1,8 +1,5 @@
 package com.snek.fancyplayershops.utils;
 
-import java.beans.SimpleBeanInfo;
-import java.util.AbstractMap.SimpleEntry;
-
 
 
 
@@ -11,12 +8,14 @@ import java.util.AbstractMap.SimpleEntry;
  * Instances of this class are returned by the Scheduler's methods.
  */
 public class TaskHandler {
-    public final Long targetTick;
-    private final Runnable task;
-    private boolean cancelled = false;
+    private long targetTick;
+    public long getTargetTick() { return targetTick; }
+    public void setTargetTick(long n) { targetTick = n; }
+    protected final Runnable task;
+    protected boolean cancelled = false;
 
 
-    public TaskHandler(Long _targetTick, Runnable _task) {
+    public TaskHandler(long _targetTick, Runnable _task) {
         targetTick = _targetTick;
         task = _task;
     }

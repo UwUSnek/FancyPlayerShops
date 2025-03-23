@@ -18,9 +18,9 @@ import net.minecraft.world.World;
 
 public class CustomItemDisplay extends CustomDisplay {
 
-    ItemDisplayEntity rawDisplay;
+    protected ItemDisplayEntity rawDisplay;
     public ItemDisplayEntity getRawDisplay() { return rawDisplay; }
-    static Method method_setItemStack;
+    static private Method method_setItemStack;
     static {
         try {
             method_setItemStack = ItemDisplayEntity.class.getDeclaredMethod("setItemStack", ItemStack.class);

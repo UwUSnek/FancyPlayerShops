@@ -8,6 +8,7 @@ import org.joml.Vector3f;
 import com.snek.fancyplayershops.CustomDisplays.CustomItemDisplay;
 import com.snek.fancyplayershops.CustomDisplays.DisplayAnimation;
 import com.snek.fancyplayershops.CustomDisplays.TransformTransition;
+import com.snek.fancyplayershops.utils.Scheduler;
 
 import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
 import net.minecraft.item.ItemStack;
@@ -25,8 +26,9 @@ import net.minecraft.world.World;
 
 
 public class ShopItemDisplay extends CustomItemDisplay {
-    public static int TRANSITION_DURATION_SPAWN = 20;
-    public static int TRANSITION_DURATION_DESPAWN = 20;
+    public static int TRANSITION_DURATION_SPAWN   = FocusDisplay.TRANSITION_DURATION_SPAWN + 2;
+    public static int TRANSITION_DURATION_LOOP    = 1; //FIXME
+    public static int TRANSITION_DURATION_DESPAWN = FocusDisplay.TRANSITION_DURATION_DESPAWN + 2;
 
     private static float DEFAULT_SCALE     = 1.00f / 2;
     private static float TRANSITION_SCALE  = 1.02f / 2;
@@ -78,7 +80,7 @@ public class ShopItemDisplay extends CustomItemDisplay {
             false,
             null
         );
-        getRawDisplay().setCustomName(Text.of("[Empty shop]"));
+        rawDisplay.setCustomName(Text.of("[Empty]"));
     }
 
 
@@ -99,27 +101,26 @@ public class ShopItemDisplay extends CustomItemDisplay {
 
 
     public void setCustomNameVisible(Boolean customNameVisible) {
-        getRawDisplay().setCustomNameVisible(customNameVisible);
+        rawDisplay.setCustomNameVisible(customNameVisible);
     }
 
 
 
 
-    public void startFocusSpawnAnimation(){
+    public void enterFocusState(){
+        rawDisplay.setCustomNameVisible(false);
         scheduleTransitions(focusAnimation.spawn);
+
+        // Scheduler.loop(TRANSITION_DURATION_SPAWN, TRANSITION_DURATION_LOOP, () -> {
+            // //TODO
+        // });
     }
 
 
 
 
-    public void startFocusLoopAnimation(){
+    public void leaveFocusState(){
         scheduleTransitions(focusAnimation.despawn);
-    }
-
-
-
-
-    public void startFocusDespawnAnimation(){
-        scheduleTransitions(focusAnimation.despawn);
+        Scheduler.schedule(TRANSITION_DURATION_DESPAWN, () -> { rawDisplay.setCustomNameVisible(true); });
     }
 }

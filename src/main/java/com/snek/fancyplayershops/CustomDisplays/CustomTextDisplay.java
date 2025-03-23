@@ -26,9 +26,9 @@ import net.minecraft.world.World;
 
 
 public class CustomTextDisplay extends CustomDisplay {
-    List<TaskHandler> textOpacityHandlers = new ArrayList<>();
-    List<TaskHandler> backgroundHandlers = new ArrayList<>();
-    TextDisplayEntity rawDisplay;
+    private List<TaskHandler> textOpacityHandlers = new ArrayList<>();
+    private List<TaskHandler> backgroundHandlers = new ArrayList<>();
+    protected TextDisplayEntity rawDisplay;
     public TextDisplayEntity getRawDisplay() { return rawDisplay; }
 
 
@@ -38,7 +38,6 @@ public class CustomTextDisplay extends CustomDisplay {
     static private Method method_setBackground;
     static private Method method_getBackground;
     static private Method method_setBillboardMode;
-    static Method method_setTransformation;
     static {
         try {
             method_setText          = TextDisplayEntity.class.getDeclaredMethod("setText",                   Text.class);

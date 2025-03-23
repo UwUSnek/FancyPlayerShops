@@ -223,35 +223,22 @@ public class Shop {
             if(focusedStateNext) {
 
                 // Create and setup the Text Display entity
+                if(focusDisplay != null) focusDisplay.getRawDisplay().remove(RemovalReason.KILLED);
                 focusDisplay = new FocusDisplay(world, pos, item, price, stock);
                 focusDisplay.spawn(world);
 
                 // Start item animation and turn off the CustomName
                 findDisplayEntityIfNeeded();
-                if(itemDisplay != null) {
-                    itemDisplay.startFocusSpawnAnimation();
-                    itemDisplay.setCustomNameVisible(false);
-
-                    // Start loop animation when the spawning animation ends
-                    Scheduler.schedule(ShopItemDisplay.TRANSITION_DURATION_SPAWN, () -> {
-                        Scheduler.
-                    });
-                }
+                if(itemDisplay != null) itemDisplay.enterFocusState();
             }
             else {
 
                 // Despawn the text display
                 focusDisplay.despawn();
-                focusDisplay = null;
 
                 // Start item animation and turn the CustomName back on
-                Scheduler.schedule(FocusDisplay.TRANSITION_DURATION_DESPAWN, () -> {
-                    findDisplayEntityIfNeeded();
-                    if(itemDisplay != null) {
-                        itemDisplay.startFocusDespawnAnimation();
-                        itemDisplay.setCustomNameVisible(true);
-                    }
-                });
+                findDisplayEntityIfNeeded();
+                if(itemDisplay != null) itemDisplay.leaveFocusState();
             }
             focusedState = focusedStateNext;
         }
