@@ -21,7 +21,6 @@ import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -38,12 +37,14 @@ import net.minecraft.world.World;
 
 
 
-public class FocusDisplay extends CustomTextDisplay {
+public class DetailsDisplay extends CustomTextDisplay {
 
     // Used to avoid purges. Stray displays won't be in here
     public static final HashSet<UUID> activeFocusDisplays = new HashSet<>();
 
     // Style data
+    private static final float DEFAULT_SCALE             = 1.00f / 2;
+    public  static final float TRANSITION_SCALE_         = 1.02f / 2f;
     public  static final int TRANSITION_DURATION_SPAWN   = 4; // Measured in ticks. MUST BE EVEN
     public  static final int TRANSITION_DURATION_DESPAWN = 8; // Measured in ticks. MUST BE EVEN
     private static final Vector4i BG_FOCUSED             = new Vector4i(200, 20, 20, 20);
@@ -52,7 +53,7 @@ public class FocusDisplay extends CustomTextDisplay {
 
 
 
-    public FocusDisplay(ServerWorld world, BlockPos pos, ItemStack item, double price, int stock){
+    public DetailsDisplay(ServerWorld world, BlockPos pos, ItemStack item, double price, int stock){
         super(
             world,
             Text.empty()
@@ -68,7 +69,7 @@ public class FocusDisplay extends CustomTextDisplay {
                     new AffineTransformation(
                         new Vector3f(0, 0.05f, 0),
                         new Quaternionf(),
-                        new Vector3f(1.02f, 1.02f, 1.02f),
+                        new Vector3f(TRANSITION_SCALE_),
                         new Quaternionf()
                     ),
                     TRANSITION_DURATION_SPAWN
@@ -78,7 +79,7 @@ public class FocusDisplay extends CustomTextDisplay {
                     new AffineTransformation(
                         new Vector3f(0, 0, 0),
                         new Quaternionf(),
-                        new Vector3f(1.0f, 1.0f, 1.0f),
+                        new Vector3f(DEFAULT_SCALE),
                         new Quaternionf()
                     ),
                     TRANSITION_DURATION_DESPAWN
@@ -133,7 +134,7 @@ public class FocusDisplay extends CustomTextDisplay {
             World world = entity.getWorld();
             if(
                 world != null &&
-                !FocusDisplay.activeFocusDisplays.contains(entity.getUuid()) &&
+                !DetailsDisplay.activeFocusDisplays.contains(entity.getUuid()) &&
                 Shop.findShop(entity.getBlockPos(), world.getRegistryKey().getValue().toString()) != null
             ) {
                 entity.remove(RemovalReason.KILLED);

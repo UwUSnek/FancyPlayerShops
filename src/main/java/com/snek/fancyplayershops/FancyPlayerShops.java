@@ -4,7 +4,6 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -22,7 +21,7 @@ import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.snek.fancyplayershops.ShopComponentEntities.FocusDisplay;
+import com.snek.fancyplayershops.ShopComponentEntities.DetailsDisplay;
 import com.snek.fancyplayershops.utils.Scheduler;
 
 
@@ -100,7 +99,7 @@ public class FancyPlayerShops implements ModInitializer {
 
         // Register focus display purge
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
-            FocusDisplay.onEntityLoad(entity);
+            DetailsDisplay.onEntityLoad(entity);
         });
     }
 

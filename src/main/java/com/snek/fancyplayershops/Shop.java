@@ -15,15 +15,12 @@ import java.util.UUID;
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
-import com.snek.fancyplayershops.ShopComponentEntities.FocusDisplay;
+import com.snek.fancyplayershops.ShopComponentEntities.DetailsDisplay;
 import com.snek.fancyplayershops.ShopComponentEntities.ShopItemDisplay;
-import com.snek.fancyplayershops.utils.Scheduler;
 
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
-import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -79,7 +76,7 @@ public class Shop {
 
     private transient Boolean focusedState = false;
     public transient Boolean focusedStateNext = false;
-    private transient FocusDisplay focusDisplay = null;
+    private transient DetailsDisplay focusDisplay = null;
 
 
 
@@ -247,7 +244,7 @@ public class Shop {
 
                 // Create and setup the Text Display entity
                 if(focusDisplay != null) focusDisplay.getRawDisplay().remove(RemovalReason.KILLED);
-                focusDisplay = new FocusDisplay(world, pos, item, price, stock);
+                focusDisplay = new DetailsDisplay(world, pos, item, price, stock);
                 focusDisplay.spawn(world);
 
                 // Start item animation and turn off the CustomName

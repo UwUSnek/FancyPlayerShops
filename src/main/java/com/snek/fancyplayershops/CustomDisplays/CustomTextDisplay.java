@@ -67,7 +67,7 @@ public class CustomTextDisplay extends CustomDisplay {
         rawDisplay = _rawDisplay;
     }
     public CustomTextDisplay(World world, Text text, Vec3d pos, BillboardMode billboardMode, Boolean glowing, DisplayAnimation _animation) {
-        super(new TextDisplayEntity(EntityType.TEXT_DISPLAY, world), 1, _animation);
+        super(new TextDisplayEntity(EntityType.TEXT_DISPLAY, world), 0.5f, _animation);
         rawDisplay = (TextDisplayEntity)heldEntity;
         rawDisplay.setGlowing(glowing);
         rawDisplay.setPosition(pos);

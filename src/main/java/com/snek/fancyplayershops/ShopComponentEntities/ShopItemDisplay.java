@@ -26,17 +26,17 @@ import net.minecraft.world.World;
 
 
 public class ShopItemDisplay extends CustomItemDisplay {
-    public static int TRANSITION_DURATION_SPAWN   = FocusDisplay.TRANSITION_DURATION_SPAWN + 2;
-    public static int TRANSITION_DURATION_LOOP    = 32 * 3; //! Must be a multiple of 3
-    public static int TRANSITION_DURATION_DESPAWN = FocusDisplay.TRANSITION_DURATION_DESPAWN + 2;
+    public static final int TRANSITION_DURATION_SPAWN   = DetailsDisplay.TRANSITION_DURATION_SPAWN + 2;
+    public static final int TRANSITION_DURATION_LOOP    = 32 * 3; //! Must be a multiple of 3
+    public static final int TRANSITION_DURATION_DESPAWN = DetailsDisplay.TRANSITION_DURATION_DESPAWN + 2;
 
-    private static float DEFAULT_ROTATION  = (float) Math.toRadians(45);
-    private static float DEFAULT_SCALE     = 1.00f / 2;
-    private static float TRANSITION_SCALE  = 1.02f / 2;
-    private static float TRANSITION_HEIGHT = 0.05f;
+    private static       float DEFAULT_ROTATION  = (float) Math.toRadians(45);
+    private static final float DEFAULT_SCALE     = 1.00f / 2;
+    private static final float TRANSITION_SCALE  = 1.02f / 2;
+    private static final float TRANSITION_HEIGHT = 0.05f;
 
-    public static float LOOP_ROTATION_WIDTH   = (float) Math.toRadians(120);
-    public static float LOOP_ROTATION_WIDTH_A = LOOP_ROTATION_WIDTH * (float)((double)TRANSITION_DURATION_SPAWN / ((double)TRANSITION_DURATION_LOOP / 3) * 3d);
+    public static final float LOOP_ROTATION_WIDTH   = (float) Math.toRadians(120);
+    public static final float LOOP_ROTATION_WIDTH_A = LOOP_ROTATION_WIDTH * (float)((double)TRANSITION_DURATION_SPAWN / ((double)TRANSITION_DURATION_LOOP / 3) * 3d);
 
 
     private static final DisplayAnimation focusAnimation = new DisplayAnimation(
@@ -142,9 +142,9 @@ public class ShopItemDisplay extends CustomItemDisplay {
         rawDisplay.setCustomNameVisible(false);
         scheduleTransitions(focusAnimation.spawn);
 
-        Scheduler.schedule(TRANSITION_DURATION_SPAWN, () -> {
+        currentHandlers.add(Scheduler.schedule(TRANSITION_DURATION_SPAWN, () -> {
             loopTransitions(focusAnimation.loop, TRANSITION_DURATION_LOOP);
-        });
+        }));
     }
 
 
@@ -152,6 +152,8 @@ public class ShopItemDisplay extends CustomItemDisplay {
 
     public void leaveFocusState(){
         scheduleTransitions(focusAnimation.despawn);
-        Scheduler.schedule(TRANSITION_DURATION_DESPAWN, () -> { rawDisplay.setCustomNameVisible(true); });
+        currentHandlers.add(Scheduler.schedule(TRANSITION_DURATION_DESPAWN, () -> {
+            rawDisplay.setCustomNameVisible(true);
+        }));
     }
 }

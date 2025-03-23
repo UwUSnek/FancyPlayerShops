@@ -25,14 +25,14 @@ import net.minecraft.world.World;
 
 
 public abstract class CustomDisplay {
-    DisplayEntity heldEntity;
-    AffineTransformation defaultTransformation;
-    DisplayAnimation animation;
-    List<TaskHandler> currentHandlers = new ArrayList<>(); // The handlers of the transitions that are currently scheduled. Used to cancel animations without waiting for them to finish
+    protected DisplayEntity heldEntity;
+    protected AffineTransformation defaultTransformation;
+    protected DisplayAnimation animation;
+    protected List<TaskHandler> currentHandlers = new ArrayList<>(); // The handlers of the transitions that are currently scheduled. Used to cancel animations without waiting for them to finish
 
 
     private int TMP_interpolationDuration = 0;
-    TaskHandler interpolationDispatcherHandler;
+    private TaskHandler interpolationDispatcherHandler;
 
 
     static private Method method_setTransformation;
@@ -75,7 +75,7 @@ public abstract class CustomDisplay {
     /**
      * Schedules a list of transitions.
      * Automatically cancels any remaining transitions from the previous call (or previous calls to loopTransition).
-     * @param transition The transitions. Can be empty.
+     * @param transitions The transitions. Can be empty.
      */
     public void scheduleTransitions(List<TransformTransition> transitions) {
         // Cancel previous transitions
