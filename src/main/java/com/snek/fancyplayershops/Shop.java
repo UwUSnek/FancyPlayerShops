@@ -42,15 +42,14 @@ import net.minecraft.world.World;
 // TODO fix broken shops and blocks if they don't exist in the world when the map is loaded
 // TODO purge stray focus displays on entity loading (use custom entity data)
 public class Shop {
-    private static final File SHOP_STORAGE_DIR;
+    private static final Path SHOP_STORAGE_DIR;
     static {
-        final Path shopStorageDirPath = FabricLoader.getInstance().getConfigDir().resolve(FancyPlayerShops.MOD_ID + "/shops");
+        SHOP_STORAGE_DIR = FabricLoader.getInstance().getConfigDir().resolve(FancyPlayerShops.MOD_ID + "/shops");
         try {
-            Files.createDirectories(shopStorageDirPath);
+            Files.createDirectories(SHOP_STORAGE_DIR);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        SHOP_STORAGE_DIR = shopStorageDirPath.toFile();
     }
 
     // Stores the shops of players, identifying them by their owner's UUID and their coordinates and world in the format "x,y,z,worldId"
@@ -67,6 +66,7 @@ public class Shop {
     public UUID ownerUUID;
     private BlockPos pos;
     private transient String shopIdentifierCache;
+    private transient String shopIdentifierCache_noWorld;
 
     private transient ItemStack item = Items.BARRIER.getDefaultStack();
     private String serializedItem;
@@ -141,10 +141,14 @@ public class Shop {
      * @return The shop identifier.
      */
     private void cacheShopIdentifier() {
-        shopIdentifierCache = calcShopIdentifier(pos, worldId);
+        shopIdentifierCache         = calcShopIdentifier(pos, worldId);
+        shopIdentifierCache_noWorld = calcShopIdentifier(pos);
     }
     private static String calcShopIdentifier(BlockPos _pos, String worldId) {
-        return String.format("%d,%d,%d,%s", _pos.getX(), _pos.getY(), _pos.getZ(), worldId);
+        return calcShopIdentifier(_pos) + "," + worldId;
+    }
+    private static String calcShopIdentifier(BlockPos _pos) {
+        return String.format("%d,%d,%d", _pos.getX(), _pos.getY(), _pos.getZ());
     }
 
 
@@ -160,8 +164,17 @@ public class Shop {
         shopsByCoords.put(shopIdentifierCache, this);
 
 
+        // Create directory for the world
+        final Path shopStorageDir = SHOP_STORAGE_DIR.resolve(worldId);
+        try {
+            Files.createDirectories(shopStorageDir);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
         // Create this shop's config file if absent, then save the JSON in it
-        final File shopStorageFile = new File(SHOP_STORAGE_DIR.getPath() + "/" + shopIdentifierCache + ".json");
+        final File shopStorageFile = new File(shopStorageDir + "/" + shopIdentifierCache_noWorld + ".json");
         try (Writer writer = new FileWriter(shopStorageFile)) {
             new Gson().toJson(this, writer);
         } catch (IOException e) {
@@ -177,27 +190,33 @@ public class Shop {
      * Must be called on server started event (After the worlds are loaded!).
      */
     public static void loadData(MinecraftServer server) {
-        for (File shopStorageFile : new File(SHOP_STORAGE_DIR.toString()).listFiles()) {
 
+        // For each world directory
+        if(SHOP_STORAGE_DIR != null) for (File shopStorageDir : SHOP_STORAGE_DIR.toFile().listFiles()) {
 
-            // Read file
-            Shop retrievedShop = null;
-            try (Reader reader = new FileReader(shopStorageFile)) {
-                retrievedShop = new Gson().fromJson(reader, Shop.class);
-            } catch (IOException e) {
-                e.printStackTrace();
+            // For each shop file
+            File[] shopStorageFiles = shopStorageDir.listFiles();
+            if(shopStorageFiles != null) for (File shopStorageFile : shopStorageFiles) {
+
+                // Read file
+                Shop retrievedShop = null;
+                try (Reader reader = new FileReader(shopStorageFile)) {
+                    retrievedShop = new Gson().fromJson(reader, Shop.class);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                // Recalculate transient members and update shop maps
+                retrievedShop.cacheShopIdentifier();
+                retrievedShop.calcDeserializedItem();
+                try {
+                    retrievedShop.calcDeserializedWorldId(server);
+                } catch (RuntimeException e) {
+                    e.printStackTrace();
+                }
+                shopsByOwner.put(retrievedShop.ownerUUID.toString(), retrievedShop);
+                shopsByCoords.put(retrievedShop.shopIdentifierCache, retrievedShop);
             }
-
-            // Recalculate transient members and update shop maps
-            retrievedShop.cacheShopIdentifier();
-            retrievedShop.calcDeserializedItem();
-            try {
-                retrievedShop.calcDeserializedWorldId(server);
-            } catch (RuntimeException e) {
-                e.printStackTrace();
-            }
-            shopsByOwner.put(retrievedShop.ownerUUID.toString(), retrievedShop);
-            shopsByCoords.put(retrievedShop.shopIdentifierCache, retrievedShop);
         }
     }
 
