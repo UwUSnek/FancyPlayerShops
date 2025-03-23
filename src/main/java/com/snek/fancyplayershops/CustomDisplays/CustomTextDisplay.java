@@ -26,8 +26,6 @@ import net.minecraft.world.World;
 
 
 public class CustomTextDisplay extends CustomDisplay {
-    private List<TaskHandler> textOpacityHandlers = new ArrayList<>();
-    private List<TaskHandler> backgroundHandlers = new ArrayList<>();
     protected TextDisplayEntity rawDisplay;
     public TextDisplayEntity getRawDisplay() { return rawDisplay; }
 
@@ -37,7 +35,6 @@ public class CustomTextDisplay extends CustomDisplay {
     static private Method method_getTextOpacity;
     static private Method method_setBackground;
     static private Method method_getBackground;
-    static private Method method_setBillboardMode;
     static {
         try {
             method_setText          = TextDisplayEntity.class.getDeclaredMethod("setText",                   Text.class);
@@ -45,7 +42,6 @@ public class CustomTextDisplay extends CustomDisplay {
             method_getTextOpacity   = TextDisplayEntity.class.getDeclaredMethod("getTextOpacity");
             method_setBackground    = TextDisplayEntity.class.getDeclaredMethod("setBackground",              int.class);
             method_getBackground    = TextDisplayEntity.class.getDeclaredMethod("getBackground");
-            method_setBillboardMode =     DisplayEntity.class.getDeclaredMethod("setBillboardMode", BillboardMode.class);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (SecurityException e) {
@@ -56,7 +52,6 @@ public class CustomTextDisplay extends CustomDisplay {
         method_getTextOpacity.setAccessible(true);
         method_setBackground.setAccessible(true);
         method_getBackground.setAccessible(true);
-        method_setBillboardMode.setAccessible(true);
     }
 
 
@@ -81,21 +76,6 @@ public class CustomTextDisplay extends CustomDisplay {
     public void setText(Text text) {
         try {
             method_setText.invoke(rawDisplay, text);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-
-
-    public void setBillboardMode(BillboardMode billboardMode) {
-        try {
-            method_setBillboardMode.invoke(rawDisplay, billboardMode);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (IllegalArgumentException e) {

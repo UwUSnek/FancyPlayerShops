@@ -12,7 +12,9 @@ import com.snek.fancyplayershops.utils.Scheduler;
 import com.snek.fancyplayershops.utils.TaskHandler;
 
 import net.minecraft.entity.Entity.RemovalReason;
+import net.minecraft.entity.decoration.Brightness;
 import net.minecraft.entity.decoration.DisplayEntity;
+import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.AffineTransformation;
 import net.minecraft.world.World;
@@ -38,11 +40,17 @@ public abstract class CustomDisplay {
     static private Method method_setTransformation;
     static private Method method_setInterpolationDuration;
     static private Method method_setStartInterpolation;
+    static private Method method_setBillboardMode;
+    static private Method method_setViewRange;
+    static private Method method_setBrightness;
     static {
         try {
             method_setTransformation        = DisplayEntity.class.getDeclaredMethod("setTransformation", AffineTransformation.class);
             method_setInterpolationDuration = DisplayEntity.class.getDeclaredMethod("setInterpolationDuration",           int.class);
             method_setStartInterpolation    = DisplayEntity.class.getDeclaredMethod("setStartInterpolation",              int.class);
+            method_setBillboardMode         = DisplayEntity.class.getDeclaredMethod("setBillboardMode",         BillboardMode.class);
+            method_setViewRange             = DisplayEntity.class.getDeclaredMethod("setViewRange",                     float.class);
+            method_setBrightness            = DisplayEntity.class.getDeclaredMethod("setBrightness",               Brightness.class);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (SecurityException e) {
@@ -51,6 +59,9 @@ public abstract class CustomDisplay {
         method_setTransformation.setAccessible(true);
         method_setInterpolationDuration.setAccessible(true);
         method_setStartInterpolation.setAccessible(true);
+        method_setBillboardMode.setAccessible(true);
+        method_setViewRange.setAccessible(true);
+        method_setBrightness.setAccessible(true);
     }
 
 
@@ -65,6 +76,8 @@ public abstract class CustomDisplay {
         );
         heldEntity = _heldEntity;
         animation = _animation;
+        setViewRange(0.4f);
+        setBrightness(new Brightness(15, 15));
         setTransformation(defaultTransformation);
         apply(0);
     }
@@ -215,6 +228,51 @@ public abstract class CustomDisplay {
     private void setStartInterpolation() {
         try {
             method_setStartInterpolation.invoke(heldEntity, 0);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+    public void setBillboardMode(BillboardMode billboardMode) {
+        try {
+            method_setBillboardMode.invoke(heldEntity, billboardMode);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+    public void setViewRange(float viewRange) {
+        try {
+            method_setViewRange.invoke(heldEntity, viewRange);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+    public void setBrightness(Brightness brightness) {
+        try {
+            method_setBrightness.invoke(heldEntity, brightness);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (IllegalArgumentException e) {
