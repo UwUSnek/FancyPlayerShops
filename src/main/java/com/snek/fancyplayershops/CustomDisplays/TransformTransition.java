@@ -8,8 +8,8 @@ import net.minecraft.util.math.AffineTransformation;
  * It stores the target transformation and the interpolation time.
  */
 public class TransformTransition {
-    AffineTransformation transform;
-    int duration;
+    public final AffineTransformation transform;
+    public final int duration;
 
     public TransformTransition(AffineTransformation _transform, int _duration) {
         transform = _transform;

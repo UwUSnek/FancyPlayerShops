@@ -10,9 +10,9 @@ import java.util.List;
  * They are stored as lists of transformation transitions.
  */
 public class DisplayAnimation {
-    public List<TransformTransition> spawn;
-    public List<TransformTransition> loop;
-    public List<TransformTransition> despawn;
+    public final List<TransformTransition> spawn;
+    public final List<TransformTransition> loop;
+    public final List<TransformTransition> despawn;
 
     public DisplayAnimation(List<TransformTransition> _spawn, List<TransformTransition> _loop, List<TransformTransition> _despawn) {
         spawn = _spawn;

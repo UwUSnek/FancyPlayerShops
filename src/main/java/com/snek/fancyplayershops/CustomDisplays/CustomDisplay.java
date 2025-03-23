@@ -74,7 +74,7 @@ public abstract class CustomDisplay {
 
     /**
      * Schedules a list of transitions.
-     * Automatically cancels any remaining transitions from the previous call.
+     * Automatically cancels any remaining transitions from the previous call (or previous calls to loopTransition).
      * @param transition The transitions. Can be empty.
      */
     public void scheduleTransitions(List<TransformTransition> transitions) {
@@ -93,6 +93,33 @@ public abstract class CustomDisplay {
                 apply(t.duration);
             }
             else currentHandlers.add(Scheduler.schedule(totScheduledDuration, () -> {
+                setTransformation(t.transform);
+                apply(t.duration);
+            }));
+            totScheduledDuration += t.duration;
+        }
+    }
+
+
+
+
+    /**
+     * Schedules a list of transitions.
+     * Automatically cancels any remaining transitions from the previous call (or previous calls to scheduleTransition).
+     * @param transition The transitions. Can be empty.
+     */
+    public void loopTransitions(List<TransformTransition> transitions, int loopDuration) {
+        // Cancel previous transitions
+        for (TaskHandler handler : currentHandlers) {
+            handler.cancel();
+        }
+        currentHandlers.clear();
+
+
+        // Schedule the new transitions
+        int totScheduledDuration = 0;
+        for (TransformTransition t : transitions) {
+            currentHandlers.add(Scheduler.loop(totScheduledDuration, loopDuration, () -> {
                 setTransformation(t.transform);
                 apply(t.duration);
             }));
