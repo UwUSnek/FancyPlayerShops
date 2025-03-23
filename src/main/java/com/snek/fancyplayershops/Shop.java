@@ -8,31 +8,20 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
-import org.joml.Vector4i;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
-import com.snek.fancyplayershops.CustomDisplays.CustomItemDisplay;
-import com.snek.fancyplayershops.CustomDisplays.CustomTextDisplay;
-import com.snek.fancyplayershops.CustomDisplays.DisplayAnimation;
-import com.snek.fancyplayershops.CustomDisplays.TransformTransition;
+import com.snek.fancyplayershops.ShopComponentEntities.FocusDisplay;
+import com.snek.fancyplayershops.ShopComponentEntities.ShopItemDisplay;
 import com.snek.fancyplayershops.utils.Scheduler;
-import com.snek.fancyplayershops.utils.Utils;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.Entity.RemovalReason;
-import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
 import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -40,15 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.AffineTransformation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 
@@ -76,21 +57,12 @@ public class Shop {
     private static final Map<String, Shop> shopsByCoords = new HashMap<>();
     private static final Map<String, Shop> shopsByOwner  = new HashMap<>();
 
-    // Focus display data
-    private static final HashSet<UUID> activeFocusDisplays = new HashSet<>(); //! Used to avoid purges. Stray displays won't be in here
-    private static final int BG_TRANSITION_TIME_IN = 5; // Measured in ticks
-    private static final int BG_TRANSITION_TIME_OUT = 10; // Measured in ticks
-    private static final Vector4i BG_FOCUSED   = new Vector4i(200, 20, 20, 20);
-    private static final Vector4i BG_UNFOCUSED = new Vector4i(0,  0, 0, 0); //! Default nametag color
-    private static final int FG_ALPHA_FOCUSED = 255;
-    private static final int FG_ALPHA_UNFOCUSED = 128;
-
 
 
 
     private transient ServerWorld world;
     private String worldId;
-    private transient CustomItemDisplay itemDisplay = null; //! Searched when needed instead of on data loading. The chunk needs to be loaded.
+    private transient ShopItemDisplay itemDisplay = null; //! Searched when needed instead of on data loading. The chunk needs to be loaded.
     private UUID itemDisplayUUID;
     public UUID ownerUUID;
     private BlockPos pos;
@@ -103,7 +75,9 @@ public class Shop {
 
     private transient Boolean focusedState = false;
     public transient Boolean focusedStateNext = false;
-    private transient List<CustomTextDisplay> focusDisplays = new ArrayList<>();
+    private transient FocusDisplay focusDisplay = null;
+
+
 
 
     private void calcSerializedItem() {
@@ -150,19 +124,10 @@ public class Shop {
         cacheShopIdentifier();
 
 
-        // Create and setup the Item Display entity
-        itemDisplay = new CustomItemDisplay(
-            world,
-            item,
-            new Vec3d(pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5),
-            true,
-            false,
-            null
-        );
-        itemDisplay.getRawDisplay().setCustomName(Text.of("[Empty shop]"));
+        // Create and spawn the Item Display entity
+        itemDisplay = new ShopItemDisplay(world, pos, item);
         itemDisplayUUID = itemDisplay.getRawDisplay().getUuid();
         itemDisplay.spawn(world);
-
 
         // Save the shop
         saveShop();
@@ -231,7 +196,6 @@ public class Shop {
             } catch (RuntimeException e) {
                 e.printStackTrace();
             }
-            retrievedShop.focusDisplays = new ArrayList<>();
             shopsByOwner.put(retrievedShop.ownerUUID.toString(), retrievedShop);
             shopsByCoords.put(retrievedShop.shopIdentifierCache, retrievedShop);
         }
@@ -252,74 +216,41 @@ public class Shop {
 
 
     /**
-     * Spawns or removes the focus displays depending on the set next focus state.
+     * Spawns or removes the focus display and starts item animations depending on the set next focus state.
      */
-    public void updateFocusDisplay(){
+    public void updateFocusStatus(){
         if(focusedState != focusedStateNext) {
             if(focusedStateNext) {
 
-                // Create and setup the Text Display entity and turn off the CustomName
-                CustomTextDisplay focusDisplay = new CustomTextDisplay(
-                    world,
-                    Text.empty()
-                        .append(item.getItem() != Items.BARRIER ? Utils.getItemName(item) : Text.literal("[Empty shop]").setStyle(Style.EMPTY.withItalic(true)))
-                        .append(Text.literal("\nPrice: ")).append(Text.literal(Utils.formatPrice (price)).setStyle(Style.EMPTY.withColor(Formatting.GOLD).withBold(true)))
-                        .append(Text.literal("\nStock: ")).append(Text.literal(Utils.formatAmount(stock)).setStyle(Style.EMPTY.withColor(Formatting.DARK_AQUA).withBold(true)))
-                    ,
-                    new Vec3d(pos.getX() + 0.5, pos.getY() + 0.6, pos.getZ() + 0.5),
-                    BillboardMode.VERTICAL,
-                    false,
-                    new DisplayAnimation(
-                        List.of(new TransformTransition(
-                            new AffineTransformation(
-                                new Vector3f(0, 0.05f, 0),
-                                new Quaternionf(),
-                                new Vector3f(1.02f, 1.02f, 1.02f),
-                                new Quaternionf()
-                            ),
-                            BG_TRANSITION_TIME_IN
-                        )),
-                        null,
-                        List.of(new TransformTransition(
-                            new AffineTransformation(
-                                new Vector3f(0, 0, 0),
-                                new Quaternionf(),
-                                new Vector3f(1.0f, 1.0f, 1.0f),
-                                new Quaternionf()
-                            ),
-                            BG_TRANSITION_TIME_OUT
-                        ))
-                    )
-                );
-                activeFocusDisplays.add(focusDisplay.getRawDisplay().getUuid()); //! Must be added before spawning the entity into the world to stop it from intantly getting purged
-                focusDisplays.add(focusDisplay);
-                focusDisplay.setTextOpacity(FG_ALPHA_UNFOCUSED);
-                focusDisplay.setBackground(BG_UNFOCUSED);
-                focusDisplay.apply(0);
+                // Create and setup the Text Display entity
+                focusDisplay = new FocusDisplay(world, pos, item, price, stock);
+                focusDisplay.spawn(world);
 
-                Scheduler.schedule(1, () -> {
-                    focusDisplay.spawn(world);
-                    focusDisplay.setBackground(BG_FOCUSED);
-                    focusDisplay.setTextOpacity(FG_ALPHA_FOCUSED);
-                    focusDisplay.apply(BG_TRANSITION_TIME_IN);
-                });
+                // Start item animation and turn off the CustomName
                 findDisplayEntityIfNeeded();
-                if(itemDisplay != null) itemDisplay.getRawDisplay().setCustomNameVisible(false);
+                if(itemDisplay != null) {
+                    itemDisplay.startFocusSpawnAnimation();
+                    itemDisplay.setCustomNameVisible(false);
+
+                    // Start loop animation when the spawning animation ends
+                    Scheduler.schedule(ShopItemDisplay.TRANSITION_DURATION_SPAWN, () -> {
+                        Scheduler.
+                    });
+                }
             }
             else {
 
-                // Remove text display entities, stop and reset item rotation and turn the CustomName back on
-                for (CustomTextDisplay e : focusDisplays) {
-                    e.despawn();
-                    e.setTextOpacity(FG_ALPHA_UNFOCUSED);
-                    e.setBackground(BG_UNFOCUSED);
-                    e.apply(BG_TRANSITION_TIME_OUT);
-                    activeFocusDisplays.remove(e.getRawDisplay().getUuid());
-                }
-                focusDisplays.clear();
-                Scheduler.schedule(BG_TRANSITION_TIME_OUT, () -> {
+                // Despawn the text display
+                focusDisplay.despawn();
+                focusDisplay = null;
+
+                // Start item animation and turn the CustomName back on
+                Scheduler.schedule(FocusDisplay.TRANSITION_DURATION_DESPAWN, () -> {
                     findDisplayEntityIfNeeded();
-                    if(itemDisplay != null) itemDisplay.getRawDisplay().setCustomNameVisible(true);
+                    if(itemDisplay != null) {
+                        itemDisplay.startFocusDespawnAnimation();
+                        itemDisplay.setCustomNameVisible(true);
+                    }
                 });
             }
             focusedState = focusedStateNext;
@@ -331,54 +262,13 @@ public class Shop {
 
     /**
      * Finds the display entity connected to this shop, only if this.itemDisplay is null.
-     * @param world The world search the the entity in.
      */
     private void findDisplayEntityIfNeeded(){
         if(itemDisplay == null) {
             ItemDisplayEntity rawItemDisplay = (ItemDisplayEntity)(world.getEntity(itemDisplayUUID));
             if(rawItemDisplay != null) {
-                itemDisplay = new CustomItemDisplay(rawItemDisplay, null);
+                itemDisplay = new ShopItemDisplay(rawItemDisplay, null);
             }
         }
-    }
-
-
-
-
-    /**
-     * Checks for stray focus displays and purges them.
-     * Any TextDisplayEntity not registered as active display and in the same block as a shop is considered a stray display.
-     * Must be called on entity load event.
-     * @param entity
-     */
-    public static void onEntityLoad(Entity entity) {
-        if (entity instanceof TextDisplayEntity) {
-            World world = entity.getWorld();
-            if(world != null && !activeFocusDisplays.contains(entity.getUuid()) && findShop(entity.getBlockPos(), world.getRegistryKey().getValue().toString()) != null) {
-                entity.remove(RemovalReason.KILLED);
-            }
-        }
-    }
-
-
-
-
-    /**
-     * Checks if the held item is a shop item. If it is, it spawns a new shop.
-     */
-    public static ActionResult onItemUse(World world, PlayerEntity player, Hand hand, BlockHitResult hitResult){
-        ItemStack stack = player.getStackInHand(hand);
-        if (stack.getItem() == FancyPlayerShops.SHOP_ITEM_ID && stack.hasNbt() && stack.getNbt().contains(FancyPlayerShops.SHOP_ITEM_NBT_KEY)) {
-            if(world instanceof ServerWorld) {
-                BlockPos blockPos = hitResult.getBlockPos().add(hitResult.getSide().getVector());
-                new Shop((ServerWorld)world, blockPos, player);
-                player.sendMessage(Text.of("New shop created! Right click it to configure."));
-            }
-            else {
-                player.sendMessage(Text.of("You cannot create a shop here!"));
-            }
-            return ActionResult.SUCCESS;
-        }
-        return ActionResult.PASS;
     }
 }

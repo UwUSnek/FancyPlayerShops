@@ -160,10 +160,10 @@ public class FocusFeatures {
 
         // Update the displays of all the previously and currently focused shops to their next state and update the targeted shops list
         for (Shop shop : targetedShopsOld) {
-            shop.updateFocusDisplay();
+            shop.updateFocusStatus();
         }
         for (Shop shop : targetedShops) {
-            shop.updateFocusDisplay();
+            shop.updateFocusStatus();
         }
         targetedShopsOld = targetedShops;
     }

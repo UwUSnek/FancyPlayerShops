@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -13,11 +14,15 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.snek.fancyplayershops.ShopComponentEntities.FocusDisplay;
 import com.snek.fancyplayershops.utils.Scheduler;
 
 
@@ -80,7 +85,7 @@ public class FancyPlayerShops implements ModInitializer {
 
         // Create and register shop block rclick event
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-            return Shop.onItemUse(world, player, hand, hitResult);
+            return onItemUse(world, player, hand, hitResult);
         });
 
 
@@ -93,7 +98,29 @@ public class FancyPlayerShops implements ModInitializer {
 
         // Register focus display purge
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
-            Shop.onEntityLoad(entity);
+            FocusDisplay.onEntityLoad(entity);
         });
+    }
+
+
+
+
+    /**
+     * Checks if the held item is a shop item. If it is, it spawns a new shop.
+     */
+    public static ActionResult onItemUse(World world, PlayerEntity player, Hand hand, BlockHitResult hitResult){
+        ItemStack stack = player.getStackInHand(hand);
+        if (stack.getItem() == SHOP_ITEM_ID && stack.hasNbt() && stack.getNbt().contains(SHOP_ITEM_NBT_KEY)) {
+            if(world instanceof ServerWorld) {
+                BlockPos blockPos = hitResult.getBlockPos().add(hitResult.getSide().getVector());
+                new Shop((ServerWorld)world, blockPos, player);
+                player.sendMessage(Text.of("New shop created! Right click it to configure."));
+            }
+            else {
+                player.sendMessage(Text.of("You cannot create a shop here!"));
+            }
+            return ActionResult.SUCCESS;
+        }
+        return ActionResult.PASS;
     }
 }

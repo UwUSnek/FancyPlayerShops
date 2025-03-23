@@ -2,6 +2,8 @@ package com.snek.fancyplayershops.CustomDisplays;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.joml.Vector3f;
 import org.joml.Vector4i;
@@ -26,6 +28,7 @@ public abstract class CustomDisplay {
     DisplayEntity heldEntity;
     AffineTransformation defaultTransformation;
     DisplayAnimation animation;
+    List<TaskHandler> currentHandlers = new ArrayList<>(); // The handlers of the transitions that are currently scheduled. Used to cancel animations without waiting for them to finish
 
 
     private int TMP_interpolationDuration = 0;
@@ -69,23 +72,43 @@ public abstract class CustomDisplay {
 
 
 
+    /**
+     * Schedules a list of transitions.
+     * Automatically cancels any remaining transitions from the previous call.
+     * @param transition The transitions. Can be empty.
+     */
+    public void scheduleTransitions(List<TransformTransition> transitions) {
+        // Cancel previous transitions
+        for (TaskHandler handler : currentHandlers) {
+            handler.cancel();
+        }
+        currentHandlers.clear();
+
+
+        // Schedule the new transitions
+        int totScheduledDuration = 0;
+        for (TransformTransition t : transitions) {
+            if(totScheduledDuration == 0) {
+                setTransformation(t.transform);
+                apply(t.duration);
+            }
+            else currentHandlers.add(Scheduler.schedule(totScheduledDuration, () -> {
+                setTransformation(t.transform);
+                apply(t.duration);
+            }));
+            totScheduledDuration += t.duration;
+        }
+    }
+
+
+
+
     public void spawn(World world) {
         world.spawnEntity(heldEntity);
 
         // Schedule transitions if present
         if(animation != null && animation.spawn != null) {
-            int totScheduledDuration = 0;
-            for (TransformTransition t : animation.spawn) {
-                if(totScheduledDuration == 0) {
-                    setTransformation(t.transform);
-                    apply(t.duration);
-                }
-                else Scheduler.schedule(totScheduledDuration, () -> {
-                    setTransformation(t.transform);
-                    apply(t.duration);
-                });
-                totScheduledDuration += t.duration;
-            }
+            scheduleTransitions(animation.spawn);
         }
     }
 
@@ -96,17 +119,7 @@ public abstract class CustomDisplay {
         // Schedule transitions if present
         int totScheduledDuration = 0;
         if(animation != null && animation.despawn != null) {
-            for (TransformTransition t : animation.despawn) {
-                if(totScheduledDuration == 0) {
-                    setTransformation(t.transform);
-                    apply(t.duration);
-                }
-                else Scheduler.schedule(totScheduledDuration, () -> {
-                    setTransformation(t.transform);
-                    apply(t.duration);
-                });
-                totScheduledDuration += t.duration;
-            }
+            scheduleTransitions(animation.despawn);
         }
 
         Scheduler.schedule(totScheduledDuration, () -> { heldEntity.remove(RemovalReason.KILLED); });
@@ -146,9 +159,7 @@ public abstract class CustomDisplay {
         interpolationDispatcherHandler = Scheduler.run(() -> {
             setInterpolationDuration(saved_TMP_interpolationDuration);
             setStartInterpolation();
-            System.out.println("started interpolation with delay " + saved_TMP_interpolationDuration);
         });
-        System.out.println("queued interpolation with delay " + saved_TMP_interpolationDuration);
     }
 
 
