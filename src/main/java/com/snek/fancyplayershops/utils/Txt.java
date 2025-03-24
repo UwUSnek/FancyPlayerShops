@@ -35,22 +35,22 @@ public class Txt {
     }
 
 
-    public Txt black            () { return color(       0); }
-    public Txt darkBlue         () { return color(     170); }
-    public Txt darkGreen        () { return color(   43520); }
-    public Txt darkAqua         () { return color(   43690); }
-    public Txt darkRed          () { return color(11141120); }
-    public Txt darkPurple       () { return color(11141290); }
-    public Txt gold             () { return color(16755200); }
-    public Txt gray             () { return color(11184810); }
-    public Txt darkGray         () { return color( 5592405); }
-    public Txt blue             () { return color( 5592575); }
-    public Txt green            () { return color( 5635925); }
-    public Txt aqua             () { return color( 5636095); }
-    public Txt red              () { return color(16733525); }
-    public Txt lightPurple      () { return color(16733695); }
-    public Txt yellow           () { return color(16777045); }
-    public Txt white            () { return color(16777215); }
+    public Txt black    () { return color(       0); }
+    public Txt blue     () { return color(     170); }
+    public Txt green    () { return color(   43520); }
+    public Txt aqua     () { return color(   43690); }
+    public Txt darkRed  () { return color(11141120); }
+    public Txt purple   () { return color(11141290); }
+    public Txt gold     () { return color(16755200); }
+    public Txt lightGray() { return color(11184810); }
+    public Txt gray     () { return color( 5592405); }
+    public Txt lightBlue() { return color( 5592575); }
+    public Txt lime     () { return color( 5635925); }
+    public Txt cyan     () { return color( 5636095); }
+    public Txt red      () { return color(16733525); }
+    public Txt magenta  () { return color(16733695); }
+    public Txt yellow   () { return color(16777045); }
+    public Txt white    () { return color(16777215); }
 
 
     public Txt color(int r, int g, int b) {

@@ -1,5 +1,7 @@
 package com.snek.fancyplayershops.Containers;
 
+import com.snek.fancyplayershops.utils.Txt;
+
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.NamedScreenHandlerFactory;
@@ -12,7 +14,7 @@ import net.minecraft.text.Text;
 public class ShopConfigUI_Factory implements NamedScreenHandlerFactory {
     @Override
     public Text getDisplayName() {
-        return Text.literal("test ui by snek");
+        return new Txt("test ui by snek").get();
     }
 
     @Override

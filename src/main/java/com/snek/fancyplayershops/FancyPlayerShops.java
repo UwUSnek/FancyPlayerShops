@@ -11,7 +11,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -23,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import com.snek.fancyplayershops.UI.DetailsDisplay;
 import com.snek.fancyplayershops.utils.Scheduler;
+import com.snek.fancyplayershops.utils.Txt;
 
 
 
@@ -39,7 +39,7 @@ public class FancyPlayerShops implements ModInitializer {
     public static final ItemStack shopItem = new ItemStack(SHOP_ITEM_ID);
     public static final String SHOP_ITEM_NBT_KEY = MOD_ID + ".item.shop_item";
     static {
-        shopItem.setCustomName(Text.of("Shop shelf"));
+        shopItem.setCustomName(new Txt("Shop shelf").get());
         NbtCompound nbt = shopItem.getOrCreateNbt();
         nbt.putBoolean(SHOP_ITEM_NBT_KEY, true);
     }
@@ -115,10 +115,10 @@ public class FancyPlayerShops implements ModInitializer {
             if(world instanceof ServerWorld) {
                 BlockPos blockPos = hitResult.getBlockPos().add(hitResult.getSide().getVector());
                 new Shop((ServerWorld)world, blockPos, player);
-                player.sendMessage(Text.of("New shop created! Right click it to configure."));
+                player.sendMessage(new Txt("New shop created! Right click it to configure.").green().get());
             }
             else {
-                player.sendMessage(Text.of("You cannot create a shop here!"));
+                player.sendMessage(new Txt("You cannot create a shop here!").darkRed().get());
             }
             return ActionResult.SUCCESS;
         }

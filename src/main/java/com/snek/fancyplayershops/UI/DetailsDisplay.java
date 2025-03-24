@@ -61,7 +61,7 @@ public class DetailsDisplay extends CustomTextDisplay {
             new Txt()
                 .cat(new Txt(Utils.getItemName(targetShop.getItem())))
                 .cat(new Txt("\nPrice: ")).cat(new Txt(Utils.formatPrice (targetShop.getPrice())).bold().gold())
-                .cat(new Txt("\nStock: ")).cat(new Txt(Utils.formatAmount(targetShop.getStock())).bold().darkAqua())
+                .cat(new Txt("\nStock: ")).cat(new Txt(Utils.formatAmount(targetShop.getStock())).bold().aqua())
             .get(),
             targetShop.calcDisplayPos().add(0, 0.3d, 0),
             DEFAULT_TRANSFORM,
