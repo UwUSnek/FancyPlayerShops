@@ -1,6 +1,5 @@
 package com.snek.fancyplayershops.CustomDisplays;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.snek.fancyplayershops.utils.Scheduler;
 import com.snek.fancyplayershops.utils.TaskHandler;
+import com.snek.fancyplayershops.utils.Utils;
 
 import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.decoration.Brightness;
@@ -161,15 +161,7 @@ public abstract class CustomDisplay {
 
 
     public void setTransformation(@NotNull AffineTransformation transformation) {
-        try {
-            method_setTransformation.invoke(heldEntity, transformation);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        Utils.invokeSafe(method_setTransformation, heldEntity, transformation);
     }
 
 
@@ -201,74 +193,34 @@ public abstract class CustomDisplay {
      * @param duration The duration in ticks
      */
     private void setInterpolationDuration(int duration) {
-        try {
-            method_setInterpolationDuration.invoke(heldEntity, duration);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        Utils.invokeSafe(method_setInterpolationDuration, heldEntity, duration);
     }
 
 
 
 
     private void setStartInterpolation() {
-        try {
-            method_setStartInterpolation.invoke(heldEntity, 0);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        Utils.invokeSafe(method_setStartInterpolation, heldEntity, 0);
     }
 
 
 
 
     public void setBillboardMode(@NotNull BillboardMode billboardMode) {
-        try {
-            method_setBillboardMode.invoke(heldEntity, billboardMode);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        Utils.invokeSafe(method_setBillboardMode, heldEntity, billboardMode);
     }
 
 
 
 
     public void setViewRange(float viewRange) {
-        try {
-            method_setViewRange.invoke(heldEntity, viewRange);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        Utils.invokeSafe(method_setViewRange, heldEntity, viewRange);
     }
 
 
 
 
     public void setBrightness(@NotNull Brightness brightness) {
-        try {
-            method_setBrightness.invoke(heldEntity, brightness);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        Utils.invokeSafe(method_setBrightness, heldEntity, brightness);
     }
 }

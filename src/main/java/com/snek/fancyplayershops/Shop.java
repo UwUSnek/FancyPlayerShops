@@ -12,11 +12,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
-import com.snek.fancyplayershops.ShopComponentEntities.DetailsDisplay;
 import com.snek.fancyplayershops.ShopComponentEntities.ShopItemDisplay;
+import com.snek.fancyplayershops.UI.DetailsDisplay;
+import com.snek.fancyplayershops.utils.Txt;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.Entity.RemovalReason;
@@ -26,10 +29,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 
 
@@ -50,7 +51,7 @@ public class Shop {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        DEFAULT_ITEM.setCustomName(Text.literal("[Empty]").setStyle(Style.EMPTY.withColor(Formatting.GRAY).withItalic(true)));
+        DEFAULT_ITEM.setCustomName(new Txt("[Empty]").italic().gray().get());
     }
 
     // Stores the shops of players, identifying them by their owner's UUID and their coordinates and world in the format "x,y,z,worldId"
@@ -68,15 +69,23 @@ public class Shop {
     private BlockPos pos;
     private transient String shopIdentifierCache;
     private transient String shopIdentifierCache_noWorld;
+    public Vec3d calcDisplayPos() { return new Vec3d(pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5); }
 
     private transient ItemStack item = DEFAULT_ITEM;
     private String serializedItem;
     private double price = 0;
     private int stock = 0;
 
-    private transient Boolean focusedState = false;
-    public transient Boolean focusedStateNext = false;
+    private transient boolean focusedState = false;
+    public  transient boolean focusedStateNext = false;
     private transient DetailsDisplay focusDisplay = null;
+
+    public @NotNull ServerWorld getWorld() { return world; }
+    public @NotNull BlockPos    getPos  () { return pos;   }
+    public @NotNull ItemStack   getItem () { return item;  }
+    public          double      getPrice() { return price; }
+    public          int         getStock() { return stock; }
+
 
 
 
@@ -126,7 +135,7 @@ public class Shop {
 
 
         // Create and spawn the Item Display entity
-        itemDisplay = new ShopItemDisplay(world, pos, item);
+        itemDisplay = new ShopItemDisplay(this);
         itemDisplayUUID = itemDisplay.getRawDisplay().getUuid();
         itemDisplay.spawn(world);
 
@@ -244,7 +253,7 @@ public class Shop {
 
                 // Create and setup the Text Display entity
                 if(focusDisplay != null) focusDisplay.getRawDisplay().remove(RemovalReason.KILLED);
-                focusDisplay = new DetailsDisplay(world, pos, item, price, stock);
+                focusDisplay = new DetailsDisplay(this);
                 focusDisplay.spawn(world);
 
                 // Start item animation and turn off the CustomName

@@ -5,6 +5,8 @@ import java.lang.reflect.Method;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.snek.fancyplayershops.utils.Utils;
+
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
 import net.minecraft.item.ItemStack;
@@ -54,14 +56,6 @@ public class CustomItemDisplay extends CustomDisplay {
 
 
     public void setItemStack(@NotNull ItemStack itemStack) {
-        try {
-            method_setItemStack.invoke(rawDisplay, itemStack);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        Utils.invokeSafe(method_setItemStack, rawDisplay, itemStack);
     }
 }

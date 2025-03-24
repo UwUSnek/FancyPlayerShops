@@ -6,6 +6,8 @@ import java.lang.reflect.Method;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector4i;
 
+import com.snek.fancyplayershops.utils.Utils;
+
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity;
@@ -89,66 +91,35 @@ public class CustomTextDisplay extends CustomDisplay {
      *     Values smaller than 26 are converted to 26.
      *     This is because minecraft ignores these values and usually makes the text
      *     fully opaque instead of fully transparent, rendering animations jittery.
+     * NOTICE:
+     *     Interpolation is broken. Opacity values are NOT converted back to 0-255 range
+     *     before interpolating, but the raw byte value (0 to 127, -128 to -1) is used instead.
      */
     public void setTextOpacity(int a) {
-        try {
-            int a2 = Math.max(26, a);
-            method_setTextOpacity.invoke(rawDisplay, (byte)(a2 > 127 ? a2 - 256 : a2));
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        int a2 = Math.max(26, a);
+        Utils.invokeSafe(method_setTextOpacity, rawDisplay, (byte)(a2 > 127 ? a2 - 256 : a2));
     }
 
 
 
 
     public int getTextOpacity() {
-        try {
-            int a = (int)(byte)method_getTextOpacity.invoke(rawDisplay);
-            return a < 0 ? a + 256 : a;
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        return 0;
+        int a = (int)(byte)Utils.invokeSafe(method_getTextOpacity, rawDisplay);
+        return a < 0 ? a + 256 : a;
     }
 
 
 
 
     public void setBackground(@NotNull Vector4i argb) {
-        try {
-            method_setBackground.invoke(rawDisplay, (argb.x << 24) | (argb.y << 16) | (argb.z << 8) | argb.w);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        Utils.invokeSafe(method_setBackground, rawDisplay, (argb.x << 24) | (argb.y << 16) | (argb.z << 8) | argb.w);
     }
 
 
 
 
     public @NotNull Vector4i getBackground() {
-        try {
-            int bg = (int)method_getBackground.invoke(rawDisplay);
-            return new Vector4i((bg >> 24) & 0xFF, (bg >> 16) & 0xFF, (bg >> 8) & 0xFF, bg & 0xFF);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        return new Vector4i(0);
+        int bg = (int)Utils.invokeSafe(method_getBackground, rawDisplay);
+        return new Vector4i((bg >> 24) & 0xFF, (bg >> 16) & 0xFF, (bg >> 8) & 0xFF, bg & 0xFF);
     }
 }

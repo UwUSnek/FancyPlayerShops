@@ -1,6 +1,11 @@
 package com.snek.fancyplayershops.utils;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.DecimalFormat;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
@@ -16,6 +21,24 @@ import net.minecraft.util.math.Vec3i;
 
 public class Utils {
     public Utils() { throw new UnsupportedOperationException("Utility class \"FocusFeatures\" cannot be instantiated"); }
+
+
+
+    /**
+     * Invokes a Method on the object target using the specified arguments.
+     * @param method The method to invoke.
+     * @param target The target Object.
+     * @param args The arguments to use. Can be empty.
+     * @return The return value of the method.
+     */
+    public static @Nullable Object invokeSafe(@NotNull Method method, @NotNull Object target, Object... args) {
+        try {
+            return method.invoke(target, args);
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 
 
@@ -40,7 +63,7 @@ public class Utils {
      * @param delay The delay expressed in milliseconds.
      * @param task The task to run.
      */
-    public static void runAsync(int delay, Runnable task) {
+    public static void runAsync(int delay, @NotNull Runnable task) {
         new Thread(() -> {
             try {
                 Thread.sleep(delay);
@@ -59,7 +82,7 @@ public class Utils {
      * @param item The item.
      * @return The name of the item.
      */
-    public static Text getItemName(ItemStack item) {
+    public static @NotNull Text getItemName(@NotNull ItemStack item) {
         if (item.hasCustomName()) return item.getName();
         return item.getItem().getName();
     }
@@ -73,7 +96,7 @@ public class Utils {
      * @param pos
      * @return
      */
-    public static Vec3i doubleToBlockCoords(Vec3d pos) {
+    public static @NotNull Vec3i doubleToBlockCoords(@NotNull Vec3d pos) {
         int x = pos.x < 0 ? (int)(Math.floor(pos.x) - 0.1) : (int) pos.x;
         int y = pos.y < 0 ? (int)(Math.floor(pos.y) - 0.1) : (int) pos.y;
         int z = pos.z < 0 ? (int)(Math.floor(pos.z) - 0.1) : (int) pos.z;
@@ -85,7 +108,7 @@ public class Utils {
 
     private static final DecimalFormat formatterPrice = new DecimalFormat("#,##0.##");
 
-    public static String formatPrice(double price){
+    public static @NotNull String formatPrice(double price){
         return formatPrice(price, "$", true);
     }
 
@@ -96,7 +119,7 @@ public class Utils {
      * @param thousandsSeparator Whether to use a separator between thousands. [default: true]
      * @return The formatted price.
      */
-    public static String formatPrice(double price, String currency, Boolean thousandsSeparator){
+    public static @NotNull String formatPrice(double price, String currency, boolean thousandsSeparator){
         String r;
 
         // No separator
@@ -118,7 +141,7 @@ public class Utils {
 
     private static final DecimalFormat formatterAmount = new DecimalFormat("#,###");
 
-    public static String formatAmount(double amount){
+    public static @NotNull String formatAmount(double amount){
         return formatAmount(amount, false, true);
     }
 
@@ -129,7 +152,7 @@ public class Utils {
      * @param thousandsSeparator Whether to use a separator between thousands. [default: true]
      * @return The formatted price.
      */
-    public static String formatAmount(double amount, Boolean x, Boolean thousandsSeparator){
+    public static @NotNull String formatAmount(double amount, boolean x, boolean thousandsSeparator){
         String r;
         if(thousandsSeparator) {
             r = formatterAmount.format(amount);

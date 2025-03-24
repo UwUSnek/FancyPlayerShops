@@ -21,7 +21,7 @@ import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.snek.fancyplayershops.ShopComponentEntities.DetailsDisplay;
+import com.snek.fancyplayershops.UI.DetailsDisplay;
 import com.snek.fancyplayershops.utils.Scheduler;
 
 

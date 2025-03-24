@@ -1,9 +1,9 @@
-package com.snek.fancyplayershops.ShopComponentEntities;
+package com.snek.fancyplayershops.UI;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.UUID;
 
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector4i;
 
 import com.snek.fancyplayershops.Shop;
@@ -12,18 +12,16 @@ import com.snek.fancyplayershops.CustomDisplays.Animation;
 import com.snek.fancyplayershops.CustomDisplays.AnimationData;
 import com.snek.fancyplayershops.CustomDisplays.Transform;
 import com.snek.fancyplayershops.CustomDisplays.Transition;
+import com.snek.fancyplayershops.utils.Txt;
 import com.snek.fancyplayershops.utils.Utils;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -35,6 +33,7 @@ import net.minecraft.world.World;
 
 
 public class DetailsDisplay extends CustomTextDisplay {
+    Shop targetShop;
 
 
     // Used to avoid purges. Stray displays won't be in here
@@ -56,15 +55,15 @@ public class DetailsDisplay extends CustomTextDisplay {
 
 
 
-    public DetailsDisplay(ServerWorld world, BlockPos pos, ItemStack item, double price, int stock){
+    public DetailsDisplay(@NotNull Shop targetShop){
         super(
-            world,
-            Text.empty()
-                .append(Utils.getItemName(item))
-                .append(Text.literal("\nPrice: ")).append(Text.literal(Utils.formatPrice (price)).setStyle(Style.EMPTY.withColor(Formatting.GOLD).withBold(true)))
-                .append(Text.literal("\nStock: ")).append(Text.literal(Utils.formatAmount(stock)).setStyle(Style.EMPTY.withColor(Formatting.DARK_AQUA).withBold(true)))
-            ,
-            new Vec3d(pos.getX() + 0.5, pos.getY() + 0.6, pos.getZ() + 0.5),//FIXME this should prob be part of the default transform
+            targetShop.getWorld(),
+            new Txt()
+                .cat(new Txt(Utils.getItemName(targetShop.getItem())))
+                .cat(new Txt("\nPrice: ")).cat(new Txt(Utils.formatPrice (targetShop.getPrice())).bold().gold())
+                .cat(new Txt("\nStock: ")).cat(new Txt(Utils.formatAmount(targetShop.getStock())).bold().darkAqua())
+            .get(),
+            targetShop.calcDisplayPos().add(0, 0.3d, 0),
             DEFAULT_TRANSFORM,
             BillboardMode.VERTICAL,
             false,
@@ -84,7 +83,7 @@ public class DetailsDisplay extends CustomTextDisplay {
 
 
     @Override
-    public void spawn(World world){
+    public void spawn(@NotNull World world){
         super.spawn(world);
 
         // Transition
@@ -116,7 +115,7 @@ public class DetailsDisplay extends CustomTextDisplay {
      * Must be called on entity load event.
      * @param entity The entity.
      */
-    public static void onEntityLoad(Entity entity) {
+    public static void onEntityLoad(@NotNull Entity entity) {
         if (entity instanceof TextDisplayEntity) {
             World world = entity.getWorld();
             if(

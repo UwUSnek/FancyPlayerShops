@@ -2,11 +2,15 @@ package com.snek.fancyplayershops.ShopComponentEntities;
 
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.snek.fancyplayershops.CustomDisplays.CustomItemDisplay;
 import com.snek.fancyplayershops.CustomDisplays.AnimationData;
+import com.snek.fancyplayershops.Shop;
 import com.snek.fancyplayershops.CustomDisplays.Animation;
 import com.snek.fancyplayershops.CustomDisplays.Transform;
 import com.snek.fancyplayershops.CustomDisplays.Transition;
+import com.snek.fancyplayershops.UI.DetailsDisplay;
 import com.snek.fancyplayershops.utils.Scheduler;
 import com.snek.fancyplayershops.utils.Utils;
 
@@ -59,33 +63,35 @@ public class ShopItemDisplay extends CustomItemDisplay {
 
 
 
-    public ShopItemDisplay(ItemDisplayEntity _rawDisplay, AnimationData _animation) {
+    public ShopItemDisplay(@NotNull ItemDisplayEntity _rawDisplay, @NotNull AnimationData _animation) {
         super(_rawDisplay, _animation);
     }
 
-    public ShopItemDisplay(World world, BlockPos pos, ItemStack item) {
+    public ShopItemDisplay(@NotNull Shop targetShop) {
         super(
-            world,
-            new Vec3d(pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5), //FIXME this should prob be part of the default transform
+            targetShop.getWorld(),
+            targetShop.calcDisplayPos(),
             DEFAULT_TRANSFORM,
-            item,
+            targetShop.getItem(),
             true,
             false,
             null
         );
-        rawDisplay.setCustomName(Utils.getItemName(item));
+        rawDisplay.setCustomName(Utils.getItemName(targetShop.getItem()));
     }
 
 
 
 
-    public void spawn(World world){
+    @Override
+    public void spawn(@NotNull World world){
         super.spawn(world);
     }
 
 
 
 
+    @Override
     public void despawn(){
         super.despawn();
     }
@@ -93,7 +99,7 @@ public class ShopItemDisplay extends CustomItemDisplay {
 
 
 
-    public void setCustomNameVisible(Boolean customNameVisible) {
+    public void setCustomNameVisible(boolean customNameVisible) {
         rawDisplay.setCustomNameVisible(customNameVisible);
     }
 
