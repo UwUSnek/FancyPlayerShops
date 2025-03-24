@@ -28,7 +28,7 @@ import net.minecraft.world.World;
 
 public abstract class CustomDisplay {
     protected DisplayEntity heldEntity;
-    protected AffineTransformation defaultTransformation;
+    protected Transform defaultTransform;
     protected DisplayAnimation animation;
     protected List<TaskHandler> currentHandlers = new ArrayList<>(); // The handlers of the transitions that are currently scheduled. Used to cancel animations without waiting for them to finish
 
@@ -67,18 +67,13 @@ public abstract class CustomDisplay {
 
 
 
-    public CustomDisplay(DisplayEntity _heldEntity, float scale, DisplayAnimation _animation) {
-        defaultTransformation = new AffineTransformation(
-            null,                              // Translation
-            null,                              // Rotation
-            new Vector3f(scale, scale, scale), // Scale
-            null                               // Left rotation
-        );
+    public CustomDisplay(DisplayEntity _heldEntity, Transform _defaultTransform, DisplayAnimation _animation) {
+        defaultTransform = _defaultTransform;
         heldEntity = _heldEntity;
         animation = _animation;
         setViewRange(0.4f);
         setBrightness(new Brightness(15, 15));
-        setTransformation(defaultTransformation);
+        setTransformation(defaultTransform.get());
         apply(0);
     }
 
@@ -102,11 +97,11 @@ public abstract class CustomDisplay {
         int totScheduledDuration = 0;
         for (TransformTransition t : transitions) {
             if(totScheduledDuration == 0) {
-                setTransformation(t.transform);
+                setTransformation(t.transform.get());
                 apply(t.duration);
             }
             else currentHandlers.add(Scheduler.schedule(totScheduledDuration, () -> {
-                setTransformation(t.transform);
+                setTransformation(t.transform.get());
                 apply(t.duration);
             }));
             totScheduledDuration += t.duration;
@@ -133,7 +128,7 @@ public abstract class CustomDisplay {
         int totScheduledDuration = 0;
         for (TransformTransition t : transitions) {
             currentHandlers.add(Scheduler.loop(totScheduledDuration, loopDuration, () -> {
-                setTransformation(t.transform);
+                setTransformation(t.transform.get());
                 apply(t.duration);
             }));
             totScheduledDuration += t.duration;

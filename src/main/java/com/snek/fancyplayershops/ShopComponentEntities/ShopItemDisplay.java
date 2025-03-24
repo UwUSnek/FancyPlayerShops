@@ -7,6 +7,7 @@ import org.joml.Vector3f;
 
 import com.snek.fancyplayershops.CustomDisplays.CustomItemDisplay;
 import com.snek.fancyplayershops.CustomDisplays.DisplayAnimation;
+import com.snek.fancyplayershops.CustomDisplays.Transform;
 import com.snek.fancyplayershops.CustomDisplays.TransformTransition;
 import com.snek.fancyplayershops.utils.Scheduler;
 import com.snek.fancyplayershops.utils.Utils;
@@ -26,67 +27,36 @@ import net.minecraft.world.World;
 
 
 public class ShopItemDisplay extends CustomItemDisplay {
-    public static final int TRANSITION_DURATION_SPAWN   = DetailsDisplay.TRANSITION_DURATION_SPAWN + 2;
-    public static final int TRANSITION_DURATION_LOOP    = 32 * 3; //! Must be a multiple of 3
-    public static final int TRANSITION_DURATION_DESPAWN = DetailsDisplay.TRANSITION_DURATION_DESPAWN + 2;
 
-    private static       float DEFAULT_ROTATION  = (float) Math.toRadians(45);
-    private static final float DEFAULT_SCALE     = 1.00f / 2;
-    private static final float TRANSITION_SCALE  = 1.02f / 2;
-    private static final float TRANSITION_HEIGHT = 0.05f;
+    public void setDefaultRotation(float r) { defaultRotation = r; } //FIXME save in shop instance
+    private static       float defaultRotation       = (float) Math.toRadians(45);
+    private static final Transform DEFAULT_TRANSFORM = new Transform().scale(0.5f).rotY(defaultRotation);
 
-    public static final float LOOP_ROTATION_WIDTH   = (float) Math.toRadians(120);
-    public static final float LOOP_ROTATION_WIDTH_A = LOOP_ROTATION_WIDTH * (float)((double)TRANSITION_DURATION_SPAWN / ((double)TRANSITION_DURATION_LOOP / 3) * 3d);
+    public static final int S_TIME = DetailsDisplay.DURATION_SPAWN + 2;
+    public static final int L_TIME = 32 * 3; //! Must be a multiple of 3
+    public static final int D_TIME = DetailsDisplay.DURATION_DESPAWN + 2;
+
+    private static final float S_SCALE  = 1.02f;
+    private static final float S_HEIGHT = 0.05f;
+
+    public static final float L_ROT   = (float) Math.toRadians(120);
+    public static final float L_ROT_A = L_ROT * (float)((double)S_TIME / ((double)L_TIME / 3) * 3d);
+
+
 
 
     private static final DisplayAnimation focusAnimation = new DisplayAnimation(
-        List.of(new TransformTransition(
-            new AffineTransformation(
-                new Vector3f(0, TRANSITION_HEIGHT, 0),
-                new Quaternionf().rotateY(DEFAULT_ROTATION + LOOP_ROTATION_WIDTH_A),
-                new Vector3f(TRANSITION_SCALE),
-                new Quaternionf()
-            ),
-            TRANSITION_DURATION_SPAWN
-        )),
         List.of(
-            new TransformTransition(
-                new AffineTransformation(
-                    new Vector3f(0, TRANSITION_HEIGHT, 0),
-                    new Quaternionf().rotateY(DEFAULT_ROTATION + LOOP_ROTATION_WIDTH_A + LOOP_ROTATION_WIDTH),
-                    new Vector3f(TRANSITION_SCALE),
-                    new Quaternionf()
-                ),
-                TRANSITION_DURATION_LOOP / 3
-            ),
-            new TransformTransition(
-                new AffineTransformation(
-                    new Vector3f(0, TRANSITION_HEIGHT, 0),
-                    new Quaternionf().rotateY(DEFAULT_ROTATION + LOOP_ROTATION_WIDTH_A + LOOP_ROTATION_WIDTH * 2),
-                    new Vector3f(TRANSITION_SCALE),
-                    new Quaternionf()
-                ),
-                TRANSITION_DURATION_LOOP / 3
-            ),
-            new TransformTransition(
-                new AffineTransformation(
-                    new Vector3f(0, TRANSITION_HEIGHT, 0),
-                    new Quaternionf().rotateY(DEFAULT_ROTATION + LOOP_ROTATION_WIDTH_A + LOOP_ROTATION_WIDTH * 3),
-                    new Vector3f(TRANSITION_SCALE),
-                    new Quaternionf()
-                ),
-                TRANSITION_DURATION_LOOP / 3
-            )
+            new TransformTransition(DEFAULT_TRANSFORM.clone().moveY(S_HEIGHT).scale(S_SCALE).rotY(L_ROT_A), S_TIME)
         ),
-        List.of(new TransformTransition(
-            new AffineTransformation(
-                new Vector3f(0, 0, 0),
-                new Quaternionf().rotateY(DEFAULT_ROTATION),
-                new Vector3f(DEFAULT_SCALE),
-                new Quaternionf()
-            ),
-            TRANSITION_DURATION_DESPAWN
-        ))
+        List.of(
+            new TransformTransition(DEFAULT_TRANSFORM.clone().moveY(S_HEIGHT).scale(S_SCALE).rotY(L_ROT_A + L_ROT * 1), L_TIME / 3),
+            new TransformTransition(DEFAULT_TRANSFORM.clone().moveY(S_HEIGHT).scale(S_SCALE).rotY(L_ROT_A + L_ROT * 2), L_TIME / 3),
+            new TransformTransition(DEFAULT_TRANSFORM.clone().moveY(S_HEIGHT).scale(S_SCALE).rotY(L_ROT_A + L_ROT * 3), L_TIME / 3)
+        ),
+        List.of(
+            new TransformTransition(DEFAULT_TRANSFORM, D_TIME)
+        )
     );
 
 
@@ -99,19 +69,14 @@ public class ShopItemDisplay extends CustomItemDisplay {
     public ShopItemDisplay(World world, BlockPos pos, ItemStack item) {
         super(
             world,
-            new Vec3d(pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5),
+            new Vec3d(pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5), //FIXME this should prob be part of the default transform
+            DEFAULT_TRANSFORM,
             item,
             true,
             false,
             null
         );
         rawDisplay.setCustomName(Utils.getItemName(item));
-        setTransformation(new AffineTransformation(
-            new Vector3f(0, 0, 0),
-            new Quaternionf().rotateY(DEFAULT_ROTATION),
-            new Vector3f(DEFAULT_SCALE),
-            new Quaternionf()
-        ));
     }
 
 
@@ -142,8 +107,8 @@ public class ShopItemDisplay extends CustomItemDisplay {
         rawDisplay.setCustomNameVisible(false);
         scheduleTransitions(focusAnimation.spawn);
 
-        currentHandlers.add(Scheduler.schedule(TRANSITION_DURATION_SPAWN, () -> {
-            loopTransitions(focusAnimation.loop, TRANSITION_DURATION_LOOP);
+        currentHandlers.add(Scheduler.schedule(S_TIME, () -> {
+            loopTransitions(focusAnimation.loop, L_TIME);
         }));
     }
 
@@ -152,7 +117,7 @@ public class ShopItemDisplay extends CustomItemDisplay {
 
     public void leaveFocusState(){
         scheduleTransitions(focusAnimation.despawn);
-        currentHandlers.add(Scheduler.schedule(TRANSITION_DURATION_DESPAWN, () -> {
+        currentHandlers.add(Scheduler.schedule(D_TIME, () -> {
             rawDisplay.setCustomNameVisible(true);
         }));
     }
