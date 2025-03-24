@@ -19,7 +19,6 @@ public class Utils {
 
 
 
-
     /**
      * Runs a task on a secondary thread after a specified delay.
      * @param delay The delay expressed in milliseconds.
@@ -68,7 +67,7 @@ public class Utils {
 
 
 
-    private static final DecimalFormat formatterPrice = new DecimalFormat("#,###.00");
+    private static final DecimalFormat formatterPrice = new DecimalFormat("#,##0.##");
 
     public static String formatPrice(double price){
         return formatPrice(price, "$", true);
@@ -82,12 +81,20 @@ public class Utils {
      * @return The formatted price.
      */
     public static String formatPrice(double price, String currency, Boolean thousandsSeparator){
+        String r;
+
+        // No separator
         if(thousandsSeparator) {
-            return currency + formatterPrice.format(price);
+            r = currency + formatterPrice.format(price);
         }
+
+        // Separator
         else {
-            return String.format(currency + "%.2f", price);
+            r = String.format(currency + "%.2f", price);
         }
+
+        // Add trailing 0 if there is only one decimal digit
+        return r.charAt(r.length() - 2) == '.' ? r + "0" : r;
     }
 
 
