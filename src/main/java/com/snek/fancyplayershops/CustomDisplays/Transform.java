@@ -1,5 +1,6 @@
 package com.snek.fancyplayershops.CustomDisplays;
 
+import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -18,10 +19,10 @@ import net.minecraft.util.math.AffineTransformation;
  * Use .get() to create an AffineTransformation from this Transform's data.
  */
 public class Transform {
-    private Vector3f    _pos;
-    private Quaternionf _lrot;
-    private Vector3f    _scale;
-    private Quaternionf _rrot;
+    private @NotNull Vector3f    _pos;
+    private @NotNull Quaternionf _lrot;
+    private @NotNull Vector3f    _scale;
+    private @NotNull Quaternionf _rrot;
 
     /**
      * Creates a new AffineTransformation using the current translation, left rotation, scale and right rotation values.
@@ -38,7 +39,7 @@ public class Transform {
         _rrot  = new Quaternionf();
     }
 
-    public Transform(Vector3f __pos, Quaternionf __lrot, Vector3f __scale, Quaternionf __rrot) {
+    public Transform(@NotNull Vector3f __pos, @NotNull Quaternionf __lrot, @NotNull Vector3f __scale, @NotNull Quaternionf __rrot) {
         _pos   = new Vector3f(__pos);
         _lrot  = new Quaternionf(__lrot);
         _scale = new Vector3f(__scale);

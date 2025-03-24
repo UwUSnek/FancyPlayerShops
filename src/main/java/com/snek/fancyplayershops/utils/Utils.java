@@ -19,6 +19,22 @@ public class Utils {
 
 
 
+
+    //FIXME TextRenderer cannot be used by the server
+    //FIXME find a way to calculate text width
+    // public static int getTextWidth(String text) {
+    //     MinecraftClient client = MinecraftClient.getInstance();
+    //     if (client == null || client.textRenderer == null) {
+    //         return 0;
+    //     }
+
+    //     TextRenderer renderer = client.textRenderer;
+    //     return renderer.getWidth(Text.literal(text));
+    // }
+
+
+
+
     /**
      * Runs a task on a secondary thread after a specified delay.
      * @param delay The delay expressed in milliseconds.

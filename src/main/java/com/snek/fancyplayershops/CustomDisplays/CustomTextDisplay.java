@@ -2,16 +2,11 @@ package com.snek.fancyplayershops.CustomDisplays;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector4i;
 
-import com.snek.fancyplayershops.utils.Scheduler;
-import com.snek.fancyplayershops.utils.TaskHandler;
-
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity;
 import net.minecraft.text.Text;
@@ -26,8 +21,8 @@ import net.minecraft.world.World;
 
 
 public class CustomTextDisplay extends CustomDisplay {
-    protected TextDisplayEntity rawDisplay;
-    public TextDisplayEntity getRawDisplay() { return rawDisplay; }
+    protected @NotNull TextDisplayEntity rawDisplay;
+    public @NotNull TextDisplayEntity getRawDisplay() { return rawDisplay; }
 
 
     static private Method method_setText;
@@ -57,11 +52,11 @@ public class CustomTextDisplay extends CustomDisplay {
 
 
 
-    public CustomTextDisplay(TextDisplayEntity _rawDisplay, DisplayAnimation _animation) {
+    public CustomTextDisplay(@NotNull TextDisplayEntity _rawDisplay, @NotNull AnimationData _animation) {
         super(_rawDisplay, new Transform(), _animation);
         rawDisplay = _rawDisplay;
     }
-    public CustomTextDisplay(World world, Text text, Vec3d pos, Transform _defaultTransform, BillboardMode billboardMode, Boolean glowing, DisplayAnimation _animation) {
+    public CustomTextDisplay(@NotNull World world, @NotNull Text text, @NotNull Vec3d pos, @NotNull Transform _defaultTransform, @NotNull BillboardMode billboardMode, boolean glowing, @NotNull AnimationData _animation) {
         super(new TextDisplayEntity(EntityType.TEXT_DISPLAY, world), _defaultTransform, _animation);
         rawDisplay = (TextDisplayEntity)heldEntity;
         rawDisplay.setGlowing(glowing);
@@ -73,7 +68,7 @@ public class CustomTextDisplay extends CustomDisplay {
 
 
 
-    public void setText(Text text) {
+    public void setText(@NotNull Text text) {
         try {
             method_setText.invoke(rawDisplay, text);
         } catch (IllegalAccessException e) {
@@ -128,7 +123,7 @@ public class CustomTextDisplay extends CustomDisplay {
 
 
 
-    public void setBackground(Vector4i argb) {
+    public void setBackground(@NotNull Vector4i argb) {
         try {
             method_setBackground.invoke(rawDisplay, (argb.x << 24) | (argb.y << 16) | (argb.z << 8) | argb.w);
         } catch (IllegalAccessException e) {
@@ -143,7 +138,7 @@ public class CustomTextDisplay extends CustomDisplay {
 
 
 
-    public Vector4i getBackground() {
+    public @NotNull Vector4i getBackground() {
         try {
             int bg = (int)method_getBackground.invoke(rawDisplay);
             return new Vector4i((bg >> 24) & 0xFF, (bg >> 16) & 0xFF, (bg >> 8) & 0xFF, bg & 0xFF);

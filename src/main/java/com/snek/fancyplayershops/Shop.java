@@ -64,7 +64,7 @@ public class Shop {
     private String worldId;
     private transient ShopItemDisplay itemDisplay = null; //! Searched when needed instead of on data loading. The chunk needs to be loaded.
     private UUID itemDisplayUUID;
-    public UUID ownerUUID;
+    public  UUID ownerUUID;
     private BlockPos pos;
     private transient String shopIdentifierCache;
     private transient String shopIdentifierCache_noWorld;

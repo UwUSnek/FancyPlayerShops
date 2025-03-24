@@ -2,19 +2,16 @@ package com.snek.fancyplayershops.ShopComponentEntities;
 
 import java.util.List;
 
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
-
 import com.snek.fancyplayershops.CustomDisplays.CustomItemDisplay;
-import com.snek.fancyplayershops.CustomDisplays.DisplayAnimation;
+import com.snek.fancyplayershops.CustomDisplays.AnimationData;
+import com.snek.fancyplayershops.CustomDisplays.Animation;
 import com.snek.fancyplayershops.CustomDisplays.Transform;
-import com.snek.fancyplayershops.CustomDisplays.TransformTransition;
+import com.snek.fancyplayershops.CustomDisplays.Transition;
 import com.snek.fancyplayershops.utils.Scheduler;
 import com.snek.fancyplayershops.utils.Utils;
 
 import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.AffineTransformation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -45,24 +42,24 @@ public class ShopItemDisplay extends CustomItemDisplay {
 
 
 
-    private static final DisplayAnimation focusAnimation = new DisplayAnimation(
-        List.of(
-            new TransformTransition(DEFAULT_TRANSFORM.clone().moveY(S_HEIGHT).scale(S_SCALE).rotY(L_ROT_A), S_TIME)
+    private static final AnimationData focusAnimation = new AnimationData(
+        new Animation(
+            new Transition(DEFAULT_TRANSFORM.clone().moveY(S_HEIGHT).scale(S_SCALE).rotY(L_ROT_A), S_TIME)
         ),
-        List.of(
-            new TransformTransition(DEFAULT_TRANSFORM.clone().moveY(S_HEIGHT).scale(S_SCALE).rotY(L_ROT_A + L_ROT * 1), L_TIME / 3),
-            new TransformTransition(DEFAULT_TRANSFORM.clone().moveY(S_HEIGHT).scale(S_SCALE).rotY(L_ROT_A + L_ROT * 2), L_TIME / 3),
-            new TransformTransition(DEFAULT_TRANSFORM.clone().moveY(S_HEIGHT).scale(S_SCALE).rotY(L_ROT_A + L_ROT * 3), L_TIME / 3)
+        new Animation(
+            new Transition(DEFAULT_TRANSFORM.clone().moveY(S_HEIGHT).scale(S_SCALE).rotY(L_ROT_A + L_ROT * 1), L_TIME / 3),
+            new Transition(DEFAULT_TRANSFORM.clone().moveY(S_HEIGHT).scale(S_SCALE).rotY(L_ROT_A + L_ROT * 2), L_TIME / 3),
+            new Transition(DEFAULT_TRANSFORM.clone().moveY(S_HEIGHT).scale(S_SCALE).rotY(L_ROT_A + L_ROT * 3), L_TIME / 3)
         ),
-        List.of(
-            new TransformTransition(DEFAULT_TRANSFORM, D_TIME)
+        new Animation(
+            new Transition(DEFAULT_TRANSFORM, D_TIME)
         )
     );
 
 
 
 
-    public ShopItemDisplay(ItemDisplayEntity _rawDisplay, DisplayAnimation _animation) {
+    public ShopItemDisplay(ItemDisplayEntity _rawDisplay, AnimationData _animation) {
         super(_rawDisplay, _animation);
     }
 
@@ -105,10 +102,10 @@ public class ShopItemDisplay extends CustomItemDisplay {
 
     public void enterFocusState(){
         rawDisplay.setCustomNameVisible(false);
-        scheduleTransitions(focusAnimation.spawn);
+        scheduleAnimation(focusAnimation.spawn);
 
-        currentHandlers.add(Scheduler.schedule(S_TIME, () -> {
-            loopTransitions(focusAnimation.loop, L_TIME);
+        currentHandlers.add(Scheduler.schedule(focusAnimation.spawn.getTotalDuration(), () -> {
+            loopAnimation(focusAnimation.loop, focusAnimation.loop.getTotalDuration());
         }));
     }
 
@@ -116,8 +113,8 @@ public class ShopItemDisplay extends CustomItemDisplay {
 
 
     public void leaveFocusState(){
-        scheduleTransitions(focusAnimation.despawn);
-        currentHandlers.add(Scheduler.schedule(D_TIME, () -> {
+        scheduleAnimation(focusAnimation.despawn);
+        currentHandlers.add(Scheduler.schedule(focusAnimation.despawn.getTotalDuration(), () -> {
             rawDisplay.setCustomNameVisible(true);
         }));
     }

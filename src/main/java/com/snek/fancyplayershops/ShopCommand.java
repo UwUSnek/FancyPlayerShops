@@ -18,6 +18,7 @@ public class ShopCommand {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(LiteralArgumentBuilder.<ServerCommandSource>literal("shop")
 
+
                 .then(LiteralArgumentBuilder.<ServerCommandSource>literal("config_test").executes(context -> {
                     PlayerEntity player = context.getSource().getPlayer();
                     try {
@@ -29,6 +30,7 @@ public class ShopCommand {
                     }
                     return 1;
                 }))
+
 
                 //TODO replace with crafting recipe
                 .then(LiteralArgumentBuilder.<ServerCommandSource>literal("create").executes(context -> {

@@ -5,8 +5,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.joml.Vector3f;
-import org.joml.Vector4i;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.snek.fancyplayershops.utils.Scheduler;
 import com.snek.fancyplayershops.utils.TaskHandler;
@@ -15,7 +15,6 @@ import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.decoration.Brightness;
 import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.AffineTransformation;
 import net.minecraft.world.World;
 
@@ -27,14 +26,14 @@ import net.minecraft.world.World;
 
 
 public abstract class CustomDisplay {
-    protected DisplayEntity heldEntity;
-    protected Transform defaultTransform;
-    protected DisplayAnimation animation;
-    protected List<TaskHandler> currentHandlers = new ArrayList<>(); // The handlers of the transitions that are currently scheduled. Used to cancel animations without waiting for them to finish
+    protected @NotNull DisplayEntity heldEntity;
+    protected @NotNull Transform defaultTransform;
+    protected @NotNull AnimationData animation;
+    protected @NotNull List<TaskHandler> currentHandlers = new ArrayList<>(); // The handlers of the transitions that are currently scheduled. Used to cancel animations without waiting for them to finish
 
 
     private int TMP_interpolationDuration = 0;
-    private TaskHandler interpolationDispatcherHandler;
+    private @Nullable TaskHandler interpolationDispatcherHandler;
 
 
     static private Method method_setTransformation;
@@ -67,7 +66,7 @@ public abstract class CustomDisplay {
 
 
 
-    public CustomDisplay(DisplayEntity _heldEntity, Transform _defaultTransform, DisplayAnimation _animation) {
+    public CustomDisplay(@NotNull DisplayEntity _heldEntity, @NotNull Transform _defaultTransform, @NotNull AnimationData _animation) {
         defaultTransform = _defaultTransform;
         heldEntity = _heldEntity;
         animation = _animation;
@@ -81,11 +80,11 @@ public abstract class CustomDisplay {
 
 
     /**
-     * Schedules a list of transitions.
-     * Automatically cancels any remaining transitions from the previous call (or previous calls to loopTransition).
-     * @param transitions The transitions. Can be empty.
+     * Schedules an animation.
+     * Automatically cancels any remaining animation from the previous call (or previous calls to loopAnimation).
+     * @param animtion The animation.
      */
-    public void scheduleTransitions(List<TransformTransition> transitions) {
+    public void scheduleAnimation(@NotNull Animation animtion) {
         // Cancel previous transitions
         for (TaskHandler handler : currentHandlers) {
             handler.cancel();
@@ -95,16 +94,12 @@ public abstract class CustomDisplay {
 
         // Schedule the new transitions
         int totScheduledDuration = 0;
-        for (TransformTransition t : transitions) {
-            if(totScheduledDuration == 0) {
+        for (Transition t : animtion.transitions) {
+            currentHandlers.add(Scheduler.schedule(totScheduledDuration, () -> {
                 setTransformation(t.transform.get());
-                apply(t.duration);
-            }
-            else currentHandlers.add(Scheduler.schedule(totScheduledDuration, () -> {
-                setTransformation(t.transform.get());
-                apply(t.duration);
+                apply(t.getDuration());
             }));
-            totScheduledDuration += t.duration;
+            totScheduledDuration += t.getDuration();
         }
     }
 
@@ -112,11 +107,11 @@ public abstract class CustomDisplay {
 
 
     /**
-     * Schedules a list of transitions.
-     * Automatically cancels any remaining transitions from the previous call (or previous calls to scheduleTransition).
-     * @param transition The transitions. Can be empty.
+     * Loops an animation.
+     * Automatically cancels any remaining animation from the previous call (or previous calls to scheduleAnimation).
+     * @param transition The animation.
      */
-    public void loopTransitions(List<TransformTransition> transitions, int loopDuration) {
+    public void loopAnimation(@NotNull Animation animation, int loopDuration) {
         // Cancel previous transitions
         for (TaskHandler handler : currentHandlers) {
             handler.cancel();
@@ -126,24 +121,24 @@ public abstract class CustomDisplay {
 
         // Schedule the new transitions
         int totScheduledDuration = 0;
-        for (TransformTransition t : transitions) {
+        for (Transition t : animation.transitions) {
             currentHandlers.add(Scheduler.loop(totScheduledDuration, loopDuration, () -> {
                 setTransformation(t.transform.get());
-                apply(t.duration);
+                apply(t.getDuration());
             }));
-            totScheduledDuration += t.duration;
+            totScheduledDuration += t.getDuration();
         }
     }
 
 
 
 
-    public void spawn(World world) {
+    public void spawn(@NotNull World world) {
         world.spawnEntity(heldEntity);
 
         // Schedule transitions if present
         if(animation != null && animation.spawn != null) {
-            scheduleTransitions(animation.spawn);
+            scheduleAnimation(animation.spawn);
         }
     }
 
@@ -153,19 +148,19 @@ public abstract class CustomDisplay {
     public void despawn() {
         // Schedule transitions if present
         if(animation != null && animation.despawn != null) {
-            scheduleTransitions(animation.despawn);
+            scheduleAnimation(animation.despawn);
         }
 
         // Schedule entity removal
         int totScheduledDuration = 0;
-        for (TransformTransition t : animation.despawn) totScheduledDuration += t.duration; //TODO this should prob be a method of a custom transition list class
+        for (Transition t : animation.despawn.transitions) totScheduledDuration += t.getDuration(); //TODO this should prob be a method of a custom transition list class
         Scheduler.schedule(totScheduledDuration, () -> { heldEntity.remove(RemovalReason.KILLED); });
     }
 
 
 
 
-    public void setTransformation(AffineTransformation transformation) {
+    public void setTransformation(@NotNull AffineTransformation transformation) {
         try {
             method_setTransformation.invoke(heldEntity, transformation);
         } catch (IllegalAccessException e) {
@@ -235,7 +230,7 @@ public abstract class CustomDisplay {
 
 
 
-    public void setBillboardMode(BillboardMode billboardMode) {
+    public void setBillboardMode(@NotNull BillboardMode billboardMode) {
         try {
             method_setBillboardMode.invoke(heldEntity, billboardMode);
         } catch (IllegalAccessException e) {
@@ -265,7 +260,7 @@ public abstract class CustomDisplay {
 
 
 
-    public void setBrightness(Brightness brightness) {
+    public void setBrightness(@NotNull Brightness brightness) {
         try {
             method_setBrightness.invoke(heldEntity, brightness);
         } catch (IllegalAccessException e) {

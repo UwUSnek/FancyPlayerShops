@@ -8,9 +8,10 @@ import org.joml.Vector4i;
 
 import com.snek.fancyplayershops.Shop;
 import com.snek.fancyplayershops.CustomDisplays.CustomTextDisplay;
-import com.snek.fancyplayershops.CustomDisplays.DisplayAnimation;
+import com.snek.fancyplayershops.CustomDisplays.Animation;
+import com.snek.fancyplayershops.CustomDisplays.AnimationData;
 import com.snek.fancyplayershops.CustomDisplays.Transform;
-import com.snek.fancyplayershops.CustomDisplays.TransformTransition;
+import com.snek.fancyplayershops.CustomDisplays.Transition;
 import com.snek.fancyplayershops.utils.Utils;
 
 import net.minecraft.entity.Entity;
@@ -67,10 +68,10 @@ public class DetailsDisplay extends CustomTextDisplay {
             DEFAULT_TRANSFORM,
             BillboardMode.VERTICAL,
             false,
-            new DisplayAnimation(
-                List.of(new TransformTransition(DEFAULT_TRANSFORM.clone().moveY(T_HEIGHT).scale(T_SCALE), DURATION_SPAWN)),
+            new AnimationData(
+                new Animation(new Transition(DEFAULT_TRANSFORM.clone().moveY(T_HEIGHT).scale(T_SCALE), DURATION_SPAWN)),
                 null,
-                List.of(new TransformTransition(DEFAULT_TRANSFORM, DURATION_DESPAWN))
+                new Animation(new Transition(DEFAULT_TRANSFORM, DURATION_DESPAWN))
             )
         );
 
