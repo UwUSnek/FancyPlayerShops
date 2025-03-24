@@ -33,9 +33,9 @@ public class ShopItemDisplay extends CustomItemDisplay {
     private static       float defaultRotation       = (float) Math.toRadians(45);
     private static final Transform DEFAULT_TRANSFORM = new Transform().scale(0.5f).rotY(defaultRotation);
 
-    public static final int S_TIME = DetailsDisplay.DURATION_SPAWN + 2;
+    public static final int S_TIME = DetailsDisplay.S_TIME + 2;
     public static final int L_TIME = 32 * 3; //! Must be a multiple of 3
-    public static final int D_TIME = DetailsDisplay.DURATION_DESPAWN + 2;
+    public static final int D_TIME = DetailsDisplay.D_TIME + 2;
 
     private static final float S_SCALE  = 1.02f;
     private static final float S_HEIGHT = 0.05f;

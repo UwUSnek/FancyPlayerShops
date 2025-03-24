@@ -1,8 +1,11 @@
 package com.snek.fancyplayershops.utils;
 
+import org.joml.Vector3i;
+
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.Vec3i;
 
 
 
@@ -27,11 +30,16 @@ public class Txt {
     }
     public Txt(MutableText s) {
         rawText = s.copy();
-        style = s.getStyle();
+        style = rawText.getStyle();
     }
     public Txt(Text s) {
         rawText = s.copy();
-        style = s.getStyle();
+        style = rawText.getStyle();
+    }
+    @Override
+    public Txt clone(){
+        rawText.setStyle(style);
+        return new Txt(rawText.copy());
     }
 
 
@@ -55,6 +63,10 @@ public class Txt {
 
     public Txt color(int r, int g, int b) {
         style = style.withColor((r << 16) | (g << 8) | b);
+        return this;
+    }
+    public Txt color(Vector3i rgb) {
+        style = style.withColor((rgb.x << 16) | (rgb.y << 8) | rgb.z);
         return this;
     }
     public Txt color     (int rgb) { style = style.withColor        (rgb ); return this; }

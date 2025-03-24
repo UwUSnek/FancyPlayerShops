@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +52,7 @@ public class Shop {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        DEFAULT_ITEM.setCustomName(new Txt("[Empty]").italic().gray().get());
+        DEFAULT_ITEM.setCustomName(new Txt("[Empty]").italic().lightGray().get());
     }
 
     // Stores the shops of players, identifying them by their owner's UUID and their coordinates and world in the format "x,y,z,worldId"
@@ -74,7 +75,7 @@ public class Shop {
     private transient ItemStack item = DEFAULT_ITEM;
     private String serializedItem;
     private double price = 0;
-    private int stock = 0;
+    private int stock = Math.abs(new Random().nextInt()) % 1000;
 
     private transient boolean focusedState = false;
     public  transient boolean focusedStateNext = false;

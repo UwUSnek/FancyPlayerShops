@@ -6,6 +6,7 @@ import java.text.DecimalFormat;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
@@ -119,7 +120,7 @@ public class Utils {
      * @param thousandsSeparator Whether to use a separator between thousands. [default: true]
      * @return The formatted price.
      */
-    public static @NotNull String formatPrice(double price, String currency, boolean thousandsSeparator){
+    public static @NotNull String formatPrice(double price, @NotNull String currency, boolean thousandsSeparator){
         String r;
 
         // No separator
@@ -161,5 +162,75 @@ public class Utils {
             r = String.valueOf(amount);
         }
         return x ? "x" + r : r;
+    }
+
+
+
+
+
+    public static @NotNull Vector3f RGBtoHSV(@NotNull Vector3f rgb) {
+        float r = rgb.x / 255.0f;
+        float g = rgb.y / 255.0f;
+        float b = rgb.z / 255.0f;
+
+        float max = Math.max(r, Math.max(g, b));
+        float min = Math.min(r, Math.min(g, b));
+        float h = 0, s, v = max;
+
+        float delta = max - min;
+
+        if (max != 0) {
+            s = delta / max;
+        } else {
+            s = 0;
+            h = -1;
+            return new Vector3f(h, s, v);
+        }
+
+        if (r == max) {
+            h = (g - b) / delta;
+        } else if (g == max) {
+            h = 2 + (b - r) / delta;
+        } else {
+            h = 4 + (r - g) / delta;
+        }
+
+        h *= 60;
+        if (h < 0) h += 360;
+
+        return new Vector3f(h, s, v);
+    }
+
+
+
+
+    public static Vector3f HSVtoRGB(Vector3f hsv) {
+        float h = hsv.x;
+        float s = hsv.y;
+        float v = hsv.z;
+
+        float c = v * s;
+        float x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+        float m = v - c;
+
+        float r = 0, g = 0, b = 0;
+
+        if (0 <= h && h < 60) {
+            r = c; g = x; b = 0;
+        } else if (60 <= h && h < 120) {
+            r = x; g = c; b = 0;
+        } else if (120 <= h && h < 180) {
+            r = 0; g = c; b = x;
+        } else if (180 <= h && h < 240) {
+            r = 0; g = x; b = c;
+        } else if (240 <= h && h < 300) {
+            r = x; g = 0; b = c;
+        } else if (300 <= h && h < 360) {
+            r = c; g = 0; b = x;
+        }
+
+        r += m; g += m; b += m;
+
+        return new Vector3f(r * 255, g * 255, b * 255);
     }
 }

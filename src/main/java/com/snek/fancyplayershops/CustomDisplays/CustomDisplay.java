@@ -70,7 +70,7 @@ public abstract class CustomDisplay {
         defaultTransform = _defaultTransform;
         heldEntity = _heldEntity;
         animation = _animation;
-        setViewRange(0.4f);
+        setViewRange(0.3f);
         setBrightness(new Brightness(15, 15));
         setTransformation(defaultTransform.get());
         apply(0);
