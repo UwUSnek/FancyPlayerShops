@@ -13,12 +13,14 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
 import com.snek.fancyplayershops.ShopComponentEntities.ShopItemDisplay;
 import com.snek.fancyplayershops.UI.DetailsDisplay;
+import com.snek.fancyplayershops.utils.Scheduler;
 import com.snek.fancyplayershops.utils.Txt;
 
 import net.fabricmc.loader.api.FabricLoader;
@@ -62,6 +64,7 @@ public class Shop {
 
 
 
+    // Basic data
     private transient ServerWorld world;
     private String worldId;
     private transient ShopItemDisplay itemDisplay = null; //! Searched when needed instead of on data loading. The chunk needs to be loaded.
@@ -72,15 +75,23 @@ public class Shop {
     private transient String shopIdentifierCache_noWorld;
     public Vec3d calcDisplayPos() { return new Vec3d(pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5); }
 
+
+    // Shop data
     private transient ItemStack item = DEFAULT_ITEM;
     private String serializedItem;
     private double price = 0;
     private int stock = 0;
 
-    private transient boolean focusedState = false;
-    public  transient boolean focusedStateNext = false;
-    private transient DetailsDisplay focusDisplay = null;
 
+    // Shop status
+    // private transient boolean isFocused = false;
+    private transient @Nullable DetailsDisplay focusDisplay = null; //TODO this might need to be a list
+    public  transient @Nullable PlayerEntity           user = null;
+    public  transient @NotNull  MenuStatus       menuStatus = MenuStatus.IDLE;
+    public  transient @NotNull  MenuStatus   menuStatusNext = MenuStatus.IDLE;
+
+
+    // Accessors
     public @NotNull ServerWorld getWorld() { return world; }
     public @NotNull BlockPos    getPos  () { return pos;   }
     public @NotNull ItemStack   getItem () { return item;  }
@@ -218,6 +229,8 @@ public class Shop {
                 }
 
                 // Recalculate transient members and update shop maps
+                retrievedShop.menuStatus     = MenuStatus.IDLE;
+                retrievedShop.menuStatusNext = MenuStatus.IDLE;
                 retrievedShop.cacheShopIdentifier();
                 retrievedShop.calcDeserializedItem();
                 try {
@@ -249,11 +262,14 @@ public class Shop {
 
 
     /**
-     * Spawns or removes the focus display and starts item animations depending on the set next focus state.
+     * Spawns or removes the focus displays and starts item animations depending on the set next menu status.
      */
-    public void updateFocusStatus(){
-        if(focusedState != focusedStateNext) {
-            if(focusedStateNext) {
+    public void updateMenuStatus(){
+        if(menuStatus != menuStatusNext) {
+            if(menuStatusNext == MenuStatus.DETAILS) {
+                if(focusDisplay != null && menuStatusNext != MenuStatus.IDLE) {
+                    focusDisplay.despawn();
+                }
 
                 // Create and setup the Text Display entity
                 if(focusDisplay != null) focusDisplay.getRawDisplay().remove(RemovalReason.KILLED);
@@ -264,17 +280,35 @@ public class Shop {
                 findDisplayEntityIfNeeded();
                 if(itemDisplay != null) itemDisplay.enterFocusState();
             }
-            else {
-
-                // Despawn the text display
+            else if(menuStatusNext == MenuStatus.OWNER_EDIT) {
                 focusDisplay.despawn();
-
-                // Start item animation and turn the CustomName back on
-                findDisplayEntityIfNeeded();
-                if(itemDisplay != null) itemDisplay.leaveFocusState();
+                Scheduler.schedule(DetailsDisplay.D_TIME, () -> {
+                    //TODO spawn menus
+                    //FIXME replace current system with a generic "despawn current menu / open new menu" system
+                });
             }
-            focusedState = focusedStateNext;
+            else if(menuStatusNext == MenuStatus.CLIENT_BUY) {
+                focusDisplay.despawn();
+                Scheduler.schedule(DetailsDisplay.D_TIME, () -> {
+                    //TODO spawn menus
+                    //FIXME replace current system with a generic "despawn current menu / open new menu" system
+                });
+            }
+            else if(menuStatusNext == MenuStatus.IDLE) {
+                if(menuStatus == MenuStatus.DETAILS) {
+
+                    // Despawn the text display
+                    focusDisplay.despawn();
+
+                    // Start item animation and turn the CustomName back on
+                    findDisplayEntityIfNeeded();
+                    if(itemDisplay != null) itemDisplay.leaveFocusState();
+                }
+            }
+            menuStatus = menuStatusNext;
         }
+
+
     }
 
 

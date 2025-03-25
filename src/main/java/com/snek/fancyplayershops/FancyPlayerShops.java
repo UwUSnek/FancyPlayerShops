@@ -4,6 +4,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -12,6 +13,7 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.ClickType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -88,8 +90,16 @@ public class FancyPlayerShops implements ModInitializer {
         // Create and register shop block rclick event
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             ActionResult r;
-            r = onItemUse(world, player, hand, hitResult);
-            if(r == ActionResult.PASS) r = ClickFeatures.onRclick(world, player, hand, hitResult);
+            r = ClickFeatures.onClick(world, player, hand, hitResult, ClickType.RIGHT); //FIXME add ghost cooldown. add to lclick too
+            if(r == ActionResult.PASS) r = onItemUse(world, player, hand, hitResult);
+            return r;
+        });
+
+
+        // Create and register shop block rclick event
+        AttackBlockCallback.EVENT.register((player, world, hand, blockPos, diretion) -> {
+            ActionResult r;
+            r = ClickFeatures.onClick(world, player, hand, blockPos, ClickType.LEFT); //FIXME add ghost cooldown. add to lclick too
             return r;
         });
 

@@ -152,9 +152,7 @@ public abstract class CustomDisplay {
         }
 
         // Schedule entity removal
-        int totScheduledDuration = 0;
-        for (Transition t : animation.despawn.transitions) totScheduledDuration += t.getDuration(); //TODO this should prob be a method of a custom transition list class
-        Scheduler.schedule(totScheduledDuration, () -> { heldEntity.remove(RemovalReason.KILLED); });
+        Scheduler.schedule(animation.despawn.getTotalDuration(), () -> { heldEntity.remove(RemovalReason.KILLED); });
     }
 
 

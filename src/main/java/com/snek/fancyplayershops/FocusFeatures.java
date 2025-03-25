@@ -143,7 +143,9 @@ public class FocusFeatures {
 
         // Set all previously focused shops's next focus state to false
         for (Shop shop : targetedShopsOld) {
-            shop.focusedStateNext = false;
+            if(shop.menuStatus == MenuStatus.DETAILS) {
+                shop.menuStatusNext = MenuStatus.IDLE;
+            }
         }
 
         // Find currently focused shops and set their next focus state to true
@@ -151,8 +153,8 @@ public class FocusFeatures {
         for (ServerWorld serverWorld : serverWorlds) {
             for (PlayerEntity player : serverWorld.getPlayers()) {
                 Shop targetShop = FocusFeatures.getLookedAtShop(player, serverWorld);
-                if(targetShop != null) {
-                    targetShop.focusedStateNext = true;
+                if(targetShop != null && targetShop.menuStatusNext == MenuStatus.IDLE) { //! Check next instead of current as the previous look could have changed that
+                    targetShop.menuStatusNext = MenuStatus.DETAILS;
                     targetedShops.add(targetShop);
                 }
             }
@@ -160,10 +162,10 @@ public class FocusFeatures {
 
         // Update the displays of all the previously and currently focused shops to their next state and update the targeted shops list
         for (Shop shop : targetedShopsOld) {
-            shop.updateFocusStatus();
+            shop.updateMenuStatus();
         }
         for (Shop shop : targetedShops) {
-            shop.updateFocusStatus();
+            shop.updateMenuStatus();
         }
         targetedShopsOld = targetedShops;
     }
