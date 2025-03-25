@@ -39,7 +39,7 @@ public class FancyPlayerShops implements ModInitializer {
     public static final ItemStack shopItem = new ItemStack(SHOP_ITEM_ID);
     public static final String SHOP_ITEM_NBT_KEY = MOD_ID + ".item.shop_item";
     static {
-        shopItem.setCustomName(new Txt("Shop shelf").get());
+        shopItem.setCustomName(new Txt("Shop").get());
         NbtCompound nbt = shopItem.getOrCreateNbt();
         nbt.putBoolean(SHOP_ITEM_NBT_KEY, true);
     }
@@ -87,7 +87,10 @@ public class FancyPlayerShops implements ModInitializer {
 
         // Create and register shop block rclick event
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-            return onItemUse(world, player, hand, hitResult);
+            ActionResult r;
+            r = onItemUse(world, player, hand, hitResult);
+            if(r == ActionResult.PASS) r = ClickFeatures.onRclick(world, player, hand, hitResult);
+            return r;
         });
 
 
@@ -113,6 +116,7 @@ public class FancyPlayerShops implements ModInitializer {
         ItemStack stack = player.getStackInHand(hand);
         if (stack.getItem() == SHOP_ITEM_ID && stack.hasNbt() && stack.getNbt().contains(SHOP_ITEM_NBT_KEY)) {
             if(world instanceof ServerWorld) {
+                stack.setCount(stack.getCount() - 1);
                 BlockPos blockPos = hitResult.getBlockPos().add(hitResult.getSide().getVector());
                 new Shop((ServerWorld)world, blockPos, player);
                 player.sendMessage(new Txt("New shop created! Right click it to configure.").green().get());

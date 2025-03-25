@@ -137,7 +137,7 @@ public class DetailsDisplay extends CustomTextDisplay {
             if(
                 world != null &&
                 !DetailsDisplay.activeFocusDisplays.contains(entity.getUuid()) &&
-                Shop.findShop(entity.getBlockPos(), world.getRegistryKey().getValue().toString()) != null
+                Shop.findShop(entity.getBlockPos(), world) != null
             ) {
                 entity.remove(RemovalReason.KILLED);
             }

@@ -10,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.UUID;
 
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +31,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 
 
 
@@ -75,7 +75,7 @@ public class Shop {
     private transient ItemStack item = DEFAULT_ITEM;
     private String serializedItem;
     private double price = 0;
-    private int stock = Math.abs(new Random().nextInt()) % 1000;
+    private int stock = 0;
 
     private transient boolean focusedState = false;
     public  transient boolean focusedStateNext = false;
@@ -240,6 +240,9 @@ public class Shop {
     */
     public static Shop findShop(BlockPos pos, String worldId) {
         return shopsByCoords.get(calcShopIdentifier(pos, worldId));
+    }
+    public static Shop findShop(BlockPos pos, World world) {
+        return findShop(pos, world.getRegistryKey().getValue().toString());
     }
 
 

@@ -121,7 +121,7 @@ public class FocusFeatures {
                 Vec3i blockPos = Utils.doubleToBlockCoords(pos);
                 for (ItemDisplayEntity e : entitiyList) {
                     if(e.getBlockPos().equals(blockPos)) {
-                        return Shop.findShop(new BlockPos(blockPos), world.getRegistryKey().getValue().toString());
+                        return Shop.findShop(new BlockPos(blockPos), world);
                     }
                 }
             }
