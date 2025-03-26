@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.snek.framework.data_types.Animation;
 import com.snek.framework.data_types.Transform;
-import com.snek.framework.data_types.Transition;
+import com.snek.framework.data_types.TargetTransition;
 import com.snek.framework.ui.styles.AnimationData;
 import com.snek.framework.utils.Scheduler;
 import com.snek.framework.utils.TaskHandler;
@@ -98,7 +98,7 @@ public abstract class CustomDisplay {
 
         // Schedule the new transitions
         int totScheduledDuration = 0;
-        for (Transition t : animtion.transitions) {
+        for (TargetTransition t : animtion.transitions) {
             currentHandlers.add(Scheduler.schedule(totScheduledDuration, () -> {
                 setTransformation(t.transform.get());
                 apply(t.getDuration());
@@ -125,7 +125,7 @@ public abstract class CustomDisplay {
 
         // Schedule the new transitions
         int totScheduledDuration = 0;
-        for (Transition t : animation.transitions) {
+        for (TargetTransition t : animation.transitions) {
             currentHandlers.add(Scheduler.loop(totScheduledDuration, loopDuration, () -> {
                 setTransformation(t.transform.get());
                 apply(t.getDuration());

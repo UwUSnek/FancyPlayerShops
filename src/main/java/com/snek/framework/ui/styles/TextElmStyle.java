@@ -25,8 +25,8 @@ public class TextElmStyle extends ElmStyle {
     private @NotNull Flagged<Text>          text;
     private @NotNull Flagged<Integer>       textOpacity;
 
-    private static final Vector4i despawnBackground  = new Vector4i(0,  0, 0, 0);
-    private static final int      despawnOpacity     = 128;
+    private @NotNull Flagged<Vector4i>      despawnBackground;
+    private @NotNull Flagged<Integer>       despawnTextOpacity;
 
 
 
@@ -40,6 +40,9 @@ public class TextElmStyle extends ElmStyle {
         background  = Flagged.from(new Vector4i(200, 20, 20, 20));
         text        = Flagged.from(new Txt("").get());
         textOpacity = Flagged.from(256);
+
+        despawnBackground  = Flagged.from(new Vector4i(0,  0, 0, 0));
+        despawnTextOpacity = Flagged.from(128);
     }
 
 
@@ -61,8 +64,11 @@ public class TextElmStyle extends ElmStyle {
 
 
 
-    public void setAlignment  (TextAlignment _alignment  ) { alignment  .set(_alignment  ); }
-    public void setBackground (Vector4i      _background ) { background .set(_background ); }
-    public void setText       (Text          _text       ) { text       .set(_text       ); }
-    public void setTextOpacity(int           _textOpacity) { textOpacity.set(_textOpacity); }
+    public TextElmStyle setAlignment  (TextAlignment _alignment  ) { alignment  .set(_alignment  ); return this; }
+    public TextElmStyle setBackground (Vector4i      _background ) { background .set(_background ); return this; }
+    public TextElmStyle setText       (Text          _text       ) { text       .set(_text       ); return this; }
+    public TextElmStyle setTextOpacity(int           _textOpacity) { textOpacity.set(_textOpacity); return this; }
+
+    public TextElmStyle setDespawnTextOpacity(int      _despawnTextOpacity) { despawnTextOpacity.set(_despawnTextOpacity); return this; }
+    public TextElmStyle setDespawnBackground (Vector4i _despawnBackground ) { despawnBackground .set(_despawnBackground ); return this; }
 }

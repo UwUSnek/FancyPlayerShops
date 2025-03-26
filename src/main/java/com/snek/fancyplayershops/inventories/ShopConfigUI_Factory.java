@@ -1,4 +1,4 @@
-package com.snek.fancyplayershops.Containers;
+package com.snek.fancyplayershops.inventories;
 
 import com.snek.framework.utils.Txt;
 

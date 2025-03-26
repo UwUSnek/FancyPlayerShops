@@ -60,24 +60,33 @@ public class Transform {
 
 
     /**
-     * Applies a transformation to this transform.
+     * Applies a transformation to this.
      * @param t The transform to apply
+     * @return this.
      */
-    public void apply(Transform t) {
+    public Transform apply(Transform t) {
         move(t._pos);
         rot(t._lrot);
         scale(t._scale);
         rrot(t._rrot);
+        return this;
     }
 
 
 
 
-    public void interpolate(Transform target, float factor) {
+    /**
+     * Applies a linear interpolation to this.
+     * @param target The target transform.
+     * @param factor The factor. Using 0 will return a copy of this, using 1 will return a copy of target
+     * @return this.
+     */
+    public Transform interpolate(Transform target, float factor) {
         _pos  .lerp (target._pos,   factor);
         _lrot .slerp(target._lrot,  factor);
         _scale.lerp (target._scale, factor);
         _rrot .slerp(target._rrot,  factor);
+        return this;
     }
 
 

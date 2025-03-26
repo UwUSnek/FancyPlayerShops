@@ -4,7 +4,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.ServerCommandSource;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.snek.fancyplayershops.Containers.ShopConfigUI_Factory;
+import com.snek.fancyplayershops.inventories.ShopConfigUI_Factory;
 import com.snek.framework.utils.Txt;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
