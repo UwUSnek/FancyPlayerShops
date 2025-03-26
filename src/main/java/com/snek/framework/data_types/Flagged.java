@@ -15,13 +15,33 @@ public class Flagged<T> {
     }
 
 
+    /**
+     * Returns the current value without flagging the object.
+     * @return The value.
+     */
     public T get() {
         return value;
     }
 
+
+    /**
+     * Sets the falue and flags the object.
+     * @param _value The new value.
+     */
     public void set(T _value) {
         value = _value;
         flag = true;
+    }
+
+
+    /**
+     * Flags the object and returns a reference to its value.
+     * In case of immutable types, a copy is returned.
+     * @return The object.
+     */
+    public T edit() {
+        flag = true;
+        return value;
     }
 
 

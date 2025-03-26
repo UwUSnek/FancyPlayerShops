@@ -21,8 +21,20 @@ import net.minecraft.util.math.Vec3i;
 
 
 public class Utils {
-    public Utils() { throw new UnsupportedOperationException("Utility class \"FocusFeatures\" cannot be instantiated"); }
+    public Utils() { throw new UnsupportedOperationException("Utility class \"Utils\" cannot be instantiated"); }
 
+
+    /**
+     * Checks if a double value is within a certain threshold from a target value.
+     * This is used to avoid precision related problems when comparing double values.
+     * @param n The value to check
+     * @param target The target value
+     * @param threshold The threshold to use
+     * @return True if the value is withing the threshold, false otherwise
+     */
+    public static boolean doubleEquals(final double n, final double target, final double threshold) {
+        return !(n < target - threshold || n > target + threshold);
+    }
 
 
     /**

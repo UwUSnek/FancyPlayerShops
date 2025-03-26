@@ -19,7 +19,7 @@ import net.minecraft.world.World;
 
 
 public class ClickFeatures {
-    public ClickFeatures() { throw new UnsupportedOperationException("Utility class \"FocusFeatures\" cannot be instantiated"); }
+    public ClickFeatures() { throw new UnsupportedOperationException("Utility class \"ClickFeatures\" cannot be instantiated"); }
 
 
 

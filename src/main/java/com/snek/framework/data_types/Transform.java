@@ -59,12 +59,37 @@ public class Transform {
 
 
 
+    /**
+     * Applies a transformation to this transform.
+     * @param t The transform to apply
+     */
+    public void apply(Transform t) {
+        move(t._pos);
+        rot(t._lrot);
+        scale(t._scale);
+        rrot(t._rrot);
+    }
+
+
+
+
+    public void interpolate(Transform target, float factor) {
+        _pos  .lerp (target._pos,   factor);
+        _lrot .slerp(target._lrot,  factor);
+        _scale.lerp (target._scale, factor);
+        _rrot .slerp(target._rrot,  factor);
+    }
+
+
+
+
 
     // Left rotation
     public Transform rotX        (float x                  ) { _lrot.rotateX(x);                                  return this; }
     public Transform rotY        (float y                  ) { _lrot.rotateY(y);                                  return this; }
     public Transform rotZ        (float z                  ) { _lrot.rotateZ(z);                                  return this; }
     public Transform rot         (float x, float y, float z) { rotX(x); rotY(y); rotZ(z);                         return this; }
+    public Transform rot         (Quaternionf r            ) { _lrot.mul(r);                                      return this; }
 
     //TODO
     // public Transform setRotX  (float x                  ) { _lrot.rotateX(x);                                  return this; }
@@ -78,6 +103,7 @@ public class Transform {
     public Transform moveY       (float y                  ) { _pos.y += y;                                       return this; }
     public Transform moveZ       (float z                  ) { _pos.z += z;                                       return this; }
     public Transform move        (float x, float y, float z) { moveX(x); moveY(y); moveZ(z);                      return this; }
+    public Transform move        (Vector3f s               ) { _pos.add(s);                                       return this; }
 
     public Transform setPosX     (float x                  ) { _pos.x = x;                                        return this; }
     public Transform setPosY     (float y                  ) { _pos.y = y;                                        return this; }
@@ -91,6 +117,7 @@ public class Transform {
     public Transform scaleZ      (float z                  ) { _scale.z *= z;                                     return this; }
     public Transform scale       (float x, float y, float z) { scaleX(x); scaleY(y); scaleZ(z);                   return this; }
     public Transform scale       (float n                  ) { scale(n, n, n);                                    return this; }
+    public Transform scale       (Vector3f s               ) { _scale.mul(s);                                     return this; }
 
     public Transform setScaleX   (float x                  ) { _scale.x = x;                                      return this; }
     public Transform setScaleY   (float y                  ) { _scale.y = y;                                      return this; }
@@ -104,6 +131,7 @@ public class Transform {
     public Transform rrotY       (float y                  ) { _rrot.rotateY(y);                                  return this; }
     public Transform rrotZ       (float z                  ) { _rrot.rotateZ(z);                                  return this; }
     public Transform rrot        (float x, float y, float z) { rrotX(x); rrotY(y); rrotZ(z);                      return this; }
+    public Transform rrot        (Quaternionf r            ) { _rrot.mul(r);                                      return this; }
 
     //TODO
     // public Transform setRrotX (float x                  ) { _rrot.setAngleAxis(x);                             return this; }

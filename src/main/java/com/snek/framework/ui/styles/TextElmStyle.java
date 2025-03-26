@@ -6,6 +6,7 @@ import org.joml.Vector4i;
 import com.snek.framework.custom_displays.CustomDisplay;
 import com.snek.framework.custom_displays.CustomTextDisplay;
 import com.snek.framework.data_types.Flagged;
+import com.snek.framework.utils.Txt;
 
 import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity.TextAlignment;
@@ -19,10 +20,15 @@ import net.minecraft.text.Text;
 
 
 public class TextElmStyle extends ElmStyle {
-    private @NotNull Flagged<TextAlignment> alignment   = Flagged.from(TextAlignment.CENTER);
-    private @NotNull Flagged<Vector4i>      background  = Flagged.from();
-    private @NotNull Flagged<Text>          text        = Flagged.from();
-    private @NotNull Flagged<Integer>       textOpacity = Flagged.from();
+    private @NotNull Flagged<TextAlignment> alignment;
+    private @NotNull Flagged<Vector4i>      background;
+    private @NotNull Flagged<Text>          text;
+    private @NotNull Flagged<Integer>       textOpacity;
+
+    private static final Vector4i despawnBackground  = new Vector4i(0,  0, 0, 0);
+    private static final int      despawnOpacity     = 128;
+
+
 
 
     /**
@@ -30,6 +36,10 @@ public class TextElmStyle extends ElmStyle {
      */
     public TextElmStyle() {
         super();
+        alignment   = Flagged.from(TextAlignment.CENTER);
+        background  = Flagged.from(new Vector4i(200, 20, 20, 20));
+        text        = Flagged.from(new Txt("").get());
+        textOpacity = Flagged.from(256);
     }
 
 

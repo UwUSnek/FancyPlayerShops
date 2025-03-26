@@ -19,18 +19,18 @@ import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 
 
 public class ElmStyle {
+    private @NotNull Flagged<Transform>     transform;
+    private @Nullable final Animation spawnAnimation;
+    private @Nullable final Animation despawnAnimation;
     private @NotNull Flagged<Float>         viewRange;
     private @NotNull Flagged<BillboardMode> billboardMode;
 
 
     private static final float S_SCALE  = 1.02f;
     private static final float S_HEIGHT = 0.05f;
-    private static final int S_TIME     = 4; // Measured in ticks. MUST BE EVEN
-    private static final int D_TIME     = 8; // Measured in ticks. MUST BE EVEN
+    private static final int   S_TIME   = 4; // Measured in ticks. MUST BE EVEN
+    private static final int   D_TIME   = 8; // Measured in ticks. MUST BE EVEN
 
-    private @NotNull  final Transform startingTransform = new Transform().scale(0.5f);
-    private @Nullable final Animation spawnAnimation    = new Animation(new Transition(startingTransform.clone().moveY(S_HEIGHT).scale(S_SCALE), S_TIME));
-    private @Nullable final Animation despawnAnimation  = new Animation(new Transition(startingTransform, D_TIME));
 
 
 
@@ -39,8 +39,13 @@ public class ElmStyle {
      * Creates a new default ElmStyle.
      */
     public ElmStyle() {
+        transform     = Flagged.from(new Transform().scale(0.5f));
         viewRange     = Flagged.from(0.3f);
         billboardMode = Flagged.from(BillboardMode.FIXED);
+
+        transform.get().get().interpolate()
+        spawnAnimation    = new Animation(new Transition(transform.get().clone().moveY(S_HEIGHT).scale(S_SCALE), S_TIME));
+        despawnAnimation  = new Animation(new Transition(transform.get(), D_TIME));
     }
 
 
@@ -52,13 +57,17 @@ public class ElmStyle {
      * @param e The entity.
      */
     public void flushStyle(CustomDisplay e) {
-        if(viewRange    .isFlagged()) e.setViewRange    (viewRange    .get()); viewRange    .unflag();
-        if(billboardMode.isFlagged()) e.setBillboardMode(billboardMode.get()); billboardMode.unflag();
+        if(transform    .isFlagged()) e.setTransformation(transform    .get().get()); transform    .unflag();
+        if(viewRange    .isFlagged()) e.setViewRange     (viewRange    .get()      ); viewRange    .unflag();
+        if(billboardMode.isFlagged()) e.setBillboardMode (billboardMode.get()      ); billboardMode.unflag();
     }
 
 
 
 
+    public Transform editTransform() {
+        return transform.edit();
+    }
     public void setViewRange    (float         _viewRange    ) { viewRange    .set(_viewRange    ); }
     public void setBillboardMode(BillboardMode _billboardMode) { billboardMode.set(_billboardMode); }
 }
