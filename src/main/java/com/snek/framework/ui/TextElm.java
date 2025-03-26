@@ -1,6 +1,8 @@
-package com.snek.fancyplayershops.UI;
+package com.snek.framework.ui;
 
 import com.snek.fancyplayershops.Shop;
+
+import net.minecraft.server.world.ServerWorld;
 
 
 
@@ -17,8 +19,8 @@ public class TextElm extends Elm {
 
 
 
-    public TextElm(Shop _shop){
-        super(_shop);
+    public TextElm(ServerWorld _world){
+        super(_world);
     }
 
 

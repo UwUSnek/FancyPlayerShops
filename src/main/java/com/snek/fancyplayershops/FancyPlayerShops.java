@@ -22,9 +22,9 @@ import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.snek.fancyplayershops.UI.DetailsDisplay;
-import com.snek.fancyplayershops.utils.Scheduler;
-import com.snek.fancyplayershops.utils.Txt;
+import com.snek.framework.ui.DetailsDisplay;
+import com.snek.framework.utils.Scheduler;
+import com.snek.framework.utils.Txt;
 
 
 

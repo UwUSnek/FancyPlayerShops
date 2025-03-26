@@ -1,4 +1,4 @@
-package com.snek.fancyplayershops.UI;
+package com.snek.framework.ui;
 
 import java.util.HashSet;
 import java.util.UUID;
@@ -9,13 +9,12 @@ import org.joml.Vector3i;
 import org.joml.Vector4i;
 
 import com.snek.fancyplayershops.Shop;
-import com.snek.fancyplayershops.CustomDisplays.CustomTextDisplay;
-import com.snek.fancyplayershops.CustomDisplays.Animation;
-import com.snek.fancyplayershops.CustomDisplays.AnimationData;
-import com.snek.fancyplayershops.CustomDisplays.Transform;
-import com.snek.fancyplayershops.CustomDisplays.Transition;
-import com.snek.fancyplayershops.utils.Txt;
-import com.snek.fancyplayershops.utils.Utils;
+import com.snek.framework.data_types.Animation;
+import com.snek.framework.custom_displays.CustomTextDisplay;
+import com.snek.framework.data_types.Transform;
+import com.snek.framework.data_types.Transition;
+import com.snek.framework.utils.Txt;
+import com.snek.framework.utils.Utils;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.Entity.RemovalReason;
@@ -65,7 +64,7 @@ public class DetailsDisplay extends CustomTextDisplay {
             DEFAULT_TRANSFORM,
             BillboardMode.VERTICAL,
             false,
-            new AnimationData(
+            new com.snek.framework.ui.styles.AnimationData(
                 new Animation(new Transition(DEFAULT_TRANSFORM.clone().moveY(S_HEIGHT).scale(S_SCALE), S_TIME)),
                 null,
                 new Animation(new Transition(DEFAULT_TRANSFORM, D_TIME))

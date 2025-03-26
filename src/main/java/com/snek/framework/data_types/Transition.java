@@ -1,4 +1,4 @@
-package com.snek.fancyplayershops.CustomDisplays;
+package com.snek.framework.data_types;
 
 import org.jetbrains.annotations.NotNull;
 

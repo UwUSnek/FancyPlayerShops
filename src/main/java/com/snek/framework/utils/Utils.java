@@ -1,4 +1,4 @@
-package com.snek.fancyplayershops.utils;
+package com.snek.framework.utils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

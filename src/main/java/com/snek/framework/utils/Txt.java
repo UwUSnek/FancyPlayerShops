@@ -1,4 +1,4 @@
-package com.snek.fancyplayershops.utils;
+package com.snek.framework.utils;
 
 import org.joml.Vector3i;
 

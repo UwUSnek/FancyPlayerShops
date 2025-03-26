@@ -4,15 +4,15 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.snek.fancyplayershops.CustomDisplays.CustomItemDisplay;
-import com.snek.fancyplayershops.CustomDisplays.AnimationData;
 import com.snek.fancyplayershops.Shop;
-import com.snek.fancyplayershops.CustomDisplays.Animation;
-import com.snek.fancyplayershops.CustomDisplays.Transform;
-import com.snek.fancyplayershops.CustomDisplays.Transition;
-import com.snek.fancyplayershops.UI.DetailsDisplay;
-import com.snek.fancyplayershops.utils.Scheduler;
-import com.snek.fancyplayershops.utils.Utils;
+import com.snek.framework.custom_displays.Animation;
+import com.snek.framework.custom_displays.CustomItemDisplay;
+import com.snek.framework.custom_displays.ElmStyle;
+import com.snek.framework.custom_displays.Transform;
+import com.snek.framework.custom_displays.Transition;
+import com.snek.framework.ui.DetailsDisplay;
+import com.snek.framework.utils.Scheduler;
+import com.snek.framework.utils.Utils;
 
 import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
 import net.minecraft.item.ItemStack;

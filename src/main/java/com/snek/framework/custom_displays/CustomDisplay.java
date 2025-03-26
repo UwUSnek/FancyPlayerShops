@@ -1,4 +1,4 @@
-package com.snek.fancyplayershops.CustomDisplays;
+package com.snek.framework.custom_displays;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -7,9 +7,13 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.snek.fancyplayershops.utils.Scheduler;
-import com.snek.fancyplayershops.utils.TaskHandler;
-import com.snek.fancyplayershops.utils.Utils;
+import com.snek.framework.data_types.Animation;
+import com.snek.framework.data_types.Transform;
+import com.snek.framework.data_types.Transition;
+import com.snek.framework.ui.styles.AnimationData;
+import com.snek.framework.utils.Scheduler;
+import com.snek.framework.utils.TaskHandler;
+import com.snek.framework.utils.Utils;
 
 import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.decoration.Brightness;

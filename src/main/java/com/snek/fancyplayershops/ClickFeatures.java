@@ -1,6 +1,6 @@
 package com.snek.fancyplayershops;
 
-import com.snek.fancyplayershops.utils.Txt;
+import com.snek.framework.utils.Txt;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;

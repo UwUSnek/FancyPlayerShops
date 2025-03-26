@@ -1,4 +1,4 @@
-package com.snek.fancyplayershops.UI;
+package com.snek.framework.ui;
 
 import java.util.ArrayList;
 import java.util.List;

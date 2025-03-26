@@ -1,4 +1,4 @@
-package com.snek.fancyplayershops.UI;
+package com.snek.framework.ui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +24,8 @@ public class Elm {
     @NotNull  private ServerWorld world;
 
 
-    public Elm(@NotNull Shop _shop) {
-        shop = _shop;
-        world = _shop.getWorld();
+    public Elm(@NotNull ServerWorld _world) {
+        world = _world;
     }
 
 

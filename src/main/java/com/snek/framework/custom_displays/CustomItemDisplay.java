@@ -1,11 +1,13 @@
-package com.snek.fancyplayershops.CustomDisplays;
+package com.snek.framework.custom_displays;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.snek.fancyplayershops.utils.Utils;
+import com.snek.framework.data_types.Transform;
+import com.snek.framework.ui.styles.AnimationData;
+import com.snek.framework.utils.Utils;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;

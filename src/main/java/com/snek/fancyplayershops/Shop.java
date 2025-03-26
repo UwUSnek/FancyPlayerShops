@@ -19,9 +19,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
 import com.snek.fancyplayershops.ShopComponentEntities.ShopItemDisplay;
-import com.snek.fancyplayershops.UI.DetailsDisplay;
-import com.snek.fancyplayershops.utils.Scheduler;
-import com.snek.fancyplayershops.utils.Txt;
+import com.snek.framework.ui.DetailsDisplay;
+import com.snek.framework.utils.Scheduler;
+import com.snek.framework.utils.Txt;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.Entity.RemovalReason;

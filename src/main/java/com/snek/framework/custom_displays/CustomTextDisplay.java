@@ -1,4 +1,4 @@
-package com.snek.fancyplayershops.CustomDisplays;
+package com.snek.framework.custom_displays;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -6,11 +6,14 @@ import java.lang.reflect.Method;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector4i;
 
-import com.snek.fancyplayershops.utils.Utils;
+import com.snek.framework.data_types.Transform;
+import com.snek.framework.ui.styles.AnimationData;
+import com.snek.framework.utils.Utils;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity;
+import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity.TextAlignment;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -28,16 +31,18 @@ public class CustomTextDisplay extends CustomDisplay {
 
 
     static private Method method_setText;
+    static private Method method_setAlignment;
     static private Method method_setTextOpacity;
     static private Method method_getTextOpacity;
     static private Method method_setBackground;
     static private Method method_getBackground;
     static {
         try {
-            method_setText          = TextDisplayEntity.class.getDeclaredMethod("setText",                   Text.class);
-            method_setTextOpacity   = TextDisplayEntity.class.getDeclaredMethod("setTextOpacity",            byte.class);
+            method_setText          = TextDisplayEntity.class.getDeclaredMethod("setText",               Text.class);
+            method_setAlignment     = TextDisplayEntity.class.getDeclaredMethod("setAlignment", TextAlignment.class);
+            method_setTextOpacity   = TextDisplayEntity.class.getDeclaredMethod("setTextOpacity",        byte.class);
             method_getTextOpacity   = TextDisplayEntity.class.getDeclaredMethod("getTextOpacity");
-            method_setBackground    = TextDisplayEntity.class.getDeclaredMethod("setBackground",              int.class);
+            method_setBackground    = TextDisplayEntity.class.getDeclaredMethod("setBackground",          int.class);
             method_getBackground    = TextDisplayEntity.class.getDeclaredMethod("getBackground");
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -45,6 +50,7 @@ public class CustomTextDisplay extends CustomDisplay {
             e.printStackTrace();
         }
         method_setText.setAccessible(true);
+        method_setAlignment.setAccessible(true);
         method_setTextOpacity.setAccessible(true);
         method_getTextOpacity.setAccessible(true);
         method_setBackground.setAccessible(true);
@@ -113,6 +119,13 @@ public class CustomTextDisplay extends CustomDisplay {
 
     public void setBackground(@NotNull Vector4i argb) {
         Utils.invokeSafe(method_setBackground, rawDisplay, (argb.x << 24) | (argb.y << 16) | (argb.z << 8) | argb.w);
+    }
+
+
+
+
+    public void setAlignment(@NotNull TextAlignment alignment) {
+        Utils.invokeSafe(method_setAlignment, rawDisplay, alignment);
     }
 
 
