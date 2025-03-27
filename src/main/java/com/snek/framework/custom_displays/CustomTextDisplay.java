@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Vector4i;
 
 import com.snek.framework.data_types.Transform;
-import com.snek.framework.ui.styles.AnimationData;
 import com.snek.framework.utils.Utils;
 
 import net.minecraft.entity.EntityType;
@@ -26,8 +25,8 @@ import net.minecraft.world.World;
 
 
 public class CustomTextDisplay extends CustomDisplay {
-    protected @NotNull TextDisplayEntity rawDisplay;
-    public @NotNull TextDisplayEntity getRawDisplay() { return rawDisplay; }
+    // protected @NotNull TextDisplayEntity rawDisplay;
+    public @NotNull TextDisplayEntity getRawDisplay() { return (TextDisplayEntity)heldEntity; }
 
 
     static private Method method_setText;
@@ -60,25 +59,30 @@ public class CustomTextDisplay extends CustomDisplay {
 
 
 
-    public CustomTextDisplay(@NotNull TextDisplayEntity _rawDisplay, @NotNull AnimationData _animation) {
-        super(_rawDisplay, new Transform(), _animation);
-        rawDisplay = _rawDisplay;
+    // public CustomTextDisplay(@NotNull TextDisplayEntity _rawDisplay, @NotNull AnimationData _animation) {
+    public CustomTextDisplay(@NotNull TextDisplayEntity _rawDisplay) {
+        // super(_rawDisplay, new Transform(), _animation);
+        super(_rawDisplay);
+        // rawDisplay = _rawDisplay;
     }
-    public CustomTextDisplay(@NotNull World world, @NotNull Text text, @NotNull Vec3d pos, @NotNull Transform _defaultTransform, @NotNull BillboardMode billboardMode, boolean glowing, @NotNull AnimationData _animation) {
-        super(new TextDisplayEntity(EntityType.TEXT_DISPLAY, world), _defaultTransform, _animation);
-        rawDisplay = (TextDisplayEntity)heldEntity;
-        rawDisplay.setGlowing(glowing);
-        rawDisplay.setPosition(pos);
-        setText(text);
-        setBillboardMode(billboardMode);
+    public CustomTextDisplay(@NotNull World _world) {
+        super(new TextDisplayEntity(EntityType.TEXT_DISPLAY, _world));
     }
+    // public CustomTextDisplay(@NotNull World world, @NotNull Text text, @NotNull Vec3d pos, @NotNull Transform _defaultTransform, @NotNull BillboardMode billboardMode, boolean glowing, @NotNull AnimationData _animation) {
+    //     super(new TextDisplayEntity(EntityType.TEXT_DISPLAY, world), _defaultTransform, _animation);
+    //     rawDisplay = (TextDisplayEntity)heldEntity;
+    //     rawDisplay.setGlowing(glowing);
+    //     rawDisplay.setPosition(pos);
+    //     setText(text);
+    //     setBillboardMode(billboardMode);
+    // }
 
 
 
 
     public void setText(@NotNull Text text) {
         try {
-            method_setText.invoke(rawDisplay, text);
+            method_setText.invoke(getRawDisplay(), text);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (IllegalArgumentException e) {
@@ -103,14 +107,14 @@ public class CustomTextDisplay extends CustomDisplay {
      */
     public void setTextOpacity(int a) {
         int a2 = Math.max(26, a);
-        Utils.invokeSafe(method_setTextOpacity, rawDisplay, (byte)(a2 > 127 ? a2 - 256 : a2));
+        Utils.invokeSafe(method_setTextOpacity, getRawDisplay(), (byte)(a2 > 127 ? a2 - 256 : a2));
     }
 
 
 
 
     public int getTextOpacity() {
-        int a = (int)(byte)Utils.invokeSafe(method_getTextOpacity, rawDisplay);
+        int a = (int)(byte)Utils.invokeSafe(method_getTextOpacity, getRawDisplay());
         return a < 0 ? a + 256 : a;
     }
 
@@ -118,21 +122,21 @@ public class CustomTextDisplay extends CustomDisplay {
 
 
     public void setBackground(@NotNull Vector4i argb) {
-        Utils.invokeSafe(method_setBackground, rawDisplay, (argb.x << 24) | (argb.y << 16) | (argb.z << 8) | argb.w);
+        Utils.invokeSafe(method_setBackground, getRawDisplay(), (argb.x << 24) | (argb.y << 16) | (argb.z << 8) | argb.w);
     }
 
 
 
 
     public void setAlignment(@NotNull TextAlignment alignment) {
-        Utils.invokeSafe(method_setAlignment, rawDisplay, alignment);
+        Utils.invokeSafe(method_setAlignment, getRawDisplay(), alignment);
     }
 
 
 
 
     public @NotNull Vector4i getBackground() {
-        int bg = (int)Utils.invokeSafe(method_getBackground, rawDisplay);
+        int bg = (int)Utils.invokeSafe(method_getBackground, getRawDisplay());
         return new Vector4i((bg >> 24) & 0xFF, (bg >> 16) & 0xFF, (bg >> 8) & 0xFF, bg & 0xFF);
     }
 }

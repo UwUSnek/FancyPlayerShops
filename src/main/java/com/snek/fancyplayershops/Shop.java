@@ -18,8 +18,8 @@ import org.jetbrains.annotations.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
+import com.snek.fancyplayershops.ShopComponentEntities.DetailsDisplay;
 import com.snek.fancyplayershops.ShopComponentEntities.ShopItemDisplay;
-import com.snek.framework.ui.DetailsDisplay;
 import com.snek.framework.utils.Scheduler;
 import com.snek.framework.utils.Txt;
 

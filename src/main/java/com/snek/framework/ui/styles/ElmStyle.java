@@ -20,12 +20,12 @@ import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 
 
 public class ElmStyle {
-    private @NotNull  Flagged<Transform>     transform;
-    private @Nullable Flagged<Animation>     spawnAnimation;
-    private @Nullable Flagged<Animation>     despawnAnimation;
+    private @NotNull  Transform     transform;
+    private @NotNull  Float         viewRange;
+    private @NotNull  BillboardMode billboardMode;
 
-    private @NotNull  Flagged<Float>         viewRange;
-    private @NotNull  Flagged<BillboardMode> billboardMode;
+    private @Nullable Animation     spawnAnimation;
+    private @Nullable Animation     despawnAnimation;
 
 
     private static final float S_SCALE  = 1.02f;
@@ -40,35 +40,31 @@ public class ElmStyle {
      * Creates a new default ElmStyle.
      */
     public ElmStyle() {
-        transform        = Flagged.from(new Transform().scale(0.5f));
-        viewRange        = Flagged.from(0.3f);
-        billboardMode    = Flagged.from(BillboardMode.FIXED);
+        transform        = new Transform().scale(0.5f);
+        viewRange        = 0.3f;
+        billboardMode    = BillboardMode.FIXED;
 
-        spawnAnimation   = Flagged.from(new Animation(new TargetTransition(new Transform().moveY(S_HEIGHT).scale(S_SCALE), S_TIME, Easings.linear))); //TODO use better easing
-        despawnAnimation = Flagged.from(new Animation(new TargetTransition(transform.get(),                                D_TIME, Easings.linear))); //TODO use better easing
+        spawnAnimation   = new Animation(new TargetTransition(new Transform().moveY(S_HEIGHT).scale(S_SCALE), S_TIME, Easings.linear)); //TODO use better easing
+        despawnAnimation = new Animation(new TargetTransition(transform,                                      D_TIME, Easings.linear)); //TODO use better easing
     }
 
 
 
 
-    /**
-     * Flushes changeable style values to the entity.
-     * This does not start an interpolation.
-     * @param e The entity.
-     */
-    public void flushStyle(CustomDisplay e) {
-        if(transform    .isFlagged()) e.setTransformation(transform    .get().get()); transform    .unflag();
-        if(viewRange    .isFlagged()) e.setViewRange     (viewRange    .get()      ); viewRange    .unflag();
-        if(billboardMode.isFlagged()) e.setBillboardMode (billboardMode.get()      ); billboardMode.unflag();
-    }
+    public ElmStyle setTransform    (Transform     _transform    ) { transform     = _transform;     return this; }
+    public ElmStyle setViewRange    (float         _viewRange    ) { viewRange     = _viewRange;     return this; }
+    public ElmStyle setBillboardMode(BillboardMode _billboardMode) { billboardMode = _billboardMode; return this; }
+
+    public Transform     getTransform    () { return transform;     }
+    public float         getViewRange    () { return viewRange;     }
+    public BillboardMode getBillboardMode() { return billboardMode; }
 
 
 
 
-    public ElmStyle setTransform    (Transform     _transform    ) { transform    .set(_transform    ); return this;}
-    public ElmStyle setViewRange    (float         _viewRange    ) { viewRange    .set(_viewRange    ); return this;}
-    public ElmStyle setBillboardMode(BillboardMode _billboardMode) { billboardMode.set(_billboardMode); return this;}
+    public ElmStyle  setSpawnAnimation  (@Nullable Animation _animation) { spawnAnimation   = _animation; return this; }
+    public ElmStyle  setDespawnAnimation(@Nullable Animation _animation) { despawnAnimation = _animation; return this; }
 
-    public Animation editSpawnAnimation  () { return spawnAnimation  .edit(); }
-    public Animation editDespawnAnimation() { return despawnAnimation.edit(); }
+    public Animation getSpawnAnimation  () { return spawnAnimation;   }
+    public Animation getDespawnAnimation() { return despawnAnimation; }
 }

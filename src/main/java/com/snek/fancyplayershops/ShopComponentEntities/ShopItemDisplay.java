@@ -10,7 +10,6 @@ import com.snek.framework.custom_displays.CustomItemDisplay;
 import com.snek.framework.custom_displays.ElmStyle;
 import com.snek.framework.custom_displays.Transform;
 import com.snek.framework.custom_displays.Transition;
-import com.snek.framework.ui.DetailsDisplay;
 import com.snek.framework.utils.Scheduler;
 import com.snek.framework.utils.Utils;
 
