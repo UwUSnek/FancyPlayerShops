@@ -14,16 +14,18 @@ import java.util.UUID;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3d;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
-import com.snek.fancyplayershops.ShopComponentEntities.DetailsDisplay;
-import com.snek.fancyplayershops.ShopComponentEntities.ShopItemDisplay;
+import com.snek.fancyplayershops.implementations.ui.DetailsDisplay;
+import com.snek.fancyplayershops.implementations.ui.ShopItemDisplay;
 import com.snek.framework.utils.Scheduler;
 import com.snek.framework.utils.Txt;
 
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -73,7 +75,7 @@ public class Shop {
     private BlockPos pos;
     private transient String shopIdentifierCache;
     private transient String shopIdentifierCache_noWorld;
-    public Vec3d calcDisplayPos() { return new Vec3d(pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5); }
+    public Vector3d calcDisplayPos() { return new Vector3d(pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5); }
 
 
     // Shop data
@@ -87,8 +89,8 @@ public class Shop {
     // private transient boolean isFocused = false;
     private transient @Nullable DetailsDisplay focusDisplay = null; //TODO this might need to be a list
     public  transient @Nullable PlayerEntity           user = null;
-    public  transient @NotNull  MenuStatus       menuStatus = MenuStatus.IDLE;
-    public  transient @NotNull  MenuStatus   menuStatusNext = MenuStatus.IDLE;
+    public  transient           boolean         focusStatus = false;
+    public  transient           boolean     focusStatusNext = false;
 
 
     // Accessors
@@ -148,8 +150,8 @@ public class Shop {
 
         // Create and spawn the Item Display entity
         itemDisplay = new ShopItemDisplay(this);
-        itemDisplayUUID = itemDisplay.getRawDisplay().getUuid();
-        itemDisplay.spawn(world);
+        itemDisplayUUID = itemDisplay.getEntity().getUuid();
+        itemDisplay.spawn(calcDisplayPos());
 
         // Save the shop
         saveShop();
@@ -229,8 +231,8 @@ public class Shop {
                 }
 
                 // Recalculate transient members and update shop maps
-                retrievedShop.menuStatus     = MenuStatus.IDLE;
-                retrievedShop.menuStatusNext = MenuStatus.IDLE;
+                retrievedShop.focusStatus     = false;
+                retrievedShop.focusStatusNext = false;
                 retrievedShop.cacheShopIdentifier();
                 retrievedShop.calcDeserializedItem();
                 try {
@@ -264,65 +266,88 @@ public class Shop {
     /**
      * Spawns or removes the focus displays and starts item animations depending on the set next menu status.
      */
-    public void updateMenuStatus(){
-        if(menuStatus != menuStatusNext) {
-            if(menuStatusNext == MenuStatus.DETAILS) {
-                if(focusDisplay != null && menuStatusNext != MenuStatus.IDLE) {
-                    focusDisplay.despawn();
-                }
+    public void updateFocusState(){
+        if(focusStatus != focusStatusNext) {
+            if(focusStatusNext) {
 
                 // Create and setup the Text Display entity
-                if(focusDisplay != null) focusDisplay.getRawDisplay().remove(RemovalReason.KILLED);
+                // if(focusDisplay != null) focusDisplay.getRawEntity().despawn(); //FIXME force despawn if an entity already exists
                 focusDisplay = new DetailsDisplay(this);
-                focusDisplay.spawn(world);
+                focusDisplay.spawn(calcDisplayPos().add(0, 0.3d, 0));
 
                 // Start item animation and turn off the CustomName
-                findDisplayEntityIfNeeded();
-                if(itemDisplay != null) itemDisplay.enterFocusState();
+                findItemDisplayEntityIfNeeded().enterFocusState();
             }
-            else if(menuStatusNext == MenuStatus.OWNER_EDIT) {
+            else {
+                // Despawn the text display
                 focusDisplay.despawn();
-                Scheduler.schedule(DetailsDisplay.D_TIME, () -> {
-                    //TODO spawn menus
-                    //FIXME replace current system with a generic "despawn current menu / open new menu" system
-                });
-            }
-            else if(menuStatusNext == MenuStatus.CLIENT_BUY) {
-                focusDisplay.despawn();
-                Scheduler.schedule(DetailsDisplay.D_TIME, () -> {
-                    //TODO spawn menus
-                    //FIXME replace current system with a generic "despawn current menu / open new menu" system
-                });
-            }
-            else if(menuStatusNext == MenuStatus.IDLE) {
-                if(menuStatus == MenuStatus.DETAILS) {
 
-                    // Despawn the text display
-                    focusDisplay.despawn();
-
-                    // Start item animation and turn the CustomName back on
-                    findDisplayEntityIfNeeded();
-                    if(itemDisplay != null) itemDisplay.leaveFocusState();
-                }
+                // Start item animation and turn the CustomName back on
+                findItemDisplayEntityIfNeeded().leaveFocusState();
             }
-            menuStatus = menuStatusNext;
+            focusStatus = focusStatusNext;
         }
+        //     if(menuStatusNext == MenuStatus.DETAILS) {
+        //         if(focusDisplay != null && menuStatusNext != MenuStatus.IDLE) {
+        //             focusDisplay.despawn();
+        //         }
 
+        //         // Create and setup the Text Display entity
+        //         if(focusDisplay != null) focusDisplay.getRawDisplay().remove(RemovalReason.KILLED);
+        //         focusDisplay = new DetailsDisplay(this);
+        //         focusDisplay.spawn(world);
 
+        //         // Start item animation and turn off the CustomName
+        //         findDisplayEntityIfNeeded();
+        //         if(itemDisplay != null) itemDisplay.enterFocusState();
+        //     }
+        //     else if(menuStatusNext == MenuStatus.OWNER_EDIT) {
+        //         focusDisplay.despawn();
+        //         Scheduler.schedule(DetailsDisplay.D_TIME, () -> {
+        //             //TODO spawn menus
+        //             //FIXME replace current system with a generic "despawn current menu / open new menu" system
+        //         });
+        //     }
+        //     else if(menuStatusNext == MenuStatus.CLIENT_BUY) {
+        //         focusDisplay.despawn();
+        //         Scheduler.schedule(DetailsDisplay.D_TIME, () -> {
+        //             //TODO spawn menus
+        //             //FIXME replace current system with a generic "despawn current menu / open new menu" system
+        //         });
+        //     }
+        //     else if(menuStatusNext == MenuStatus.IDLE) {
+        //         if(menuStatus == MenuStatus.DETAILS) {
+
+        //             // Despawn the text display
+        //             focusDisplay.despawn();
+
+        //             // Start item animation and turn the CustomName back on
+        //             findDisplayEntityIfNeeded();
+        //             if(itemDisplay != null) itemDisplay.leaveFocusState();
+        //         }
+        //     }
+        //     menuStatus = menuStatusNext;
+        // }
     }
 
 
 
 
     /**
-     * Finds the display entity connected to this shop, only if this.itemDisplay is null.
+     * Finds the display entity connected to this shop and saves it to this.itemDisplay.
+     * If this.itemDisplay is null, a new ShopItemDisplay is created.
+     * @reutrn the item display.
      */
-    private void findDisplayEntityIfNeeded(){
+    private ShopItemDisplay findItemDisplayEntityIfNeeded(){
         if(itemDisplay == null) {
             ItemDisplayEntity rawItemDisplay = (ItemDisplayEntity)(world.getEntity(itemDisplayUUID));
-            if(rawItemDisplay != null) {
-                itemDisplay = new ShopItemDisplay(rawItemDisplay, null);
+            if(rawItemDisplay == null) {
+                itemDisplay = new ShopItemDisplay(this);
+            }
+            else {
+                itemDisplay = new ShopItemDisplay(this, rawItemDisplay);
             }
         }
+        return itemDisplay;
     }
 }

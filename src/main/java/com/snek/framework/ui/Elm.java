@@ -2,16 +2,14 @@ package com.snek.framework.ui;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
-import java.util.Stack;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
 
 import com.snek.framework.custom_displays.CustomDisplay;
-import com.snek.framework.data_types.AdditiveTransition;
 import com.snek.framework.data_types.Animation;
 import com.snek.framework.data_types.Flagged;
 import com.snek.framework.data_types.Transform;
@@ -60,6 +58,10 @@ public abstract class Elm {
         world  = _world;
         entity = _entity;
         style  = _style;
+
+        transform     = Flagged.from(style.getTransform());
+        viewRange     = Flagged.from(style.getViewRange());
+        billboardMode = Flagged.from(style.getBillboardMode());
     }
 
 
@@ -188,8 +190,8 @@ public abstract class Elm {
     /**
      * Spawns the element and its associated entities into the world.
      */
-    public void spawn() {
-        entity.spawn(world);
+    public void spawn(Vector3d pos) {
+        entity.spawn(world, pos);
     }
 
 
@@ -212,13 +214,21 @@ public abstract class Elm {
      * Must be called at the end of the tick every TRANSITION_REFRESH_TIME ticks.
      */
     public void tick() {
-        if(!transformQueue.isEmpty()) {
+        // if(!transformQueue.isEmpty()) {
             transform.set(transformQueue.removeFirst());
-        }
+            flushStyle();
+            entity.setInterpolationDuration(TRANSITION_REFRESH_TIME);
+            entity.setStartInterpolation();
 
-        flushStyle();
-        entity.setInterpolationDuration(TRANSITION_REFRESH_TIME);
-        entity.setStartInterpolation();
+            if(transformQueue.isEmpty()) {
+                elmUpdateQueue.remove(this);
+                isQueued = false;
+            }
+        // }
+        // else {
+        //     flushStyle();
+        //     elmUpdateQueue.remove(this);
+        // }
     }
 
 

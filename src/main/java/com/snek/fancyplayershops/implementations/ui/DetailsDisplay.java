@@ -1,6 +1,7 @@
-package com.snek.fancyplayershops.ShopComponentEntities;
+package com.snek.fancyplayershops.implementations.ui;
 
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3d;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
@@ -71,14 +72,15 @@ public class DetailsDisplay extends TextElm {
             .cat(new Txt("\nPrice: ")).cat(new Txt(Utils.formatPrice (targetShop.getPrice())).bold().color(C_RGB_PRICE))
             .cat(new Txt("\nStock: ")).cat(new Txt(Utils.formatAmount(targetShop.getStock())).bold().color((int)col.x, (int)col.y, (int)col.z))
         .get());
+        flushStyle();
     }
 
 
 
 
     @Override
-    public void spawn(){
-        super.spawn();
+    public void spawn(Vector3d pos){
+        super.spawn(pos);
         entity.setCustomName(new Txt(ENTITY_CUSTOM_NAME).get());
         entity.setCustomNameVisible(false);
 
@@ -116,6 +118,7 @@ public class DetailsDisplay extends TextElm {
             World world = entity.getWorld();
             if(
                 world != null &&
+                entity.getCustomName() != null &&
                 entity.getCustomName().getString() == ENTITY_CUSTOM_NAME &&
                 Shop.findShop(entity.getBlockPos(), world) != null
             ) {

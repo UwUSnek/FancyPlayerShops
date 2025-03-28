@@ -1,8 +1,10 @@
 package com.snek.framework.custom_displays;
 
 import java.lang.reflect.Method;
+import java.util.UUID;
 
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3d;
 
 import com.snek.framework.utils.Utils;
 
@@ -74,6 +76,15 @@ public abstract class CustomDisplay {
     }
 
 
+    /**
+     * Returns the UUID of the raw display entity.
+     * @return The UUID.
+     */
+    public UUID getUuid(){
+        return heldEntity.getUuid();
+    }
+
+
 
 
     // /**
@@ -132,8 +143,9 @@ public abstract class CustomDisplay {
 
 
 
-    public void spawn(@NotNull World world) {
+    public void spawn(@NotNull World world, Vector3d pos) {
         world.spawnEntity(heldEntity);
+        heldEntity.setPosition(pos.x, pos.y, pos.z);
 
         //TODO move to Elm
         // // Schedule transitions if present

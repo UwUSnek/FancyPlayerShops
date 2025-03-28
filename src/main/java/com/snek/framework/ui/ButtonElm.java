@@ -1,11 +1,8 @@
 package com.snek.framework.ui;
 
-import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3d;
 
-import com.snek.framework.custom_displays.CustomDisplay;
-import com.snek.framework.custom_displays.CustomTextDisplay;
 import com.snek.framework.ui.styles.ButtonElmStyle;
-import com.snek.framework.ui.styles.TextElmStyle;
 
 import net.minecraft.server.world.ServerWorld;
 
@@ -42,8 +39,8 @@ public class ButtonElm extends TextElm {
 
 
     @Override
-    public void spawn() {
-        super.spawn();
+    public void spawn(Vector3d pos) {
+        super.spawn(pos);
     }
 
 

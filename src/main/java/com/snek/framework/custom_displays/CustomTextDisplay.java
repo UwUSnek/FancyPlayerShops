@@ -27,18 +27,18 @@ public class CustomTextDisplay extends CustomDisplay {
 
 
     static private Method method_setText;
-    static private Method method_setAlignment;
+    // static private Method method_setAlignment;
     static private Method method_setTextOpacity;
     static private Method method_getTextOpacity;
     static private Method method_setBackground;
     static private Method method_getBackground;
     static {
         try {
-            method_setText          = TextDisplayEntity.class.getDeclaredMethod("setText",               Text.class);
-            method_setAlignment     = TextDisplayEntity.class.getDeclaredMethod("setAlignment", TextAlignment.class);
-            method_setTextOpacity   = TextDisplayEntity.class.getDeclaredMethod("setTextOpacity",        byte.class);
+            method_setText          = TextDisplayEntity.class.getDeclaredMethod("setText",                   Text.class);
+            // method_setAlignment     = TextDisplayEntity.class.getDeclaredMethod("setTextAlignment", TextAlignment.class);
+            method_setTextOpacity   = TextDisplayEntity.class.getDeclaredMethod("setTextOpacity",            byte.class);
             method_getTextOpacity   = TextDisplayEntity.class.getDeclaredMethod("getTextOpacity");
-            method_setBackground    = TextDisplayEntity.class.getDeclaredMethod("setBackground",          int.class);
+            method_setBackground    = TextDisplayEntity.class.getDeclaredMethod("setBackground",              int.class);
             method_getBackground    = TextDisplayEntity.class.getDeclaredMethod("getBackground");
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -46,7 +46,7 @@ public class CustomTextDisplay extends CustomDisplay {
             e.printStackTrace();
         }
         method_setText.setAccessible(true);
-        method_setAlignment.setAccessible(true);
+        // method_setAlignment.setAccessible(true);
         method_setTextOpacity.setAccessible(true);
         method_getTextOpacity.setAccessible(true);
         method_setBackground.setAccessible(true);
@@ -125,9 +125,9 @@ public class CustomTextDisplay extends CustomDisplay {
 
 
 
-    public void setAlignment(@NotNull TextAlignment alignment) {
-        Utils.invokeSafe(method_setAlignment, getRawDisplay(), alignment);
-    }
+    // public void setAlignment(@NotNull TextAlignment alignment) {
+    //     Utils.invokeSafe(method_setAlignment, getRawDisplay(), alignment);
+    // }
 
 
 

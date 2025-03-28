@@ -1,12 +1,9 @@
 package com.snek.framework.ui.styles;
 
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector4i;
 
-import com.snek.framework.utils.Txt;
-
-import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity.TextAlignment;
-import net.minecraft.text.Text;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 
 
 
@@ -15,11 +12,8 @@ import net.minecraft.text.Text;
 
 
 
-public class TextElmStyle extends ElmStyle {
-    private @NotNull TextAlignment alignment;
-    private @NotNull Vector4i      background;
-    private @NotNull Text          text;
-    private @NotNull int           textOpacity;
+public class ItemElmStyle extends ElmStyle {
+    private @NotNull ItemStack item;
 
     // private @NotNull Flagged<Vector4i>      despawnBackground;
     // private @NotNull Flagged<Integer>       despawnTextOpacity;
@@ -30,12 +24,9 @@ public class TextElmStyle extends ElmStyle {
     /**
      * Creates a new default TextElmStyle.
      */
-    public TextElmStyle() {
+    public ItemElmStyle() {
         super();
-        alignment   = TextAlignment.CENTER;
-        background  = new Vector4i(200, 20, 20, 20);
-        text        = new Txt("").get();
-        textOpacity = 256;
+        item   = Items.BARRIER.getDefaultStack();
 
         // despawnBackground  = Flagged.from(new Vector4i(0,  0, 0, 0));
         // despawnTextOpacity = Flagged.from(128);
@@ -62,15 +53,9 @@ public class TextElmStyle extends ElmStyle {
 
 
 
-    public TextElmStyle setAlignment  (TextAlignment _alignment  ) { alignment   = _alignment;   return this; }
-    public TextElmStyle setBackground (Vector4i      _background ) { background  = _background;  return this; }
-    public TextElmStyle setText       (Text          _text       ) { text        = _text;        return this; }
-    public TextElmStyle setTextOpacity(int           _textOpacity) { textOpacity = _textOpacity; return this; }
+    public ItemElmStyle setItem(ItemStack _item) { item = _item; return this; }
 
-    public TextAlignment getAlignment  () { return alignment;   }
-    public Vector4i      getBackground () { return background;  }
-    public Text          getText       () { return text;        }
-    public int           getTextOpacity() { return textOpacity; }
+    public ItemStack getItem() { return item; }
 
     // public TextElmStyle setDespawnTextOpacity(int      _despawnTextOpacity) { despawnTextOpacity.set(_despawnTextOpacity); return this; }
     // public TextElmStyle setDespawnBackground (Vector4i _despawnBackground ) { despawnBackground .set(_despawnBackground ); return this; }
