@@ -1,26 +1,18 @@
 package com.snek.fancyplayershops.ShopComponentEntities;
 
-import java.util.HashSet;
-import java.util.UUID;
-
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
-import org.joml.Vector4i;
 
+import com.snek.fancyplayershops.FancyPlayerShops;
 import com.snek.fancyplayershops.Shop;
-import com.snek.framework.data_types.Animation;
-import com.snek.framework.custom_displays.CustomTextDisplay;
-import com.snek.framework.data_types.Transform;
 import com.snek.framework.ui.TextElm;
 import com.snek.framework.ui.styles.TextElmStyle;
-import com.snek.framework.data_types.TargetTransition;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.Entity.RemovalReason;
-import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity;
 import net.minecraft.world.World;
 
@@ -32,11 +24,8 @@ import net.minecraft.world.World;
 
 
 public class DetailsDisplay extends TextElm {
+    private static final String ENTITY_CUSTOM_NAME = FancyPlayerShops.MOD_ID + ".ui.displayentity";
     Shop targetShop;
-
-
-    // // Used to avoid purges. Stray displays won't be in here
-    // public static final HashSet<UUID> activeFocusDisplays = new HashSet<>();
 
     private static final Vector3i C_RGB_PRICE      = new Vector3i(243, 255, 0);
     private static final Vector3f C_HSV_STOCK_HIGH = Utils.RGBtoHSV(new Vector3f(0, 223, 0)); //! Float instead of int for more precision
@@ -87,29 +76,31 @@ public class DetailsDisplay extends TextElm {
 
 
 
-    // @Override
-    // public void spawn(@NotNull World world){
-    //     super.spawn(world);
+    @Override
+    public void spawn(){
+        super.spawn();
+        entity.setCustomName(new Txt(ENTITY_CUSTOM_NAME).get());
+        entity.setCustomNameVisible(false);
 
-    //     // Transition
-    //     setTextOpacity(255);
-    //     setBackground(S_BG);
-    //     apply(S_TIME);
-    // }
+        // // Transition
+        // setTextOpacity(255);
+        // setBackground(S_BG);
+        // apply(S_TIME);
+    }
 
 
 
 
-    // @Override
-    // public void despawn(){
-    //     super.despawn();
-    //     activeFocusDisplays.remove(rawDisplay.getUuid());
+    @Override
+    public void despawn(){
+        super.despawn();
+        // activeFocusDisplays.remove(rawDisplay.getUuid());
 
-    //     // Transition
-    //     setTextOpacity(128);
-    //     setBackground(D_BG);
-    //     apply(D_TIME);
-    // }
+        // // Transition
+        // setTextOpacity(128);
+        // setBackground(D_BG);
+        // apply(D_TIME);
+    }
 
 
 
@@ -121,19 +112,15 @@ public class DetailsDisplay extends TextElm {
      * @param entity The entity.
      */
     public static void onEntityLoad(@NotNull Entity entity) {
-        //FIXME ONLY PURGE DISPLAYS FROM THIS MOD
-        //FIXME ONLY PURGE DISPLAYS FROM THIS MOD
-        //FIXME ONLY PURGE DISPLAYS FROM THIS MOD
-        //FIXME ONLY PURGE DISPLAYS FROM THIS MOD
-        // if (entity instanceof TextDisplayEntity) {
-        //     World world = entity.getWorld();
-        //     if(
-        //         world != null &&
-        //         !DetailsDisplay.activeFocusDisplays.contains(entity.getUuid()) &&
-        //         Shop.findShop(entity.getBlockPos(), world) != null
-        //     ) {
-        //         entity.remove(RemovalReason.KILLED);
-        //     }
-        // }
+        if (entity instanceof TextDisplayEntity) {
+            World world = entity.getWorld();
+            if(
+                world != null &&
+                entity.getCustomName().getString() == ENTITY_CUSTOM_NAME &&
+                Shop.findShop(entity.getBlockPos(), world) != null
+            ) {
+                entity.remove(RemovalReason.KILLED);
+            }
+        }
     }
 }

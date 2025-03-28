@@ -6,15 +6,12 @@ import java.lang.reflect.Method;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector4i;
 
-import com.snek.framework.data_types.Transform;
 import com.snek.framework.utils.Utils;
 
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity;
 import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity.TextAlignment;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 

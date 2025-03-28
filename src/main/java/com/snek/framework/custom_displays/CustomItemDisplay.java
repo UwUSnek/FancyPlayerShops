@@ -1,18 +1,14 @@
 package com.snek.framework.custom_displays;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.snek.framework.data_types.Transform;
 import com.snek.framework.utils.Utils;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
-import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 

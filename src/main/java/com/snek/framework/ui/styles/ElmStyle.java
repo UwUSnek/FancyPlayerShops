@@ -3,9 +3,7 @@ package com.snek.framework.ui.styles;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.snek.framework.custom_displays.CustomDisplay;
 import com.snek.framework.data_types.Animation;
-import com.snek.framework.data_types.Flagged;
 import com.snek.framework.data_types.Transform;
 import com.snek.framework.utils.Easings;
 import com.snek.framework.data_types.TargetTransition;
@@ -20,18 +18,18 @@ import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 
 
 public class ElmStyle {
-    private @NotNull  Transform     transform;
-    private @NotNull  Float         viewRange;
-    private @NotNull  BillboardMode billboardMode;
+    private @NotNull  Transform     transform;          // The current transformation
+    private @NotNull  Float         viewRange;          // The view range. 1.0f = 64 blocks
+    private @NotNull  BillboardMode billboardMode;      // The billboard mode. Defines how the rendered entity is rotates relatively to the player's camera
 
-    private @Nullable Animation     spawnAnimation;
-    private @Nullable Animation     despawnAnimation;
+    private @Nullable Animation     spawnAnimation;     // The spawning animation. Played when the entity is spawned into the world
+    private @Nullable Animation     despawnAnimation;   // The despawning animation. Played before the entity is removed from the world
 
 
-    private static final float S_SCALE  = 1.02f;
-    private static final float S_HEIGHT = 0.05f;
-    private static final int   S_TIME   = 4; // Measured in ticks. MUST BE EVEN
-    private static final int   D_TIME   = 8; // Measured in ticks. MUST BE EVEN
+    private static final float S_SCALE  = 1.02f;        // The scale applied by the spawning animation
+    private static final float S_HEIGHT = 0.05f;        // The Y translation applied by the spawning animation
+    private static final int   S_TIME   = 4;            // Spawn   time. Measured in ticks. //! Must be even
+    private static final int   D_TIME   = 8;            // Despawn time. Measured in ticks. //! Must be even
 
 
 

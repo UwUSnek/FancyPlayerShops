@@ -1,23 +1,16 @@
 package com.snek.framework.custom_displays;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import com.snek.framework.data_types.Animation;
-import com.snek.framework.data_types.Transform;
-import com.snek.framework.data_types.TargetTransition;
-import com.snek.framework.utils.Scheduler;
-import com.snek.framework.utils.TaskHandler;
 import com.snek.framework.utils.Utils;
 
 import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.decoration.Brightness;
 import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.AffineTransformation;
 import net.minecraft.world.World;
 
@@ -223,5 +216,20 @@ public abstract class CustomDisplay {
 
     public void setBrightness(@NotNull Brightness brightness) {
         Utils.invokeSafe(method_setBrightness, heldEntity, brightness);
+    }
+
+
+    public void setCustomName(@NotNull Text name) {
+        heldEntity.setCustomName(name);
+    }
+
+
+    public void setCustomNameVisible(@NotNull boolean nameVisible) {
+        heldEntity.setCustomNameVisible(nameVisible);
+    }
+
+
+    public void setGlowing(@NotNull boolean glowing) {
+        heldEntity.setGlowing(glowing);
     }
 }

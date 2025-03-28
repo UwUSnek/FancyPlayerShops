@@ -5,11 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 import com.snek.fancyplayershops.Shop;
-import com.snek.framework.custom_displays.Animation;
 import com.snek.framework.custom_displays.CustomItemDisplay;
-import com.snek.framework.custom_displays.ElmStyle;
-import com.snek.framework.custom_displays.Transform;
-import com.snek.framework.custom_displays.Transition;
 import com.snek.framework.utils.Scheduler;
 import com.snek.framework.utils.Utils;
 
@@ -93,13 +89,6 @@ public class ShopItemDisplay extends CustomItemDisplay {
     @Override
     public void despawn(){
         super.despawn();
-    }
-
-
-
-
-    public void setCustomNameVisible(boolean customNameVisible) {
-        rawDisplay.setCustomNameVisible(customNameVisible);
     }
 
 

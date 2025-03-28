@@ -3,7 +3,6 @@ package com.snek.framework.ui;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector4i;
 
-import com.snek.fancyplayershops.Shop;
 import com.snek.framework.custom_displays.CustomDisplay;
 import com.snek.framework.custom_displays.CustomTextDisplay;
 import com.snek.framework.data_types.Flagged;
