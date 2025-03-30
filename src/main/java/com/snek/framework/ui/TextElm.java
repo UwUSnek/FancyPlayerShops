@@ -25,9 +25,9 @@ import net.minecraft.text.Text;
 public class TextElm extends Elm {
 
     // private @NotNull Flagged<TextAlignment> alignment;
-    private @NotNull Flagged<Vector4i>      background;
-    private @NotNull Flagged<Text>          text;
-    private @NotNull Flagged<Integer>       textOpacity;
+    protected @NotNull Flagged<Vector4i>      background;
+    protected @NotNull Flagged<Text>          text;
+    protected @NotNull Flagged<Integer>       textOpacity;
 
 
 
@@ -60,9 +60,9 @@ public class TextElm extends Elm {
         super.flushStyle();
         CustomTextDisplay e2 = (CustomTextDisplay)entity;
         // if(alignment  .isFlagged()) e2.setAlignment  (alignment  .get()); alignment  .unflag();
-        if(background .isFlagged()) e2.setBackground (background .get()); background .unflag();
-        if(text       .isFlagged()) e2.setText       (text       .get()); text       .unflag();
-        if(textOpacity.isFlagged()) e2.setTextOpacity(textOpacity.get()); textOpacity.unflag();
+        if(background .isFlagged()) { e2.setBackground (background .get()); background .unflag(); }
+        if(text       .isFlagged()) { e2.setText       (text       .get()); text       .unflag(); }
+        if(textOpacity.isFlagged()) { e2.setTextOpacity(textOpacity.get()); textOpacity.unflag(); }
     }
 
 

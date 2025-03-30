@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import com.snek.framework.ui.styles.ItemElmStyle;
 import com.snek.framework.utils.Utils;
 
 import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
@@ -168,6 +169,9 @@ public class FocusFeatures {
         // Update the displays of all the previously and currently focused shops to their next state and update the targeted shops list
         for (Shop shop : targetedShopsOld) {
             shop.updateFocusState();
+            // System.out.println( ((ItemElmStyle)shop.itemDisplay.style).getItem().toString());
+            // System.out.println( (shop.itemDisplay.transform.get().get().getScale().toString()));
+            //TODO remove debug print
         }
         for (Shop shop : targetedShops) {
             shop.updateFocusState();

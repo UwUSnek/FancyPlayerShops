@@ -26,7 +26,7 @@ public class ItemElmStyle extends ElmStyle {
      */
     public ItemElmStyle() {
         super();
-        item   = Items.BARRIER.getDefaultStack();
+        item = Items.AIR.getDefaultStack();
 
         // despawnBackground  = Flagged.from(new Vector4i(0,  0, 0, 0));
         // despawnTextOpacity = Flagged.from(128);

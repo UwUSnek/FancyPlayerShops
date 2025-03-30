@@ -7,8 +7,12 @@ import com.snek.fancyplayershops.Shop;
 import com.snek.framework.custom_displays.CustomItemDisplay;
 import com.snek.framework.ui.ItemElm;
 import com.snek.framework.ui.styles.ItemElmStyle;
+import com.snek.framework.utils.Txt;
+import com.snek.framework.utils.Utils;
 
 import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 
 
 
@@ -60,6 +64,7 @@ public class ShopItemDisplay extends ItemElm {
     public ShopItemDisplay(@NotNull Shop _targetShop, @NotNull CustomItemDisplay _display) {
         super(_targetShop.getWorld(), _display, new ItemElmStyle());
         targetShop = _targetShop;
+        entity.setCustomNameVisible(true);
         updateDisplay();
     }
 
@@ -88,7 +93,18 @@ public class ShopItemDisplay extends ItemElm {
      * Updates the displayed values using the current item name, price and stock.
      */
     public void updateDisplay(){
-        ((ItemElmStyle)style).setItem(targetShop.getItem());
+        ItemStack _item = targetShop.getItem();
+        if(_item.getItem() == Items.AIR) {
+            ItemStack noItem = Items.BARRIER.getDefaultStack();
+            noItem.setCustomName(Shop.EMPTY_SHOP_NAME);
+            item.set(noItem);
+            entity.setCustomName(Utils.getItemName(noItem));
+        }
+        else {
+            item.set(_item);
+            entity.setCustomName(Utils.getItemName(item.get()));
+        }
+
         flushStyle();
     }
 
@@ -127,6 +143,7 @@ public class ShopItemDisplay extends ItemElm {
     public void leaveFocusState(){
         // scheduleAnimation(focusAnimation.despawn); //FIXME add despawning animations back
         // currentHandlers.add(Scheduler.schedule(focusAnimation.despawn.getTotalDuration(), () -> {
+        System.out.println("turning on custom name");
             entity.setCustomNameVisible(true);
         // }));
     }

@@ -15,6 +15,9 @@ import com.snek.framework.utils.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.text.Text;
 import net.minecraft.world.World;
 
 
@@ -67,11 +70,28 @@ public class DetailsDisplay extends TextElm {
     public void updateDisplay(){
         float factor = 1.0f - (float)targetShop.getStock() / 1000f;
         Vector3f col = Utils.HSVtoRGB(new Vector3f(C_HSV_STOCK_LOW).add(new Vector3f(C_HSV_STOCK_HIGH).sub(C_HSV_STOCK_LOW).mul(1.0f - (factor * factor))));
-        ((TextElmStyle)style).setText(new Txt()
-            .cat(new Txt(Utils.getItemName(targetShop.getItem())))
+
+
+        // Empty shop case
+        final ItemStack _item = targetShop.getItem();
+        if(_item.getItem() == Items.AIR) {
+            text.set(new Txt()
+            .cat(Shop.EMPTY_SHOP_NAME)
             .cat(new Txt("\nPrice: ")).cat(new Txt(Utils.formatPrice (targetShop.getPrice())).bold().color(C_RGB_PRICE))
             .cat(new Txt("\nStock: ")).cat(new Txt(Utils.formatAmount(targetShop.getStock())).bold().color((int)col.x, (int)col.y, (int)col.z))
-        .get());
+            .get());
+        }
+
+        // Configured shop case
+        else {
+            text.set(new Txt()
+                .cat(new Txt(Utils.getItemName(_item)).get())
+                .cat(new Txt("\nPrice: ")).cat(new Txt(Utils.formatPrice (targetShop.getPrice())).bold().color(C_RGB_PRICE))
+                .cat(new Txt("\nStock: ")).cat(new Txt(Utils.formatAmount(targetShop.getStock())).bold().color((int)col.x, (int)col.y, (int)col.z))
+            .get());
+        }
+
+        // Flush style
         flushStyle();
     }
 

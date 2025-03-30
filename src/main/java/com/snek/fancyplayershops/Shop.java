@@ -33,6 +33,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -48,7 +49,8 @@ import net.minecraft.world.World;
 // TODO purge stray focus displays on entity loading (use custom entity data)
 public class Shop {
     private static final Path SHOP_STORAGE_DIR;
-    private static final ItemStack DEFAULT_ITEM = Items.BARRIER.getDefaultStack();
+    public  static final Text EMPTY_SHOP_NAME = new Txt("[Empty]").italic().lightGray().get();
+    // private static final ItemStack DEFAULT_ITEM = Items.BARRIER.getDefaultStack();
     static {
         SHOP_STORAGE_DIR = FabricLoader.getInstance().getConfigDir().resolve(FancyPlayerShops.MOD_ID + "/shops");
         try {
@@ -56,7 +58,7 @@ public class Shop {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        DEFAULT_ITEM.setCustomName(new Txt("[Empty]").italic().lightGray().get());
+        // DEFAULT_ITEM.setCustomName();
     }
 
     // Stores the shops of players, identifying them by their owner's UUID and their coordinates and world in the format "x,y,z,worldId"
@@ -79,7 +81,7 @@ public class Shop {
 
 
     // Shop data
-    private transient ItemStack item = DEFAULT_ITEM;
+    private transient ItemStack item = Items.AIR.getDefaultStack();
     private String serializedItem;
     private double price = 0;
     private int stock = 0;

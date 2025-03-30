@@ -22,7 +22,7 @@ import net.minecraft.server.world.ServerWorld;
 
 public class ItemElm extends Elm {
 
-    private @NotNull Flagged<ItemStack> item;
+    protected @NotNull Flagged<ItemStack> item;
 
 
 
@@ -52,7 +52,7 @@ public class ItemElm extends Elm {
     public void flushStyle() {
         super.flushStyle();
         CustomItemDisplay e2 = (CustomItemDisplay)entity;
-        if(item.isFlagged()) e2.setItemStack(item.get()); item.unflag();
+        if(item.isFlagged()) { e2.setItemStack(item.get()); item.unflag(); }
     }
 
 

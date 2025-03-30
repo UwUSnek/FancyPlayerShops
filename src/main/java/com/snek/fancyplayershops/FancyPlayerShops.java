@@ -80,8 +80,11 @@ public class FancyPlayerShops implements ModInitializer {
             // Load shop data
             Shop.loadData(server);
 
-            // Schedule focus features look
+            // Schedule focus features loop
             Scheduler.loop(0, 2, () -> { FocusFeatures.tick(server.getWorlds()); });
+
+            // Schedule UI element update loop
+            Scheduler.loop(0, Elm.TRANSITION_REFRESH_TIME, Elm::processUpdateQueueTick);
 
             // Log initialization success
             LOGGER.info("FancyPlayerShops initialized. :3");
@@ -109,7 +112,6 @@ public class FancyPlayerShops implements ModInitializer {
         // Register scheduler
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             Scheduler.tick(server);
-            Scheduler.loop(0, Elm.TRANSITION_REFRESH_TIME, Elm::processUpdateQueueTick);
         });
 
 

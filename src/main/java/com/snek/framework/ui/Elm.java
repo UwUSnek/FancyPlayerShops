@@ -38,9 +38,9 @@ public abstract class Elm {
     private boolean isQueued = false;                                                   // Whether this instance is queued for updates. Updated manually
 
     // Element data
-    private @NotNull  Flagged<Transform>     transform;
-    private @NotNull  Flagged<Float>         viewRange;
-    private @NotNull  Flagged<BillboardMode> billboardMode;
+    protected @NotNull  Flagged<Transform>     transform;
+    protected @NotNull  Flagged<Float>         viewRange;
+    protected @NotNull  Flagged<BillboardMode> billboardMode;
 
     // Tree data
     private @Nullable Elm parent = null;                                    // The parent element
@@ -72,9 +72,9 @@ public abstract class Elm {
      * This does not start an interpolation.
      */
     public void flushStyle() {
-        if(transform    .isFlagged()) entity.setTransformation(transform    .get().get()); transform    .unflag();
-        if(viewRange    .isFlagged()) entity.setViewRange     (viewRange    .get()      ); viewRange    .unflag();
-        if(billboardMode.isFlagged()) entity.setBillboardMode (billboardMode.get()      ); billboardMode.unflag();
+        if(transform    .isFlagged()) { entity.setTransformation(transform    .get().get()); transform    .unflag(); }
+        if(viewRange    .isFlagged()) { entity.setViewRange     (viewRange    .get()      ); viewRange    .unflag(); }
+        if(billboardMode.isFlagged()) { entity.setBillboardMode (billboardMode.get()      ); billboardMode.unflag(); }
     }
 
 
