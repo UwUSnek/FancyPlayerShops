@@ -86,8 +86,8 @@ public class DetailsDisplay extends TextElm {
         else {
             text.set(new Txt()
                 .cat(new Txt(Utils.getItemName(_item)).get())
-                .cat(new Txt("\nPrice: ")).cat(new Txt(Utils.formatPrice (targetShop.getPrice())).bold().color(C_RGB_PRICE))
-                .cat(new Txt("\nStock: ")).cat(new Txt(Utils.formatAmount(targetShop.getStock())).bold().color((int)col.x, (int)col.y, (int)col.z))
+                .cat(new Txt("\nPrice: -"))
+                .cat(new Txt("\nStock: -"))
             .get());
         }
 
