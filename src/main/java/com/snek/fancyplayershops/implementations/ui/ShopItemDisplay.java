@@ -1,6 +1,7 @@
 package com.snek.fancyplayershops.implementations.ui;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
 
 import com.snek.fancyplayershops.Shop;
@@ -14,6 +15,7 @@ import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.ui.styles.ItemElmStyle;
 import com.snek.framework.utils.Easings;
 import com.snek.framework.utils.Scheduler;
+import com.snek.framework.utils.TaskHandler;
 import com.snek.framework.utils.Utils;
 
 import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
@@ -34,7 +36,8 @@ public class ShopItemDisplay extends ItemElm {
     // public void setDefaultRotation(float r) { defaultRotation = r; } //FIXME save in shop instance
     // private static       float defaultRotation       = (float) Math.toRadians(45);
 
-    public static final int L_TIME = 32 * 3; //! Must be a multiple of 3
+    private @Nullable TaskHandler loopHandler = null;
+    public static final int L_TIME = 32;
     // public static final float L_ROT   = (float) Math.toRadians(120);
     // public static final float L_ROT_A = L_ROT * (float)((double)S_TIME / ((double)L_TIME / 3) * 3d);
 
@@ -44,6 +47,7 @@ public class ShopItemDisplay extends ItemElm {
 
     private final @NotNull Animation focusAnimation;
     private final @NotNull Animation unfocusAnimation;
+    private final @NotNull Animation loopAnimation;
 
 
 
@@ -56,6 +60,12 @@ public class ShopItemDisplay extends ItemElm {
 
         focusAnimation   = new Animation(new AdditiveTransition(new Transform().moveY(ElmStyle.S_HEIGHT).scale(ElmStyle.S_SCALE), ElmStyle.S_TIME, Easings.sineOut)); //TODO use better easing
         unfocusAnimation = new Animation(new   TargetTransition(transform.get(),                                                  ElmStyle.D_TIME, Easings.sineOut)); //TODO use better easing
+
+        loopAnimation = new Animation(
+            new AdditiveTransition(new Transform().rotY((float)Math.toRadians(120)), L_TIME, Easings.linear),
+            new AdditiveTransition(new Transform().rotY((float)Math.toRadians(120)), L_TIME, Easings.linear),
+            new AdditiveTransition(new Transform().rotY((float)Math.toRadians(120)), L_TIME, Easings.linear)
+        );
     }
 
 
@@ -108,21 +118,28 @@ public class ShopItemDisplay extends ItemElm {
 
 
     public void enterFocusState(){
+
+        // Hide custom name and start focus animation
         entity.setCustomNameVisible(false);
         applyAnimation(focusAnimation);
 
-        //FIXME add loop animations back
-        // currentHandlers.add(Scheduler.schedule(focusAnimation.spawn.getTotalDuration(), () -> {
-            // loopAnimation(focusAnimation.loop, focusAnimation.loop.getTotalDuration());
-        // }));
+        // Queue loop animation
+        loopHandler = Scheduler.loop(0, loopAnimation.getTotalDuration(), () -> {
+            applyAnimation(loopAnimation);
+        });
     }
 
 
 
 
     public void leaveFocusState(){
+
+        // Stop loop animation and start unfocus animation
+        loopHandler.cancel();
+        transformQueue.clear();
         applyAnimation(unfocusAnimation);
 
+        // Show custom name after animations end
         Scheduler.schedule(unfocusAnimation.getTotalDuration(), () -> {
             entity.setCustomNameVisible(true);
         });

@@ -12,6 +12,7 @@ import com.snek.framework.custom_displays.CustomDisplay;
 import com.snek.framework.data_types.AdditiveTransition;
 import com.snek.framework.data_types.Animation;
 import com.snek.framework.data_types.Flagged;
+import com.snek.framework.data_types.IndexedArrayDeque;
 import com.snek.framework.data_types.Transform;
 import com.snek.framework.data_types.Transition;
 import com.snek.framework.data_types.Triplet;
@@ -36,7 +37,7 @@ public abstract class Elm {
     // Animations
     public static int TRANSITION_REFRESH_TIME = 1;                                      // The time between transition updates. Measured in ticks
     private static final @NotNull List<Elm> elmUpdateQueue = new ArrayList<>();         // The list of instances with pending transform updates
-    private final @NotNull ArrayDeque<Transform>  transformQueue = new ArrayDeque<>();  // The list of transforms to apply to this instance in the next ticks. 1 for each update tick
+    protected final @NotNull IndexedArrayDeque<Transform> transformQueue = new IndexedArrayDeque<>(); // The list of transforms to apply to this instance in the next ticks. 1 for each update tick
     private boolean isQueued = false;                                                   // Whether this instance is queued for updates. Updated manually
 
     // Element data
@@ -96,10 +97,10 @@ public abstract class Elm {
         }
 
 
-        // Calculate animation steps as a list of additive transforms
+        // Calculate animation steps as a list of transforms
         List<Triplet<Transform, Boolean, Float>> animationSteps = new ArrayList<>();
         Transform totTransform = new Transform(); // The sum of all the changes applied by the current and previous steps of the animation
-        for (Transition transition : animation.transitions) {
+        for (Transition transition : animation.getTransitions()) {
 
             // For each step of the transition
             int time = transition.getDuration();                            // The duration of this transition
@@ -108,9 +109,13 @@ public abstract class Elm {
             for(int i = TRANSITION_REFRESH_TIME; i < time; i = Math.min(i + TRANSITION_REFRESH_TIME, time)) {
 
                 // Calculate interpolation factor and add the new animation step to the list
-                float factor = (float)transition.getEasing().compute((double)i / (double)time);
+                float factor = (float)transition.getEasing().compute((double)i / (double)time); //FIXME factor should only affect the latest transition and not the whole step
                 animationSteps.add(Triplet.from(totTransform, isAdditive, factor));
             }
+        }
+        System.out.println("New transform queue: ");
+        for (var s : animationSteps) {
+            System.out.println(s.first.get().getLeftRotation().angle() * s.third);
         }
 
 
@@ -121,7 +126,15 @@ public abstract class Elm {
                 var step = animationSteps.get(i);
                 if(step.second) ft.interpolate(ft.apply(step.first), step.third); else ft.interpolate(step.first, step.third);
                 ++i;
-                if(i >= animationSteps.size()) break;
+
+                // If the amount of future transforms is larger than the amount of steps, apply the last step to the remaining transforms and exit the loop
+                if(i >= animationSteps.size()) {
+                    for(; i < transformQueue.size(); ++i) {
+                        ft = transformQueue.get(i);
+                        if(step.second) ft.interpolate(ft.apply(step.first), step.third); else ft.interpolate(step.first, step.third);
+                    }
+                    break;
+                }
             }
         }
 
