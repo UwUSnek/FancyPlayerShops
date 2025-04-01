@@ -21,12 +21,9 @@ import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
 import com.snek.fancyplayershops.implementations.ui.DetailsDisplay;
 import com.snek.fancyplayershops.implementations.ui.ShopItemDisplay;
-import com.snek.framework.utils.Scheduler;
 import com.snek.framework.utils.Txt;
 
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -35,7 +32,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 
@@ -50,7 +46,6 @@ import net.minecraft.world.World;
 public class Shop {
     private static final Path SHOP_STORAGE_DIR;
     public  static final Text EMPTY_SHOP_NAME = new Txt("[Empty]").italic().lightGray().get();
-    // private static final ItemStack DEFAULT_ITEM = Items.BARRIER.getDefaultStack();
     static {
         SHOP_STORAGE_DIR = FabricLoader.getInstance().getConfigDir().resolve(FancyPlayerShops.MOD_ID + "/shops");
         try {
@@ -58,7 +53,6 @@ public class Shop {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // DEFAULT_ITEM.setCustomName();
     }
 
     // Stores the shops of players, identifying them by their owner's UUID and their coordinates and world in the format "x,y,z,worldId"
@@ -88,7 +82,6 @@ public class Shop {
 
 
     // Shop status
-    // private transient boolean isFocused = false;
     private transient @Nullable DetailsDisplay focusDisplay = null; //TODO this might need to be a list
     public  transient @Nullable PlayerEntity           user = null;
     public  transient           boolean         focusStatus = false;
@@ -289,47 +282,6 @@ public class Shop {
             }
             focusStatus = focusStatusNext;
         }
-        //     if(menuStatusNext == MenuStatus.DETAILS) {
-        //         if(focusDisplay != null && menuStatusNext != MenuStatus.IDLE) {
-        //             focusDisplay.despawn();
-        //         }
-
-        //         // Create and setup the Text Display entity
-        //         if(focusDisplay != null) focusDisplay.getRawDisplay().remove(RemovalReason.KILLED);
-        //         focusDisplay = new DetailsDisplay(this);
-        //         focusDisplay.spawn(world);
-
-        //         // Start item animation and turn off the CustomName
-        //         findDisplayEntityIfNeeded();
-        //         if(itemDisplay != null) itemDisplay.enterFocusState();
-        //     }
-        //     else if(menuStatusNext == MenuStatus.OWNER_EDIT) {
-        //         focusDisplay.despawn();
-        //         Scheduler.schedule(DetailsDisplay.D_TIME, () -> {
-        //             //TODO spawn menus
-        //             //FIXME replace current system with a generic "despawn current menu / open new menu" system
-        //         });
-        //     }
-        //     else if(menuStatusNext == MenuStatus.CLIENT_BUY) {
-        //         focusDisplay.despawn();
-        //         Scheduler.schedule(DetailsDisplay.D_TIME, () -> {
-        //             //TODO spawn menus
-        //             //FIXME replace current system with a generic "despawn current menu / open new menu" system
-        //         });
-        //     }
-        //     else if(menuStatusNext == MenuStatus.IDLE) {
-        //         if(menuStatus == MenuStatus.DETAILS) {
-
-        //             // Despawn the text display
-        //             focusDisplay.despawn();
-
-        //             // Start item animation and turn the CustomName back on
-        //             findDisplayEntityIfNeeded();
-        //             if(itemDisplay != null) itemDisplay.leaveFocusState();
-        //         }
-        //     }
-        //     menuStatus = menuStatusNext;
-        // }
     }
 
 

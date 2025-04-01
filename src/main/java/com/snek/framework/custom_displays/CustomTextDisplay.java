@@ -10,7 +10,6 @@ import com.snek.framework.utils.Utils;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity;
-import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity.TextAlignment;
 import net.minecraft.text.Text;
 import net.minecraft.world.World;
 
@@ -22,12 +21,10 @@ import net.minecraft.world.World;
 
 
 public class CustomTextDisplay extends CustomDisplay {
-    // protected @NotNull TextDisplayEntity rawDisplay;
     public @NotNull TextDisplayEntity getRawDisplay() { return (TextDisplayEntity)heldEntity; }
 
 
     static private Method method_setText;
-    // static private Method method_setAlignment;
     static private Method method_setTextOpacity;
     static private Method method_getTextOpacity;
     static private Method method_setBackground;
@@ -35,7 +32,6 @@ public class CustomTextDisplay extends CustomDisplay {
     static {
         try {
             method_setText          = TextDisplayEntity.class.getDeclaredMethod("setText",                   Text.class);
-            // method_setAlignment     = TextDisplayEntity.class.getDeclaredMethod("setTextAlignment", TextAlignment.class);
             method_setTextOpacity   = TextDisplayEntity.class.getDeclaredMethod("setTextOpacity",            byte.class);
             method_getTextOpacity   = TextDisplayEntity.class.getDeclaredMethod("getTextOpacity");
             method_setBackground    = TextDisplayEntity.class.getDeclaredMethod("setBackground",              int.class);
@@ -46,7 +42,6 @@ public class CustomTextDisplay extends CustomDisplay {
             e.printStackTrace();
         }
         method_setText.setAccessible(true);
-        // method_setAlignment.setAccessible(true);
         method_setTextOpacity.setAccessible(true);
         method_getTextOpacity.setAccessible(true);
         method_setBackground.setAccessible(true);
@@ -56,23 +51,12 @@ public class CustomTextDisplay extends CustomDisplay {
 
 
 
-    // public CustomTextDisplay(@NotNull TextDisplayEntity _rawDisplay, @NotNull AnimationData _animation) {
     public CustomTextDisplay(@NotNull TextDisplayEntity _rawDisplay) {
-        // super(_rawDisplay, new Transform(), _animation);
         super(_rawDisplay);
-        // rawDisplay = _rawDisplay;
     }
     public CustomTextDisplay(@NotNull World _world) {
         super(new TextDisplayEntity(EntityType.TEXT_DISPLAY, _world));
     }
-    // public CustomTextDisplay(@NotNull World world, @NotNull Text text, @NotNull Vec3d pos, @NotNull Transform _defaultTransform, @NotNull BillboardMode billboardMode, boolean glowing, @NotNull AnimationData _animation) {
-    //     super(new TextDisplayEntity(EntityType.TEXT_DISPLAY, world), _defaultTransform, _animation);
-    //     rawDisplay = (TextDisplayEntity)heldEntity;
-    //     rawDisplay.setGlowing(glowing);
-    //     rawDisplay.setPosition(pos);
-    //     setText(text);
-    //     setBillboardMode(billboardMode);
-    // }
 
 
 
@@ -121,13 +105,6 @@ public class CustomTextDisplay extends CustomDisplay {
     public void setBackground(@NotNull Vector4i argb) {
         Utils.invokeSafe(method_setBackground, getRawDisplay(), (argb.x << 24) | (argb.y << 16) | (argb.z << 8) | argb.w);
     }
-
-
-
-
-    // public void setAlignment(@NotNull TextAlignment alignment) {
-    //     Utils.invokeSafe(method_setAlignment, getRawDisplay(), alignment);
-    // }
 
 
 

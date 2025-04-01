@@ -8,7 +8,6 @@ import org.joml.Vector3i;
 import com.snek.fancyplayershops.FancyPlayerShops;
 import com.snek.fancyplayershops.Shop;
 import com.snek.framework.ui.TextElm;
-import com.snek.framework.ui.styles.TextElmStyle;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
 
@@ -17,7 +16,6 @@ import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.text.Text;
 import net.minecraft.world.World;
 
 
@@ -40,24 +38,7 @@ public class DetailsDisplay extends TextElm {
 
     public DetailsDisplay(@NotNull Shop _targetShop){
         super(_targetShop.getWorld());
-        // super(
-        //     _targetShop.getWorld(),
-        //     new Txt("Something went wrong :c").red().get(),
-        //     _targetShop.calcDisplayPos().add(0, 0.3d, 0),
-        //     DEFAULT_TRANSFORM,
-        //     BillboardMode.VERTICAL,
-        //     false,
-        //     new com.snek.framework.ui.styles.AnimationData(
-        //         new Animation(new TargetTransition(DEFAULT_TRANSFORM.clone().moveY(S_HEIGHT).scale(S_SCALE), S_TIME)),
-        //         null,
-        //         new Animation(new TargetTransition(DEFAULT_TRANSFORM, D_TIME))
-        //     )
-        // );
         targetShop = _targetShop;
-
-        // activeFocusDisplays.add(rawDisplay.getUuid()); //! Must be added before spawning the entity into the world to stop it from instantly getting purged
-        // setTextOpacity(128);
-        // setBackground(D_BG);
         updateDisplay();
     }
 
@@ -104,11 +85,6 @@ public class DetailsDisplay extends TextElm {
         super.spawn(pos);
         entity.setCustomName(new Txt(ENTITY_CUSTOM_NAME).get());
         entity.setCustomNameVisible(false);
-
-        // // Transition
-        // setTextOpacity(255);
-        // setBackground(S_BG);
-        // apply(S_TIME);
     }
 
 
@@ -117,12 +93,6 @@ public class DetailsDisplay extends TextElm {
     @Override
     public void despawn(){
         super.despawn();
-        // activeFocusDisplays.remove(rawDisplay.getUuid());
-
-        // // Transition
-        // setTextOpacity(128);
-        // setBackground(D_BG);
-        // apply(D_TIME);
     }
 
 

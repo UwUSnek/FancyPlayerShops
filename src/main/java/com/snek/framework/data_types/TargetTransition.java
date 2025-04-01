@@ -1,8 +1,6 @@
 package com.snek.framework.data_types;
 
 import org.jetbrains.annotations.NotNull;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 import com.snek.framework.utils.Easing;
 

@@ -2,7 +2,6 @@ package com.snek.framework.ui;
 
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
-import org.joml.Vector3f;
 import org.joml.Vector4i;
 
 import com.snek.framework.custom_displays.CustomDisplay;
@@ -11,7 +10,6 @@ import com.snek.framework.data_types.Flagged;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.ui.styles.TextElmStyle;
 
-import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity.TextAlignment;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 
@@ -24,7 +22,6 @@ import net.minecraft.text.Text;
 
 public class TextElm extends Elm {
 
-    // private @NotNull Flagged<TextAlignment> alignment;
     protected @NotNull Flagged<Vector4i>      background;
     protected @NotNull Flagged<Text>          text;
     protected @NotNull Flagged<Integer>       textOpacity;
@@ -59,7 +56,6 @@ public class TextElm extends Elm {
     public void flushStyle() {
         super.flushStyle();
         CustomTextDisplay e2 = (CustomTextDisplay)entity;
-        // if(alignment  .isFlagged()) e2.setAlignment  (alignment  .get()); alignment  .unflag();
         if(background .isFlagged()) { e2.setBackground (background .get()); background .unflag(); }
         if(text       .isFlagged()) { e2.setText       (text       .get()); text       .unflag(); }
         if(textOpacity.isFlagged()) { e2.setTextOpacity(textOpacity.get()); textOpacity.unflag(); }

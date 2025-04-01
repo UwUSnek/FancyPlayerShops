@@ -25,13 +25,6 @@ import net.minecraft.world.World;
 
 public abstract class CustomDisplay {
     protected @NotNull DisplayEntity heldEntity;
-    // protected @NotNull Transform defaultTransform;
-    // protected @NotNull AnimationData animation;
-    // protected @NotNull List<TaskHandler> currentHandlers = new ArrayList<>(); // The handlers of the transitions that are currently scheduled. Used to cancel animations without waiting for them to finish
-
-
-    // private int TMP_interpolationDuration = 0;
-    // private @Nullable TaskHandler interpolationDispatcherHandler;
 
 
     static private Method method_setTransformation;
@@ -64,15 +57,9 @@ public abstract class CustomDisplay {
 
 
 
-    // public CustomDisplay(@NotNull DisplayEntity _heldEntity, @NotNull Transform _defaultTransform, @NotNull AnimationData _animation) {
     public CustomDisplay(@NotNull DisplayEntity _heldEntity) {
-        // defaultTransform = _defaultTransform;
         heldEntity = _heldEntity;
-        // animation = _animation;
-        // setViewRange(0.3f);
         setBrightness(new Brightness(15, 15));
-        // setTransformation(defaultTransform.get());
-        // apply(0);
     }
 
 
@@ -87,85 +74,15 @@ public abstract class CustomDisplay {
 
 
 
-    // /**
-    //  * Schedules an animation.
-    //  * Automatically cancels any remaining animation from the previous call (or previous calls to loopAnimation).
-    //  * @param animtion The animation.
-    //  */
-    // public void scheduleAnimation(@NotNull Animation animtion) {
-    //     // Cancel previous transitions
-    //     for (TaskHandler handler : currentHandlers) {
-    //         handler.cancel();
-    //     }
-    //     currentHandlers.clear();
-
-
-    //     // Schedule the new transitions
-    //     int totScheduledDuration = 0;
-    //     for (TargetTransition t : animtion.transitions) {
-    //         currentHandlers.add(Scheduler.schedule(totScheduledDuration, () -> {
-    //             setTransformation(t.transform.get());
-    //             apply(t.getDuration());
-    //         }));
-    //         totScheduledDuration += t.getDuration();
-    //     }
-    // }
-
-
-
-
-    //TODO move to Elm
-    // /**
-    //  * Loops an animation.
-    //  * Automatically cancels any remaining animation from the previous call (or previous calls to scheduleAnimation).
-    //  * @param transition The animation.
-    //  */
-    // public void loopAnimation(@NotNull Animation animation, int loopDuration) {
-    //     // Cancel previous transitions
-    //     for (TaskHandler handler : currentHandlers) {
-    //         handler.cancel();
-    //     }
-    //     currentHandlers.clear();
-
-
-    //TODO move to Elm
-    //     // Schedule the new transitions
-    //     int totScheduledDuration = 0;
-    //     for (TargetTransition t : animation.transitions) {
-    //         currentHandlers.add(Scheduler.loop(totScheduledDuration, loopDuration, () -> {
-    //             setTransformation(t.transform.get());
-    //             apply(t.getDuration());
-    //         }));
-    //         totScheduledDuration += t.getDuration();
-    //     }
-    // }
-
-
-
-
     public void spawn(@NotNull World world, Vector3d pos) {
         world.spawnEntity(heldEntity);
         heldEntity.setPosition(pos.x, pos.y, pos.z);
-
-        //TODO move to Elm
-        // // Schedule transitions if present
-        // if(animation != null && animation.spawn != null) {
-        //     scheduleAnimation(animation.spawn);
-        // }
     }
 
 
 
 
     public void despawn() {
-        //TODO move to Elm
-        // // Schedule transitions if present
-        // if(animation != null && animation.despawn != null) {
-        //     scheduleAnimation(animation.despawn);
-        // }
-
-        // Schedule entity removal
-        // Scheduler.schedule(animation.despawn.getTotalDuration(), () -> { heldEntity.remove(RemovalReason.KILLED); });
         heldEntity.remove(RemovalReason.KILLED);
     }
 
@@ -175,30 +92,6 @@ public abstract class CustomDisplay {
     public void setTransformation(@NotNull AffineTransformation transformation) {
         Utils.invokeSafe(method_setTransformation, heldEntity, transformation);
     }
-
-
-
-
-
-    //TODO move to Elm
-    // /**
-    //  * Sets the duration of the interpolation and starts it at the end of the current tick.
-    //  * Multiple calls only update the duration. The interpolation is started exactly 1 time.
-    //  * @param duration The duration of the interpolation.
-    //  */
-    // public void apply(int duration) {
-
-    //     // Update duration
-    //     TMP_interpolationDuration = duration;
-
-    //     // Cancel previous tasks and schedule a new one on the current tick
-    //     if(interpolationDispatcherHandler != null) interpolationDispatcherHandler.cancel();
-    //     final int saved_TMP_interpolationDuration = TMP_interpolationDuration;
-    //     interpolationDispatcherHandler = Scheduler.run(() -> {
-    //         setInterpolationDuration(saved_TMP_interpolationDuration);
-    //         setStartInterpolation();
-    //     });
-    // }
 
 
 

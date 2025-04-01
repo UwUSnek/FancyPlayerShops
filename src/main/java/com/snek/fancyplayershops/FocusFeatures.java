@@ -145,9 +145,6 @@ public class FocusFeatures {
         // Set all previously focused shops's next focus state to false
         for (Shop shop : targetedShopsOld) {
             shop.focusStatusNext = false;
-            // if(shop.menuStatus == MenuStatus.DETAILS) {
-            //     shop.menuStatusNext = MenuStatus.IDLE;
-            // }
         }
 
         // Find currently focused shops and set their next focus state to true
@@ -159,19 +156,12 @@ public class FocusFeatures {
                     targetShop.focusStatusNext = true;
                     targetedShops.add(targetShop);
                 }
-                // if(targetShop != null && targetShop.menuStatusNext == MenuStatus.IDLE) { //! Check next instead of current as the previous look could have changed that
-                    // targetShop.menuStatusNext = MenuStatus.DETAILS;
-                    // targetedShops.add(targetShop);
-                // }
             }
         }
 
         // Update the displays of all the previously and currently focused shops to their next state and update the targeted shops list
         for (Shop shop : targetedShopsOld) {
             shop.updateFocusState();
-            // System.out.println( ((ItemElmStyle)shop.itemDisplay.style).getItem().toString());
-            // System.out.println( (shop.itemDisplay.transform.get().get().getScale().toString()));
-            //TODO remove debug print
         }
         for (Shop shop : targetedShops) {
             shop.updateFocusState();

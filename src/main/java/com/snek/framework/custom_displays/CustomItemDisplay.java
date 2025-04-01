@@ -19,7 +19,6 @@ import net.minecraft.world.World;
 
 
 public class CustomItemDisplay extends CustomDisplay {
-    // protected @NotNull ItemDisplayEntity rawDisplay;
     public @NotNull ItemDisplayEntity getRawDisplay() { return (ItemDisplayEntity)heldEntity; }
     static private Method method_setItemStack;
     static {
@@ -36,23 +35,12 @@ public class CustomItemDisplay extends CustomDisplay {
 
 
 
-    // public CustomItemDisplay(@NotNull ItemDisplayEntity _rawDisplay, @NotNull AnimationData _animation) {
     public CustomItemDisplay(@NotNull ItemDisplayEntity _rawDisplay) {
-        // super(_rawDisplay, new Transform(), _animation);
         super(_rawDisplay);
-        // rawDisplay = _rawDisplay;
     }
     public CustomItemDisplay(@NotNull World _world) {
         super(new ItemDisplayEntity(EntityType.ITEM_DISPLAY, _world));
     }
-    // public CustomItemDisplay(@NotNull World world, @NotNull Vec3d pos, @NotNull Transform _defaultTransform, @NotNull ItemStack itemStack, boolean customNameVisible, boolean glowing, @NotNull AnimationData _animation) {
-    //     super(new ItemDisplayEntity(EntityType.ITEM_DISPLAY, world), _defaultTransform, _animation);
-    //     rawDisplay = (ItemDisplayEntity)heldEntity;
-    //     setItemStack(itemStack);
-    //     rawDisplay.setCustomNameVisible(customNameVisible);
-    //     rawDisplay.setGlowing(glowing);
-    //     rawDisplay.setPosition(pos);
-    // }
 
 
 
