@@ -112,7 +112,7 @@ public abstract class Elm {
             for(int i = TRANSITION_REFRESH_TIME; i < time; i = Math.min(i + TRANSITION_REFRESH_TIME, time)) {
 
                 // Calculate interpolation factor and add the new animation step to the list
-                float factor = (float)i / (float)time;
+                float factor = (float)transition.getEasing().compute((double)i / (double)time);
                 // animationSteps.add(Pair.from(targetTransform.clone().interpolate(targetTransform, factor), isAdditive));
                 // animationSteps.add(Triplet.from(oldTransform.clone().interpolate(totTransform, factor), isAdditive));
                 animationSteps.add(Triplet.from(totTransform, isAdditive, factor));

@@ -29,4 +29,8 @@ public abstract class Transition {
     public int getDuration() {
         return duration;
     }
+
+    public Easing getEasing() {
+        return easing;
+    }
 }
