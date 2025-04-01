@@ -51,7 +51,7 @@ public class ButtonElm extends TextElm {
 
 
     @Override
-    public void tick(){
-        super.tick();
+    public boolean tick(){
+        return super.tick();
     }
 }

@@ -56,6 +56,14 @@ public class Transform {
         );
     }
 
+    public Transform set(Transform t) {
+        _pos   .set(t._pos);
+        _lrot  .set(t._lrot);
+        _scale .set(t._scale);
+        _rrot  .set(t._rrot);
+        return this;
+    }
+
 
 
 

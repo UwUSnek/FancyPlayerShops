@@ -88,7 +88,7 @@ public class TextElm extends Elm {
 
 
     @Override
-    public void tick(){
-        super.tick();
+    public boolean tick(){
+        return super.tick();
     }
 }

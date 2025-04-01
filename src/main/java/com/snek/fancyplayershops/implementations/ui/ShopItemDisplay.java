@@ -5,8 +5,14 @@ import org.joml.Vector3d;
 
 import com.snek.fancyplayershops.Shop;
 import com.snek.framework.custom_displays.CustomItemDisplay;
+import com.snek.framework.data_types.AdditiveTransition;
+import com.snek.framework.data_types.Animation;
+import com.snek.framework.data_types.TargetTransition;
+import com.snek.framework.data_types.Transform;
 import com.snek.framework.ui.ItemElm;
+import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.ui.styles.ItemElmStyle;
+import com.snek.framework.utils.Easings;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
 
@@ -42,19 +48,14 @@ public class ShopItemDisplay extends ItemElm {
 
 
 
-    // private static final AnimationData focusAnimation = new AnimationData(
-    //     new Animation(
-    //         new TargetTransition(DEFAULT_TRANSFORM.clone().moveY(S_HEIGHT).scale(S_SCALE).rotY(L_ROT_A), S_TIME)
-    //     ),
-    //     new Animation(
-    //         new TargetTransition(DEFAULT_TRANSFORM.clone().moveY(S_HEIGHT).scale(S_SCALE).rotY(L_ROT_A + L_ROT * 1), L_TIME / 3),
-    //         new TargetTransition(DEFAULT_TRANSFORM.clone().moveY(S_HEIGHT).scale(S_SCALE).rotY(L_ROT_A + L_ROT * 2), L_TIME / 3),
-    //         new TargetTransition(DEFAULT_TRANSFORM.clone().moveY(S_HEIGHT).scale(S_SCALE).rotY(L_ROT_A + L_ROT * 3), L_TIME / 3)
-    //     ),
-    //     new Animation(
-    //         new TargetTransition(DEFAULT_TRANSFORM, D_TIME)
-    //     )
-    // );
+
+    private final @NotNull Animation focusAnimation;
+    private final @NotNull Animation unfocusAnimation;
+    // new Animation(
+    //     new TargetTransition(DEFAULT_TRANSFORM.clone().moveY(S_HEIGHT).scale(S_SCALE).rotY(L_ROT_A + L_ROT * 1), L_TIME / 3),
+    //     new TargetTransition(DEFAULT_TRANSFORM.clone().moveY(S_HEIGHT).scale(S_SCALE).rotY(L_ROT_A + L_ROT * 2), L_TIME / 3),
+    //     new TargetTransition(DEFAULT_TRANSFORM.clone().moveY(S_HEIGHT).scale(S_SCALE).rotY(L_ROT_A + L_ROT * 3), L_TIME / 3)
+    // ),
 
 
 
@@ -62,10 +63,13 @@ public class ShopItemDisplay extends ItemElm {
     // public ShopItemDisplay(@NotNull ItemDisplayEntity _rawDisplay, @NotNull AnimationData _animation) {
         // public ShopItemDisplay(@NotNull ServerWorld _world, @NotNull CustomItemDisplay _rawDisplay) {
     public ShopItemDisplay(@NotNull Shop _targetShop, @NotNull CustomItemDisplay _display) {
-        super(_targetShop.getWorld(), _display, new ItemElmStyle());
+        super(_targetShop.getWorld(), _display, new ItemElmStyle().setDespawnAnimation(null));
         targetShop = _targetShop;
         entity.setCustomNameVisible(true);
         updateDisplay();
+
+        focusAnimation   = new Animation(new AdditiveTransition(new Transform().moveY(ElmStyle.S_HEIGHT).scale(ElmStyle.S_SCALE), ElmStyle.S_TIME, Easings.linear)); //TODO use better easing
+        unfocusAnimation = new Animation(new   TargetTransition(transform.get(),                                                  ElmStyle.D_TIME, Easings.linear)); //TODO use better easing
     }
 
 
@@ -129,7 +133,7 @@ public class ShopItemDisplay extends ItemElm {
 
     public void enterFocusState(){
         entity.setCustomNameVisible(false);
-        // scheduleAnimation(focusAnimation.spawn); //FIXME add spawning animations back
+        applyAnimation(focusAnimation);
 
         //FIXME add loop animations back
         // currentHandlers.add(Scheduler.schedule(focusAnimation.spawn.getTotalDuration(), () -> {
@@ -141,9 +145,8 @@ public class ShopItemDisplay extends ItemElm {
 
 
     public void leaveFocusState(){
-        // scheduleAnimation(focusAnimation.despawn); //FIXME add despawning animations back
+        applyAnimation(unfocusAnimation);
         // currentHandlers.add(Scheduler.schedule(focusAnimation.despawn.getTotalDuration(), () -> {
-        System.out.println("turning on custom name");
             entity.setCustomNameVisible(true);
         // }));
     }

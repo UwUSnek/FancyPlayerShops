@@ -77,17 +77,18 @@ public class DetailsDisplay extends TextElm {
         if(_item.getItem() == Items.AIR) {
             text.set(new Txt()
             .cat(Shop.EMPTY_SHOP_NAME)
-            .cat(new Txt("\nPrice: ")).cat(new Txt(Utils.formatPrice (targetShop.getPrice())).bold().color(C_RGB_PRICE))
-            .cat(new Txt("\nStock: ")).cat(new Txt(Utils.formatAmount(targetShop.getStock())).bold().color((int)col.x, (int)col.y, (int)col.z))
+            .cat(new Txt("\nPrice: -"))
+            .cat(new Txt("\nStock: -"))
             .get());
         }
 
         // Configured shop case
         else {
+            double price = targetShop.getPrice();
             text.set(new Txt()
                 .cat(new Txt(Utils.getItemName(_item)).get())
-                .cat(new Txt("\nPrice: -"))
-                .cat(new Txt("\nStock: -"))
+                .cat(new Txt("\nPrice: ")).cat(new Txt(price < 0.005 ? "Free" : Utils.formatPrice(price)).bold().color(C_RGB_PRICE))
+                .cat(new Txt("\nStock: ")).cat(new Txt(Utils.formatAmount(targetShop.getStock())).bold().color((int)col.x, (int)col.y, (int)col.z))
             .get());
         }
 

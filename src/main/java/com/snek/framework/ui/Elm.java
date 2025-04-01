@@ -10,11 +10,16 @@ import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 import com.snek.framework.custom_displays.CustomDisplay;
+import com.snek.framework.data_types.AdditiveTransition;
 import com.snek.framework.data_types.Animation;
 import com.snek.framework.data_types.Flagged;
+import com.snek.framework.data_types.TargetTransition;
 import com.snek.framework.data_types.Transform;
 import com.snek.framework.data_types.Transition;
+import com.snek.framework.data_types.Triplet;
+import com.snek.framework.data_types.Pair;
 import com.snek.framework.ui.styles.ElmStyle;
+import com.snek.framework.utils.Easings;
 import com.snek.framework.utils.Scheduler;
 
 import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
@@ -94,41 +99,25 @@ public abstract class Elm {
         }
 
 
-        // Fo each transition in the animation
-        // for (Transition transition : animation.transitions) {
-
-            // For each future transform calculated by previous calls
-            // for (Transform ft : transformQueue) {
-
-            // For each transition in the animation
-            // int stepTargetTick = 0;
-            // int ftIndex        = 0;
-            // for (Transition transition : animation.transitions) {
-                //         stepTargetTick += TRANSITION_REFRESH_TIME;                      // Calculate the number of the tick in which this step ends
-                //         Transform ft = transformQueue.(ftIndex);                     // Retrieve the future transform calculated by previous calls
-                //         float factor = stepTargetTick / animation.getTotalDuration();   // Calculate interpolation factor
-                //         ft.interpolate(transition.compute(ft), factor);                 // Apply the partial interpolation to the future transform
-                //         ++ftIndex;                                                      // Increment future transform index
-                //     }
-                // }
-
-                // // For each transform that has yet to be queued
-                // Transform lastTransform = ((LinkedList<Transform>)transformQueue).getLast();
-
-                // For each transition of the animation
-                // int stepEnd = 0;
-        List<Transform> animationSteps = new ArrayList<>();
+        // Calculate animation steps as a list of additive transforms
+        List<Triplet<Transform, Boolean, Float>> animationSteps = new ArrayList<>();
         Transform totTransform = new Transform(); // The sum of all the changes applied by the current and previous steps of the animation
         for (Transition transition : animation.transitions) {
 
             // For each step of the transition
             int time = transition.getDuration();                            // The duration of this transition
-            Transform targetTransform = transition.compute(totTransform);   // The target transformation of this transition
+            // Transform targetTransform = transition.compute(totTransform);   // The target transformation of this transition
+            Transform oldTransform = totTransform.clone();
+            totTransform = transition.compute(totTransform);   // The target transformation of this transition
+            boolean isAdditive = transition instanceof AdditiveTransition;
             for(int i = TRANSITION_REFRESH_TIME; i < time; i = Math.min(i + TRANSITION_REFRESH_TIME, time)) {
 
                 // Calculate interpolation factor and add the new animation step to the list
                 float factor = (float)i / (float)time;
-                animationSteps.add(totTransform.interpolate(targetTransform, factor));
+                // animationSteps.add(Pair.from(targetTransform.clone().interpolate(targetTransform, factor), isAdditive));
+                // animationSteps.add(Triplet.from(oldTransform.clone().interpolate(totTransform, factor), isAdditive));
+                animationSteps.add(Triplet.from(totTransform, isAdditive, factor));
+                // totTransform.clone().interpolate(targetTransform, factor)
             }
         }
 
@@ -137,8 +126,12 @@ public abstract class Elm {
         int i = 0;
         if(!transformQueue.isEmpty()) {
             for (Transform ft : transformQueue) {
-                ft.apply(animationSteps.get(i));
+                // ft.apply(animationSteps.get(i));
+                var step = animationSteps.get(i);
+                if(step.second) ft.interpolate(ft.apply(step.first), step.third); else ft.interpolate(step.first, step.third);
+                // System.out.println("Changing to " + ft.get().getTranslation().toString());
                 ++i;
+                if(i >= animationSteps.size()) break;
             }
         }
 
@@ -146,7 +139,14 @@ public abstract class Elm {
         // Add remaining future transforms
         Transform lastTransform = transformQueue.isEmpty() ? transform.get() : transformQueue.getLast();
         for(; i < animationSteps.size(); ++i) {
-            transformQueue.add(lastTransform.clone().apply(animationSteps.get(i)));
+            // transformQueue.add(lastTransform.clone().apply(animationSteps.get(i)));
+            var step = animationSteps.get(i);
+            if(step.second) {
+                transformQueue.add(lastTransform.clone().interpolate(lastTransform.clone().apply(step.first), step.third));
+            }
+            else {
+                transformQueue.add(lastTransform.clone().interpolate(step.first, step.third));
+            }
         }
 
             // for(int i = 0; i < totTime; i = Math.min(i + TRANSITION_REFRESH_TIME, totTime)) {
@@ -212,8 +212,9 @@ public abstract class Elm {
     /**
      * Processes transitions and other tick features of this Elm and all of its children, recursively.
      * Must be called at the end of the tick every TRANSITION_REFRESH_TIME ticks.
+     * @return true if no action is necessary. false if the element has been removed from the update queue.
      */
-    public void tick() {
+    public boolean tick() {
         // if(!transformQueue.isEmpty()) {
             transform.set(transformQueue.removeFirst());
             flushStyle();
@@ -223,7 +224,9 @@ public abstract class Elm {
             if(transformQueue.isEmpty()) {
                 elmUpdateQueue.remove(this);
                 isQueued = false;
+                return false;
             }
+            return true;
         // }
         // else {
         //     flushStyle();
@@ -238,8 +241,11 @@ public abstract class Elm {
      * Processes a single tick of all the queued elements
      */
     public static void processUpdateQueueTick(){
-        for (Elm elm : elmUpdateQueue) {
-            elm.tick();
+
+        // System.out.println("array: " + (elmUpdateQueue == null ? "null" : elmUpdateQueue.toString()));
+        for (int i = 0; i < elmUpdateQueue.size();) {
+            // System.out.println("processing tick of " + (elm == null ? "null" : elm.toString()));
+            if(elmUpdateQueue.get(i).tick()) ++i;
         }
     }
 }
