@@ -3,6 +3,7 @@ package com.snek.framework.ui.styles;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.snek.framework.data_types.AdditiveTransition;
 import com.snek.framework.data_types.Animation;
 import com.snek.framework.data_types.Transform;
 import com.snek.framework.utils.Easings;
@@ -26,8 +27,8 @@ public class ElmStyle {
     private @Nullable Animation     despawnAnimation;   // The despawning animation. Played before the entity is removed from the world
 
 
-    public static final float S_SCALE  = 1.05f;        // The scale applied by the spawning animation
-    public static final float S_HEIGHT = 0.1f;         // The Y translation applied by the spawning animation
+    public static final float S_SCALE  = 1.1f;         // The scale applied by the spawning animation
+    public static final float S_HEIGHT = 0.05f;        // The Y translation applied by the spawning animation
     public static final int   S_TIME   = 4;            // Spawn   time. Measured in ticks. //! Must be even
     public static final int   D_TIME   = 8;            // Despawn time. Measured in ticks. //! Must be even
 
@@ -42,8 +43,8 @@ public class ElmStyle {
         viewRange        = 0.3f;
         billboardMode    = BillboardMode.FIXED;
 
-        spawnAnimation   = new Animation(new TargetTransition(new Transform().moveY(S_HEIGHT).scale(S_SCALE), S_TIME, Easings.linear)); //TODO use better easing
-        despawnAnimation = new Animation(new TargetTransition(transform,                                      D_TIME, Easings.linear)); //TODO use better easing
+        spawnAnimation   = new Animation(new AdditiveTransition(new Transform().moveY(S_HEIGHT).scale(S_SCALE), S_TIME, Easings.sineOut)); //TODO use better easing
+        despawnAnimation = new Animation(new   TargetTransition(transform,                                      D_TIME, Easings.sineOut)); //TODO use better easing
     }
 
 

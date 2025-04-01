@@ -107,7 +107,6 @@ public abstract class Elm {
             // For each step of the transition
             int time = transition.getDuration();                            // The duration of this transition
             // Transform targetTransform = transition.compute(totTransform);   // The target transformation of this transition
-            Transform oldTransform = totTransform.clone();
             totTransform = transition.compute(totTransform);   // The target transformation of this transition
             boolean isAdditive = transition instanceof AdditiveTransition;
             for(int i = TRANSITION_REFRESH_TIME; i < time; i = Math.min(i + TRANSITION_REFRESH_TIME, time)) {
@@ -191,7 +190,15 @@ public abstract class Elm {
      * Spawns the element and its associated entities into the world.
      */
     public void spawn(Vector3d pos) {
+
+        // Spawn entity into the world
         entity.spawn(world, pos);
+
+        // Handle animations
+        Animation animation = style.getSpawnAnimation();
+        if(animation != null) {
+            applyAnimation(animation);
+        }
     }
 
 
@@ -201,7 +208,15 @@ public abstract class Elm {
      * Removes the element and its associated entities from the world.
      */
     public void despawn() {
-        Scheduler.schedule(style.getDespawnAnimation().getTotalDuration(), () -> {
+
+        // Handle animations
+        Animation animation = style.getDespawnAnimation();
+        if(animation != null) {
+            applyAnimation(animation);
+        }
+
+        // Remove entity from the world
+        Scheduler.schedule(animation.getTotalDuration(), () -> {
             entity.despawn();
         });
     }

@@ -13,6 +13,7 @@ import com.snek.framework.ui.ItemElm;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.ui.styles.ItemElmStyle;
 import com.snek.framework.utils.Easings;
+import com.snek.framework.utils.Scheduler;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
 
@@ -68,8 +69,8 @@ public class ShopItemDisplay extends ItemElm {
         entity.setCustomNameVisible(true);
         updateDisplay();
 
-        focusAnimation   = new Animation(new AdditiveTransition(new Transform().moveY(ElmStyle.S_HEIGHT).scale(ElmStyle.S_SCALE), ElmStyle.S_TIME, Easings.linear)); //TODO use better easing
-        unfocusAnimation = new Animation(new   TargetTransition(transform.get(),                                                  ElmStyle.D_TIME, Easings.linear)); //TODO use better easing
+        focusAnimation   = new Animation(new AdditiveTransition(new Transform().moveY(ElmStyle.S_HEIGHT).scale(ElmStyle.S_SCALE), ElmStyle.S_TIME, Easings.sineOut)); //TODO use better easing
+        unfocusAnimation = new Animation(new   TargetTransition(transform.get(),                                                  ElmStyle.D_TIME, Easings.sineOut)); //TODO use better easing
     }
 
 
@@ -146,8 +147,9 @@ public class ShopItemDisplay extends ItemElm {
 
     public void leaveFocusState(){
         applyAnimation(unfocusAnimation);
-        // currentHandlers.add(Scheduler.schedule(focusAnimation.despawn.getTotalDuration(), () -> {
+
+        Scheduler.schedule(unfocusAnimation.getTotalDuration(), () -> {
             entity.setCustomNameVisible(true);
-        // }));
+        });
     }
 }
