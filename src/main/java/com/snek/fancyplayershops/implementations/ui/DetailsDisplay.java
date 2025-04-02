@@ -110,7 +110,7 @@ public class DetailsDisplay extends TextElm {
             if(
                 world != null &&
                 entity.getCustomName() != null &&
-                entity.getCustomName().getString() == ENTITY_CUSTOM_NAME &&
+                entity.getCustomName().toString().equals(ENTITY_CUSTOM_NAME) &&
                 Shop.findShop(entity.getBlockPos(), world) != null
             ) {
                 entity.remove(RemovalReason.KILLED);
