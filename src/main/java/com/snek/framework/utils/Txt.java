@@ -1,11 +1,10 @@
-package com.snek.fancyplayershops.utils;
+package com.snek.framework.utils;
 
 import org.joml.Vector3i;
 
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.Vec3i;
 
 
 

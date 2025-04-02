@@ -14,25 +14,24 @@ import java.util.UUID;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3d;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
-import com.snek.fancyplayershops.ShopComponentEntities.ShopItemDisplay;
-import com.snek.fancyplayershops.UI.DetailsDisplay;
-import com.snek.fancyplayershops.utils.Scheduler;
-import com.snek.fancyplayershops.utils.Txt;
+import com.snek.fancyplayershops.implementations.ui.DetailsDisplay;
+import com.snek.fancyplayershops.implementations.ui.ShopItemDisplay;
+import com.snek.framework.utils.Txt;
 
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 
@@ -43,10 +42,9 @@ import net.minecraft.world.World;
 
 
 // TODO fix broken shops and blocks if they don't exist in the world when the map is loaded
-// TODO purge stray focus displays on entity loading (use custom entity data)
 public class Shop {
     private static final Path SHOP_STORAGE_DIR;
-    private static final ItemStack DEFAULT_ITEM = Items.BARRIER.getDefaultStack();
+    public  static final Text EMPTY_SHOP_NAME = new Txt("[Empty]").italic().lightGray().get();
     static {
         SHOP_STORAGE_DIR = FabricLoader.getInstance().getConfigDir().resolve(FancyPlayerShops.MOD_ID + "/shops");
         try {
@@ -54,7 +52,6 @@ public class Shop {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        DEFAULT_ITEM.setCustomName(new Txt("[Empty]").italic().lightGray().get());
     }
 
     // Stores the shops of players, identifying them by their owner's UUID and their coordinates and world in the format "x,y,z,worldId"
@@ -73,22 +70,21 @@ public class Shop {
     private BlockPos pos;
     private transient String shopIdentifierCache;
     private transient String shopIdentifierCache_noWorld;
-    public Vec3d calcDisplayPos() { return new Vec3d(pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5); }
+    public Vector3d calcDisplayPos() { return new Vector3d(pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5); }
 
 
     // Shop data
-    private transient ItemStack item = DEFAULT_ITEM;
+    private transient ItemStack item = Items.AIR.getDefaultStack();
     private String serializedItem;
     private double price = 0;
     private int stock = 0;
 
 
     // Shop status
-    // private transient boolean isFocused = false;
     private transient @Nullable DetailsDisplay focusDisplay = null; //TODO this might need to be a list
     public  transient @Nullable PlayerEntity           user = null;
-    public  transient @NotNull  MenuStatus       menuStatus = MenuStatus.IDLE;
-    public  transient @NotNull  MenuStatus   menuStatusNext = MenuStatus.IDLE;
+    public  transient           boolean         focusStatus = false;
+    public  transient           boolean     focusStatusNext = false;
 
 
     // Accessors
@@ -148,8 +144,8 @@ public class Shop {
 
         // Create and spawn the Item Display entity
         itemDisplay = new ShopItemDisplay(this);
-        itemDisplayUUID = itemDisplay.getRawDisplay().getUuid();
-        itemDisplay.spawn(world);
+        itemDisplayUUID = itemDisplay.getEntity().getUuid();
+        itemDisplay.spawn(calcDisplayPos());
 
         // Save the shop
         saveShop();
@@ -181,6 +177,7 @@ public class Shop {
      * @param owner The player.
      */
     private void saveShop() {
+
         // Create map entry if absent, then add the new shop to the player's shops
         shopsByOwner.put(ownerUUID.toString(), this);
         shopsByCoords.put(shopIdentifierCache, this);
@@ -229,8 +226,8 @@ public class Shop {
                 }
 
                 // Recalculate transient members and update shop maps
-                retrievedShop.menuStatus     = MenuStatus.IDLE;
-                retrievedShop.menuStatusNext = MenuStatus.IDLE;
+                retrievedShop.focusStatus     = false;
+                retrievedShop.focusStatusNext = false;
                 retrievedShop.cacheShopIdentifier();
                 retrievedShop.calcDeserializedItem();
                 try {
@@ -248,7 +245,7 @@ public class Shop {
 
 
     /**
-     * Returns the Shop instance preset at a certain block position.
+     * Returns the Shop instance present at a certain block position.
      * Returns null if no shop is there.
     */
     public static Shop findShop(BlockPos pos, String worldId) {
@@ -264,65 +261,47 @@ public class Shop {
     /**
      * Spawns or removes the focus displays and starts item animations depending on the set next menu status.
      */
-    public void updateMenuStatus(){
-        if(menuStatus != menuStatusNext) {
-            if(menuStatusNext == MenuStatus.DETAILS) {
-                if(focusDisplay != null && menuStatusNext != MenuStatus.IDLE) {
-                    focusDisplay.despawn();
-                }
+    public void updateFocusState(){
+        if(focusStatus != focusStatusNext) {
+            if(focusStatusNext) {
 
                 // Create and setup the Text Display entity
-                if(focusDisplay != null) focusDisplay.getRawDisplay().remove(RemovalReason.KILLED);
+                if(focusDisplay != null) focusDisplay.getEntity().despawn();
                 focusDisplay = new DetailsDisplay(this);
-                focusDisplay.spawn(world);
+                focusDisplay.spawn(calcDisplayPos().add(0, 0.3d, 0));
 
                 // Start item animation and turn off the CustomName
-                findDisplayEntityIfNeeded();
-                if(itemDisplay != null) itemDisplay.enterFocusState();
+                findItemDisplayEntityIfNeeded().enterFocusState();
             }
-            else if(menuStatusNext == MenuStatus.OWNER_EDIT) {
+            else {
+                // Despawn the text display
                 focusDisplay.despawn();
-                Scheduler.schedule(DetailsDisplay.D_TIME, () -> {
-                    //TODO spawn menus
-                    //FIXME replace current system with a generic "despawn current menu / open new menu" system
-                });
-            }
-            else if(menuStatusNext == MenuStatus.CLIENT_BUY) {
-                focusDisplay.despawn();
-                Scheduler.schedule(DetailsDisplay.D_TIME, () -> {
-                    //TODO spawn menus
-                    //FIXME replace current system with a generic "despawn current menu / open new menu" system
-                });
-            }
-            else if(menuStatusNext == MenuStatus.IDLE) {
-                if(menuStatus == MenuStatus.DETAILS) {
 
-                    // Despawn the text display
-                    focusDisplay.despawn();
-
-                    // Start item animation and turn the CustomName back on
-                    findDisplayEntityIfNeeded();
-                    if(itemDisplay != null) itemDisplay.leaveFocusState();
-                }
+                // Start item animation and turn the CustomName back on
+                findItemDisplayEntityIfNeeded().leaveFocusState();
             }
-            menuStatus = menuStatusNext;
+            focusStatus = focusStatusNext;
         }
-
-
     }
 
 
 
 
     /**
-     * Finds the display entity connected to this shop, only if this.itemDisplay is null.
+     * Finds the display entity connected to this shop and saves it to this.itemDisplay.
+     * If this.itemDisplay is null, a new ShopItemDisplay is created.
+     * @reutrn the item display.
      */
-    private void findDisplayEntityIfNeeded(){
+    private ShopItemDisplay findItemDisplayEntityIfNeeded(){
         if(itemDisplay == null) {
             ItemDisplayEntity rawItemDisplay = (ItemDisplayEntity)(world.getEntity(itemDisplayUUID));
-            if(rawItemDisplay != null) {
-                itemDisplay = new ShopItemDisplay(rawItemDisplay, null);
+            if(rawItemDisplay == null) {
+                itemDisplay = new ShopItemDisplay(this);
+            }
+            else {
+                itemDisplay = new ShopItemDisplay(this, rawItemDisplay);
             }
         }
+        return itemDisplay;
     }
 }

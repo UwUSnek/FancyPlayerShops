@@ -22,9 +22,10 @@ import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.snek.fancyplayershops.UI.DetailsDisplay;
-import com.snek.fancyplayershops.utils.Scheduler;
-import com.snek.fancyplayershops.utils.Txt;
+import com.snek.fancyplayershops.implementations.ui.DetailsDisplay;
+import com.snek.framework.ui.Elm;
+import com.snek.framework.utils.Scheduler;
+import com.snek.framework.utils.Txt;
 
 
 
@@ -79,7 +80,10 @@ public class FancyPlayerShops implements ModInitializer {
             // Load shop data
             Shop.loadData(server);
 
-            // Schedule focus features look
+            // Schedule UI element update loop
+            Scheduler.loop(0, Elm.TRANSITION_REFRESH_TIME, Elm::processUpdateQueueTick);
+
+            // Schedule focus features loop
             Scheduler.loop(0, 2, () -> { FocusFeatures.tick(server.getWorlds()); });
 
             // Log initialization success
@@ -90,8 +94,8 @@ public class FancyPlayerShops implements ModInitializer {
         // Create and register shop block rclick event
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             ActionResult r;
-            r = ClickFeatures.onClick(world, player, hand, hitResult, ClickType.RIGHT); //FIXME add ghost cooldown. add to lclick too
-            if(r == ActionResult.PASS) r = onItemUse(world, player, hand, hitResult);
+            // r = ClickFeatures.onClick(world, player, hand, hitResult, ClickType.RIGHT); //FIXME add ghost cooldown. add to lclick too
+            /*if(r == ActionResult.PASS)*/ r = onItemUse(world, player, hand, hitResult);
             return r;
         });
 
@@ -99,8 +103,9 @@ public class FancyPlayerShops implements ModInitializer {
         // Create and register shop block rclick event
         AttackBlockCallback.EVENT.register((player, world, hand, blockPos, diretion) -> {
             ActionResult r;
-            r = ClickFeatures.onClick(world, player, hand, blockPos, ClickType.LEFT); //FIXME add ghost cooldown. add to lclick too
-            return r;
+            // r = ClickFeatures.onClick(world, player, hand, blockPos, ClickType.LEFT); //FIXME add ghost cooldown. add to lclick too
+            // return r;
+            return ActionResult.PASS;
         });
 
 

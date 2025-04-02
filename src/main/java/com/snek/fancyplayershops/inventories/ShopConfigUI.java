@@ -1,4 +1,4 @@
-package com.snek.fancyplayershops.Containers;
+package com.snek.fancyplayershops.inventories;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;

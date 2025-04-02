@@ -1,4 +1,4 @@
-package com.snek.fancyplayershops.CustomDisplays;
+package com.snek.framework.data_types;
 
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
@@ -56,6 +56,47 @@ public class Transform {
         );
     }
 
+    public Transform set(Transform t) {
+        _pos   .set(t._pos);
+        _lrot  .set(t._lrot);
+        _scale .set(t._scale);
+        _rrot  .set(t._rrot);
+        return this;
+    }
+
+
+
+
+    /**
+     * Applies a transformation to this.
+     * @param t The transform to apply
+     * @return this.
+     */
+    public Transform apply(Transform t) {
+        move(t._pos);
+        rot(t._lrot);
+        scale(t._scale);
+        rrot(t._rrot);
+        return this;
+    }
+
+
+
+
+    /**
+     * Applies a linear interpolation to this.
+     * @param target The target transform.
+     * @param factor The factor. Using 0 will return a copy of this, using 1 will return a copy of target
+     * @return this.
+     */
+    public Transform interpolate(Transform target, float factor) {
+        _pos  .lerp (target._pos,   factor);
+        _lrot .slerp(target._lrot,  factor);
+        _scale.lerp (target._scale, factor);
+        _rrot .slerp(target._rrot,  factor);
+        return this;
+    }
+
 
 
 
@@ -65,12 +106,13 @@ public class Transform {
     public Transform rotY        (float y                  ) { _lrot.rotateY(y);                                  return this; }
     public Transform rotZ        (float z                  ) { _lrot.rotateZ(z);                                  return this; }
     public Transform rot         (float x, float y, float z) { rotX(x); rotY(y); rotZ(z);                         return this; }
+    public Transform rot         (Quaternionf r            ) { _lrot.mul(r);                                      return this; }
 
-    //TODO
-    // public Transform setRotX  (float x                  ) { _lrot.rotateX(x);                                  return this; }
-    // public Transform setRotY  (float y                  ) { _lrot.rotateY(y);                                  return this; }
-    // public Transform setRotZ  (float z                  ) { _lrot.rotateZ(z);                                  return this; }
-    // public Transform setRot   (float x, float y, float z) { rotX(x); rotY(y); rotZ(z);                         return this; }
+    public Transform setRotX    (float x                  ) { _lrot.rotationX(x);                                return this; }
+    public Transform setRotY    (float y                  ) { _lrot.rotationY(y);                                return this; }
+    public Transform setRotZ    (float z                  ) { _lrot.rotationZ(z);                                return this; }
+    public Transform setRot     (float x, float y, float z) { setRotX(x); setRotY(y); setRotZ(z);                return this; }
+    public Transform setRot     (Quaternionf r            ) { _lrot.set(r);                                      return this; }
 
 
     // Translation
@@ -78,6 +120,7 @@ public class Transform {
     public Transform moveY       (float y                  ) { _pos.y += y;                                       return this; }
     public Transform moveZ       (float z                  ) { _pos.z += z;                                       return this; }
     public Transform move        (float x, float y, float z) { moveX(x); moveY(y); moveZ(z);                      return this; }
+    public Transform move        (Vector3f s               ) { _pos.add(s);                                       return this; }
 
     public Transform setPosX     (float x                  ) { _pos.x = x;                                        return this; }
     public Transform setPosY     (float y                  ) { _pos.y = y;                                        return this; }
@@ -91,6 +134,7 @@ public class Transform {
     public Transform scaleZ      (float z                  ) { _scale.z *= z;                                     return this; }
     public Transform scale       (float x, float y, float z) { scaleX(x); scaleY(y); scaleZ(z);                   return this; }
     public Transform scale       (float n                  ) { scale(n, n, n);                                    return this; }
+    public Transform scale       (Vector3f s               ) { _scale.mul(s);                                     return this; }
 
     public Transform setScaleX   (float x                  ) { _scale.x = x;                                      return this; }
     public Transform setScaleY   (float y                  ) { _scale.y = y;                                      return this; }
@@ -104,10 +148,11 @@ public class Transform {
     public Transform rrotY       (float y                  ) { _rrot.rotateY(y);                                  return this; }
     public Transform rrotZ       (float z                  ) { _rrot.rotateZ(z);                                  return this; }
     public Transform rrot        (float x, float y, float z) { rrotX(x); rrotY(y); rrotZ(z);                      return this; }
+    public Transform rrot        (Quaternionf r            ) { _rrot.mul(r);                                      return this; }
 
-    //TODO
-    // public Transform setRrotX (float x                  ) { _rrot.setAngleAxis(x);                             return this; }
-    // public Transform setRrotY (float y                  ) { _rrot.setAngleAxis(y);                             return this; }
-    // public Transform setRrotZ (float z                  ) { _rrot.setAngleAxis(z);                             return this; }
-    // public Transform setRrot  (float x, float y, float z) { rrotX(x); rrotY(y); rrotZ(z);                      return this; }
+    public Transform setRrotX    (float x                  ) { _rrot.rotationX(x);                                return this; }
+    public Transform setRrotY    (float y                  ) { _rrot.rotationY(y);                                return this; }
+    public Transform setRrotZ    (float z                  ) { _rrot.rotationZ(z);                                return this; }
+    public Transform setRrot     (float x, float y, float z) { setRrotX(x); setRrotY(y); setRrotZ(z);             return this; }
+    public Transform setRrot     (Quaternionf r            ) { _rrot.set(r);                                      return this; }
 }
