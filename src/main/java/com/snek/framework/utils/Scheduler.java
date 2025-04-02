@@ -12,10 +12,18 @@ import net.minecraft.server.MinecraftServer;
 
 
 
-public class Scheduler {
+public abstract class Scheduler {
     public Scheduler() { throw new UnsupportedOperationException("Utility class \"Scheduler\" cannot be instantiated"); }
     private static long tickNum = 0;
     private static final PriorityQueue<TaskHandler> taskQueue = new PriorityQueue<>(Comparator.comparingLong(e -> e.getTargetTick()));
+
+    /**
+     * Returns the current tick number.
+     * @return The tick number.
+     */
+    public static long getTickNum() {
+        return tickNum;
+    }
 
 
 

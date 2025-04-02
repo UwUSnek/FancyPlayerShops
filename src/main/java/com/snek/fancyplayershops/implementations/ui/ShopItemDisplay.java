@@ -3,7 +3,6 @@ package com.snek.fancyplayershops.implementations.ui;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
-import org.joml.Vector3f;
 
 import com.snek.fancyplayershops.Shop;
 import com.snek.framework.custom_displays.CustomItemDisplay;
@@ -39,6 +38,7 @@ public class ShopItemDisplay extends ItemElm {
 
     private @Nullable TaskHandler loopHandler = null;
     public static final int L_TIME = 32;
+    public static final float L_ROT = (float)Math.toRadians(120);
 
 
 
@@ -57,11 +57,23 @@ public class ShopItemDisplay extends ItemElm {
         entity.setCustomNameVisible(true);
         updateDisplay();
 
-        focusAnimation   = new Animation(new AdditiveTransition(new Transform().moveY(ElmStyle.S_HEIGHT).scale(ElmStyle.S_SCALE), ElmStyle.S_TIME, Easings.cubicOut));
-        unfocusAnimation = new Animation(new   TargetTransition(transform.get(),                                                  ElmStyle.D_TIME, Easings.cubicOut));
 
+        // Setup spawn and despawn animations animation
+        focusAnimation = new Animation(new AdditiveTransition(
+            new Transform().moveY(ElmStyle.S_HEIGHT).scale(ElmStyle.S_SCALE).rotY(L_ROT / 2),
+            ElmStyle.S_TIME,
+            Easings.cubicOut
+        ));
+        unfocusAnimation = new Animation(new TargetTransition(
+            transform.get(),
+            ElmStyle.D_TIME,
+            Easings.cubicOut
+        ));
+
+
+        // Setup loop animation
         loopAnimation = new Animation(
-            new AdditiveTransition(new Transform().rotY((float)Math.toRadians(120)), L_TIME, Easings.linear)
+            new AdditiveTransition(new Transform().rotY(L_ROT), L_TIME, Easings.linear)
         );
     }
 

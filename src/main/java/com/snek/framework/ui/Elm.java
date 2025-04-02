@@ -116,8 +116,8 @@ public abstract class Elm {
 
         // Calculate animation steps as a list of transforms
         List<Triplet<Transform, Boolean, Float>> animationSteps = new ArrayList<>();
-        Transform totTransform = new Transform(); // The sum of all the changes applied by the current and previous steps of the animation
-        int time = transition.getDuration();                            // The duration of this transition
+        Transform totTransform = new Transform();       // The sum of all the changes applied by the current and previous steps of the animation
+        int time = transition.getDuration();            // The duration of this transition
         for(int i = TRANSITION_REFRESH_TIME; i < time; i = Math.min(i + TRANSITION_REFRESH_TIME, time)) {
 
             // Calculate interpolation factor and add the new animation step to the list
@@ -135,7 +135,7 @@ public abstract class Elm {
             Triplet<Transform, Boolean, Float> step = null;
 
             // Update existing future transforms
-            for(; i + shift < transformQueue.size() && i >= animationSteps.size(); ++i) {
+            for(; i + shift < transformQueue.size() && i < animationSteps.size(); ++i) {
                 Transform ft = transformQueue.get(i + shift);
                 step = animationSteps.get(i);
                 __applyTransitionStep(ft, step);
@@ -172,7 +172,7 @@ public abstract class Elm {
      * @param step The animation step.
      * @return The modified transform.
      */
-    private Transform __applyTransitionStep(Transform ft, Triplet<Transform, Boolean, Float> step){
+    private @NotNull Transform __applyTransitionStep(@NotNull Transform ft, @NotNull Triplet<Transform, Boolean, Float> step){
         if(step.second) {                                               // If the step is additive
             ft.interpolate(ft.clone().apply(step.first), step.third);       // Interpolate the transform with the result of applying the step's transform to it
         }                                                                   //
@@ -222,7 +222,8 @@ public abstract class Elm {
      */
     public void spawn(Vector3d pos) {
 
-        // Spawn entity into the world
+        // Flush previous changes to the entity to avoid bad interpolations and the entity into the world
+        flushStyle();
         entity.spawn(world, pos);
 
         // Handle animations

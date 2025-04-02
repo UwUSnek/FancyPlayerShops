@@ -22,9 +22,9 @@ import net.minecraft.text.Text;
 
 public class TextElm extends Elm {
 
-    protected @NotNull Flagged<Vector4i>      background;
     protected @NotNull Flagged<Text>          text;
     protected @NotNull Flagged<Integer>       textOpacity;
+    protected @NotNull Flagged<Vector4i>      background;
 
 
 
@@ -32,9 +32,9 @@ public class TextElm extends Elm {
     protected TextElm(@NotNull ServerWorld _world, @NotNull CustomDisplay _entity, @NotNull ElmStyle _style) {
         super(_world, _entity, _style);
 
-        background  = Flagged.from(((TextElmStyle)style).getBackground());
         text        = Flagged.from(((TextElmStyle)style).getText());
-        textOpacity = Flagged.from(((TextElmStyle)style).getTextOpacity());
+        textOpacity = Flagged.from(128);              // Changed on spawn
+        background  = Flagged.from(new Vector4i(0));  // Changed on spawn
     }
 
     protected TextElm(@NotNull ServerWorld _world, @NotNull ElmStyle _style) {
@@ -56,9 +56,9 @@ public class TextElm extends Elm {
     public void flushStyle() {
         super.flushStyle();
         CustomTextDisplay e2 = (CustomTextDisplay)entity;
-        if(background .isFlagged()) { e2.setBackground (background .get()); background .unflag(); }
         if(text       .isFlagged()) { e2.setText       (text       .get()); text       .unflag(); }
         if(textOpacity.isFlagged()) { e2.setTextOpacity(textOpacity.get()); textOpacity.unflag(); }
+        if(background .isFlagged()) { e2.setBackground (background .get()); background .unflag(); }
     }
 
 
@@ -66,12 +66,13 @@ public class TextElm extends Elm {
 
     @Override
     public void spawn(Vector3d pos) {
-        textOpacity.set(128);
-        background .set(new Vector4i(0));
+        // textOpacity.set(128);
+        // background .set(new Vector4i(0));
 
-        super.spawn(pos);
+        // Set new opacity and background, then spawn the entity
         textOpacity.set(((TextElmStyle)style).getTextOpacity());
         background .set(((TextElmStyle)style).getBackground ());
+        super.spawn(pos);
     }
 
 

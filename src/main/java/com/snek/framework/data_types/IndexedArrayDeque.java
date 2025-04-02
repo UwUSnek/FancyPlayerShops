@@ -27,6 +27,6 @@ public class IndexedArrayDeque<E> extends AccessibleArrayDeque<E> {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size());
         }
 
-        return (E)elements[(head + index) & (elements.length - 1)];
+        return (E)elements[(head + index) % elements.length];
     }
 }
