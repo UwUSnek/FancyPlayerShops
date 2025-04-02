@@ -3,6 +3,7 @@ package com.snek.fancyplayershops.implementations.ui;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
+import org.joml.Vector3f;
 
 import com.snek.fancyplayershops.Shop;
 import com.snek.framework.custom_displays.CustomItemDisplay;
@@ -62,8 +63,8 @@ public class ShopItemDisplay extends ItemElm {
         unfocusAnimation = new Animation(new   TargetTransition(transform.get(),                                                  ElmStyle.D_TIME, Easings.sineOut)); //TODO use better easing
 
         loopAnimation = new Animation(
-            new AdditiveTransition(new Transform().rotY((float)Math.toRadians(120)), L_TIME, Easings.linear),
-            new AdditiveTransition(new Transform().rotY((float)Math.toRadians(120)), L_TIME, Easings.linear),
+            new AdditiveTransition(new Transform().rotY((float)Math.toRadians(120)), L_TIME, Easings.linear), //FIXME remove
+            new AdditiveTransition(new Transform().rotY((float)Math.toRadians(120)), L_TIME, Easings.linear), //FIXME remove
             new AdditiveTransition(new Transform().rotY((float)Math.toRadians(120)), L_TIME, Easings.linear)
         );
     }
@@ -122,10 +123,25 @@ public class ShopItemDisplay extends ItemElm {
         // Hide custom name and start focus animation
         entity.setCustomNameVisible(false);
         applyAnimation(focusAnimation);
+        for (Transform transform : transformQueue) {
+            Vector3f v = new Vector3f();
+            transform.get().getLeftRotation().getEulerAnglesXYZ(v);
+            System.out.println("before: " + v.toString());
+        }
 
         // Queue loop animation
         loopHandler = Scheduler.loop(0, loopAnimation.getTotalDuration(), () -> {
+            for (Transform transform : transformQueue) {
+                Vector3f v = new Vector3f();
+                transform.get().getLeftRotation().getEulerAnglesXYZ(v);
+                System.out.println("before 2: " + v.toString());
+            }
             applyAnimation(loopAnimation);
+            for (Transform transform : transformQueue) {
+                Vector3f v = new Vector3f();
+                transform.get().getLeftRotation().getEulerAnglesXYZ(v);
+                System.out.println("after: " + v.toString());
+            }
         });
     }
 

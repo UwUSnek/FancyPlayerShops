@@ -27,7 +27,7 @@ public class ElmStyle {
     private @Nullable Animation     despawnAnimation;   // The despawning animation. Played before the entity is removed from the world
 
 
-    public static final float S_SCALE  = 1.1f;         // The scale applied by the spawning animation
+    public static final float S_SCALE  = 1.05f;        // The scale applied by the spawning animation
     public static final float S_HEIGHT = 0.05f;        // The Y translation applied by the spawning animation
     public static final int   S_TIME   = 4;            // Spawn   time. Measured in ticks. //! Must be even
     public static final int   D_TIME   = 8;            // Despawn time. Measured in ticks. //! Must be even

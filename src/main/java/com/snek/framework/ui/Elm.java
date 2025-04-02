@@ -1,12 +1,12 @@
 package com.snek.framework.ui;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
+import org.joml.Vector3f;
 
 import com.snek.framework.custom_displays.CustomDisplay;
 import com.snek.framework.data_types.AdditiveTransition;
@@ -35,7 +35,7 @@ import net.minecraft.server.world.ServerWorld;
 public abstract class Elm {
 
     // Animations
-    public static int TRANSITION_REFRESH_TIME = 1;                                      // The time between transition updates. Measured in ticks
+    public static int TRANSITION_REFRESH_TIME = 2;                                      // The time between transition updates. Measured in ticks
     private static final @NotNull List<Elm> elmUpdateQueue = new ArrayList<>();         // The list of instances with pending transform updates
     protected final @NotNull IndexedArrayDeque<Transform> transformQueue = new IndexedArrayDeque<>(); // The list of transforms to apply to this instance in the next ticks. 1 for each update tick
     private boolean isQueued = false;                                                   // Whether this instance is queued for updates. Updated manually
@@ -84,7 +84,7 @@ public abstract class Elm {
 
 
     /**
-     * Instantly calculates animation ticks and adds this element to the update queue.
+     * Instantly calculates animation steps and adds this element to the update queue.
      * ! Partial steps at the end of the animation are expanded to cover the entire step.
      * @param animation The animation to apply.
      */
@@ -96,44 +96,74 @@ public abstract class Elm {
             isQueued = true;
         }
 
+        // Apply each transition one at a time
+        int shift = 0;
+        for (Transition transition : animation.getTransitions()) {
+            // System.out.println("starting at shift " + shift);
+            shift += __applyAnimationTransition(transition, shift);
+        }
+    }
+
+
+
+
+    /**
+     * Instantly calculates the steps of a single transition and adds them to this element's future transforms.
+     * @param transition The transition to calculate.
+     * @param shift the amount of future transforms to skip before applying this transition.
+     * @return The amount of future transforms this transition affected.
+     */
+    private int __applyAnimationTransition(@NotNull Transition transition, int shift) {
+
 
         // Calculate animation steps as a list of transforms
         List<Triplet<Transform, Boolean, Float>> animationSteps = new ArrayList<>();
         Transform totTransform = new Transform(); // The sum of all the changes applied by the current and previous steps of the animation
-        for (Transition transition : animation.getTransitions()) {
+        // for (Transition transition : animation.getTransitions()) {
 
             // For each step of the transition
             int time = transition.getDuration();                            // The duration of this transition
-            totTransform = transition.compute(totTransform);                // The target transformation of this transition
-            boolean isAdditive = transition instanceof AdditiveTransition;
+            // totTransform = transition.compute(totTransform);                // The target transformation of this transition
+            // boolean isAdditive = transition instanceof AdditiveTransition;
             for(int i = TRANSITION_REFRESH_TIME; i < time; i = Math.min(i + TRANSITION_REFRESH_TIME, time)) {
 
                 // Calculate interpolation factor and add the new animation step to the list
                 float factor = (float)transition.getEasing().compute((double)i / (double)time); //FIXME factor should only affect the latest transition and not the whole step
-                animationSteps.add(Triplet.from(totTransform, isAdditive, factor));
+                // System.out.println("factor: " + factor);
+                // animationSteps.add(Triplet.from(totTransform, isAdditive, factor));
+                animationSteps.add(Triplet.from(transition.compute(totTransform), transition instanceof AdditiveTransition, factor));
             }
-        }
-        System.out.println("New transform queue: ");
-        for (var s : animationSteps) {
-            System.out.println(s.first.get().getLeftRotation().angle() * s.third);
-        }
+
+            // Add padding step
+            animationSteps.add(Triplet.from(transition.compute(totTransform), transition instanceof AdditiveTransition, 1f));
+            // System.out.println("factor: 1");
+        // }
+        // System.out.println("New transform queue: ");
+        // for (var s : animationSteps) {
+            // System.out.println(s.first.get().getLeftRotation().angle() * s.third);
+        // }
 
 
         // Update existing future transforms
+        //FIXME optimize O(n) indexed access
         int i = 0;
         if(!transformQueue.isEmpty()) {
-            for (Transform ft : transformQueue) {
-                var step = animationSteps.get(i);
-                if(step.second) ft.interpolate(ft.apply(step.first), step.third); else ft.interpolate(step.first, step.third);
-                ++i;
+            Triplet<Transform, Boolean, Float> step = null;
 
-                // If the amount of future transforms is larger than the amount of steps, apply the last step to the remaining transforms and exit the loop
-                if(i >= animationSteps.size()) {
-                    for(; i < transformQueue.size(); ++i) {
-                        ft = transformQueue.get(i);
-                        if(step.second) ft.interpolate(ft.apply(step.first), step.third); else ft.interpolate(step.first, step.third);
-                    }
-                    break;
+            for(; i + shift < transformQueue.size(); ++i) {
+            // for (Transform ft : transformQueue) {
+                Transform ft = transformQueue.get(i + shift);
+                step = animationSteps.get(i);
+                if(step.second) ft.interpolate(ft.clone().apply(step.first), step.third); else ft.interpolate(step.first, step.third);
+                ++i;
+                if(i >= animationSteps.size()) break;
+            }
+
+            // If the amount of future transforms is larger than the amount of steps, apply the last step to the remaining transforms and exit the loop
+            if(i >= animationSteps.size()) {
+                for(; i < transformQueue.size(); ++i) {
+                    Transform ft = transformQueue.get(i);
+                    if(step.second) ft.interpolate(ft.clone().apply(step.first), step.third); else ft.interpolate(step.first, step.third);
                 }
             }
         }
@@ -142,6 +172,7 @@ public abstract class Elm {
         // Add remaining future transforms
         Transform lastTransform = transformQueue.isEmpty() ? transform.get() : transformQueue.getLast();
         for(; i < animationSteps.size(); ++i) {
+            // System.out.println("Adding to ft #" + i);
             var step = animationSteps.get(i);
             if(step.second) {
                 transformQueue.add(lastTransform.clone().interpolate(lastTransform.clone().apply(step.first), step.third));
@@ -150,6 +181,10 @@ public abstract class Elm {
                 transformQueue.add(lastTransform.clone().interpolate(step.first, step.third));
             }
         }
+
+
+        // Return transition width
+        return animationSteps.size();
     }
 
 
@@ -227,6 +262,9 @@ public abstract class Elm {
      * @return true if no action is necessary. false if the element has been removed from the update queue.
      */
     public boolean tick() {
+        Vector3f v = new Vector3f();
+        transformQueue.peekFirst().get().getLeftRotation().getEulerAnglesXYZ(v);
+        // System.out.println("rotation: " + v.toString());
         transform.set(transformQueue.removeFirst());
         flushStyle();
         entity.setInterpolationDuration(TRANSITION_REFRESH_TIME);
