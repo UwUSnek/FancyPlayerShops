@@ -75,9 +75,9 @@ public abstract class Elm {
      * This does not start an interpolation.
      */
     public void flushStyle() {
-        if(transform    .isFlagged()) { entity.setTransformation(transform    .get().get()); transform    .unflag(); }
-        if(viewRange    .isFlagged()) { entity.setViewRange     (viewRange    .get()      ); viewRange    .unflag(); }
-        if(billboardMode.isFlagged()) { entity.setBillboardMode (billboardMode.get()      ); billboardMode.unflag(); }
+        if(transform    .isFlagged()) { entity.setTransformation(transform.get().get()); transform    .unflag(); }
+        if(viewRange    .isFlagged()) { entity.setViewRange     (viewRange      .get()); viewRange    .unflag(); }
+        if(billboardMode.isFlagged()) { entity.setBillboardMode (billboardMode  .get()); billboardMode.unflag(); }
     }
 
 
@@ -150,16 +150,14 @@ public abstract class Elm {
         if(!transformQueue.isEmpty()) {
             Triplet<Transform, Boolean, Float> step = null;
 
-            for(; i + shift < transformQueue.size(); ++i) {
-            // for (Transform ft : transformQueue) {
+            // Update existing future transforms
+            for(; i + shift < transformQueue.size() && i >= animationSteps.size(); ++i) {
                 Transform ft = transformQueue.get(i + shift);
                 step = animationSteps.get(i);
                 if(step.second) ft.interpolate(ft.clone().apply(step.first), step.third); else ft.interpolate(step.first, step.third);
-                ++i;
-                if(i >= animationSteps.size()) break;
             }
 
-            // If the amount of future transforms is larger than the amount of steps, apply the last step to the remaining transforms and exit the loop
+            // If the amount of future transforms is larger than the amount of steps, apply the last step to the remaining transforms
             if(i >= animationSteps.size()) {
                 for(; i < transformQueue.size(); ++i) {
                     Transform ft = transformQueue.get(i);

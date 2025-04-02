@@ -131,17 +131,7 @@ public class ShopItemDisplay extends ItemElm {
 
         // Queue loop animation
         loopHandler = Scheduler.loop(0, loopAnimation.getTotalDuration(), () -> {
-            for (Transform transform : transformQueue) {
-                Vector3f v = new Vector3f();
-                transform.get().getLeftRotation().getEulerAnglesXYZ(v);
-                System.out.println("before 2: " + v.toString());
-            }
             applyAnimation(loopAnimation);
-            for (Transform transform : transformQueue) {
-                Vector3f v = new Vector3f();
-                transform.get().getLeftRotation().getEulerAnglesXYZ(v);
-                System.out.println("after: " + v.toString());
-            }
         });
     }
 
