@@ -8,7 +8,10 @@ import java.util.ArrayDeque;
 
 
 
-
+//FIXME make index access O(1)
+//FIXME make index access O(1)
+//FIXME make index access O(1)
+//FIXME make index access O(1)
 
 /**
  * An ArrayDequeue that allows indexing in O(n) time instead of the O(1) it should have been because Java is stupid.

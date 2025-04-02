@@ -145,7 +145,6 @@ public abstract class Elm {
 
 
         // Update existing future transforms
-        //FIXME optimize O(n) indexed access
         int i = 0;
         if(!transformQueue.isEmpty()) {
             Triplet<Transform, Boolean, Float> step = null;
@@ -154,14 +153,14 @@ public abstract class Elm {
             for(; i + shift < transformQueue.size() && i >= animationSteps.size(); ++i) {
                 Transform ft = transformQueue.get(i + shift);
                 step = animationSteps.get(i);
-                if(step.second) ft.interpolate(ft.clone().apply(step.first), step.third); else ft.interpolate(step.first, step.third);
+                __applyTransitionStep(ft, step);
             }
 
             // If the amount of future transforms is larger than the amount of steps, apply the last step to the remaining transforms
             if(i >= animationSteps.size()) {
                 for(; i < transformQueue.size(); ++i) {
                     Transform ft = transformQueue.get(i);
-                    if(step.second) ft.interpolate(ft.clone().apply(step.first), step.third); else ft.interpolate(step.first, step.third);
+                    __applyTransitionStep(ft, step);
                 }
             }
         }
@@ -172,12 +171,13 @@ public abstract class Elm {
         for(; i < animationSteps.size(); ++i) {
             // System.out.println("Adding to ft #" + i);
             var step = animationSteps.get(i);
-            if(step.second) {
-                transformQueue.add(lastTransform.clone().interpolate(lastTransform.clone().apply(step.first), step.third));
-            }
-            else {
-                transformQueue.add(lastTransform.clone().interpolate(step.first, step.third));
-            }
+            transformQueue.add(__applyTransitionStep(lastTransform.clone(), step));
+            // if(step.second) {
+                // transformQueue.add(lastTransform.clone().interpolate(lastTransform.clone().apply(step.first), step.third));
+            // }
+            // else {
+                // transformQueue.add(lastTransform.clone().interpolate(step.first, step.third));
+            // }
         }
 
 
@@ -188,6 +188,29 @@ public abstract class Elm {
 
 
 
+    /**
+     * Applies a single animation step to a transform.
+     * @param ft The transform.
+     * @param step The animation step.
+     * @return The modified transform.
+     */
+    private Transform __applyTransitionStep(Transform ft, Triplet<Transform, Boolean, Float> step){
+        if(step.second) { // If the step is additive
+            ft.interpolate(ft.clone().apply(step.first), step.third); // Interpolate the transform with
+        }
+        else {
+            ft.interpolate(step.first, step.third);
+        }
+        return ft;
+    }
+
+
+
+
+    /**
+     * Retrieves the custom display entity held by this element.
+     * @return The entity.
+     */
     public CustomDisplay getEntity() {
         return entity;
     }
