@@ -39,8 +39,6 @@ public class ShopItemDisplay extends ItemElm {
 
     private @Nullable TaskHandler loopHandler = null;
     public static final int L_TIME = 32;
-    // public static final float L_ROT   = (float) Math.toRadians(120);
-    // public static final float L_ROT_A = L_ROT * (float)((double)S_TIME / ((double)L_TIME / 3) * 3d);
 
 
 
@@ -59,12 +57,10 @@ public class ShopItemDisplay extends ItemElm {
         entity.setCustomNameVisible(true);
         updateDisplay();
 
-        focusAnimation   = new Animation(new AdditiveTransition(new Transform().moveY(ElmStyle.S_HEIGHT).scale(ElmStyle.S_SCALE), ElmStyle.S_TIME, Easings.sineOut)); //TODO use better easing
-        unfocusAnimation = new Animation(new   TargetTransition(transform.get(),                                                  ElmStyle.D_TIME, Easings.sineOut)); //TODO use better easing
+        focusAnimation   = new Animation(new AdditiveTransition(new Transform().moveY(ElmStyle.S_HEIGHT).scale(ElmStyle.S_SCALE), ElmStyle.S_TIME, Easings.cubicOut));
+        unfocusAnimation = new Animation(new   TargetTransition(transform.get(),                                                  ElmStyle.D_TIME, Easings.cubicOut));
 
         loopAnimation = new Animation(
-            new AdditiveTransition(new Transform().rotY((float)Math.toRadians(120)), L_TIME, Easings.linear), //FIXME remove
-            new AdditiveTransition(new Transform().rotY((float)Math.toRadians(120)), L_TIME, Easings.linear), //FIXME remove
             new AdditiveTransition(new Transform().rotY((float)Math.toRadians(120)), L_TIME, Easings.linear)
         );
     }
@@ -123,11 +119,6 @@ public class ShopItemDisplay extends ItemElm {
         // Hide custom name and start focus animation
         entity.setCustomNameVisible(false);
         applyAnimation(focusAnimation);
-        for (Transform transform : transformQueue) {
-            Vector3f v = new Vector3f();
-            transform.get().getLeftRotation().getEulerAnglesXYZ(v);
-            System.out.println("before: " + v.toString());
-        }
 
         // Queue loop animation
         loopHandler = Scheduler.loop(0, loopAnimation.getTotalDuration(), () -> {

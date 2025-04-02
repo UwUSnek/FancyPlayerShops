@@ -108,11 +108,11 @@ public class Transform {
     public Transform rot         (float x, float y, float z) { rotX(x); rotY(y); rotZ(z);                         return this; }
     public Transform rot         (Quaternionf r            ) { _lrot.mul(r);                                      return this; }
 
-    //TODO
-    // public Transform setRotX  (float x                  ) { _lrot.rotateX(x);                                  return this; }
-    // public Transform setRotY  (float y                  ) { _lrot.rotateY(y);                                  return this; }
-    // public Transform setRotZ  (float z                  ) { _lrot.rotateZ(z);                                  return this; }
-    // public Transform setRot   (float x, float y, float z) { rotX(x); rotY(y); rotZ(z);                         return this; }
+    public Transform setRotX    (float x                  ) { _lrot.rotationX(x);                                return this; }
+    public Transform setRotY    (float y                  ) { _lrot.rotationY(y);                                return this; }
+    public Transform setRotZ    (float z                  ) { _lrot.rotationZ(z);                                return this; }
+    public Transform setRot     (float x, float y, float z) { setRotX(x); setRotY(y); setRotZ(z);                return this; }
+    public Transform setRot     (Quaternionf r            ) { _lrot.set(r);                                      return this; }
 
 
     // Translation
@@ -150,9 +150,9 @@ public class Transform {
     public Transform rrot        (float x, float y, float z) { rrotX(x); rrotY(y); rrotZ(z);                      return this; }
     public Transform rrot        (Quaternionf r            ) { _rrot.mul(r);                                      return this; }
 
-    //TODO
-    // public Transform setRrotX (float x                  ) { _rrot.setAngleAxis(x);                             return this; }
-    // public Transform setRrotY (float y                  ) { _rrot.setAngleAxis(y);                             return this; }
-    // public Transform setRrotZ (float z                  ) { _rrot.setAngleAxis(z);                             return this; }
-    // public Transform setRrot  (float x, float y, float z) { rrotX(x); rrotY(y); rrotZ(z);                      return this; }
+    public Transform setRrotX    (float x                  ) { _rrot.rotationX(x);                                return this; }
+    public Transform setRrotY    (float y                  ) { _rrot.rotationY(y);                                return this; }
+    public Transform setRrotZ    (float z                  ) { _rrot.rotationZ(z);                                return this; }
+    public Transform setRrot     (float x, float y, float z) { setRrotX(x); setRrotY(y); setRrotZ(z);             return this; }
+    public Transform setRrot     (Quaternionf r            ) { _rrot.set(r);                                      return this; }
 }

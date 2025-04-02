@@ -17,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
  * This class identifies an animation.
  * The animation is expressed as a list of Transitions.
  */
-//TODO add custom interpolations. they create an approximated custom animation from a linear transition and an interpolation type
 public class Animation {
     private final @NotNull List<Transition> transitions = new ArrayList<>();
     private int totalDuration = 0;

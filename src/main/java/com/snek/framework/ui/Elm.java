@@ -6,7 +6,6 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
-import org.joml.Vector3f;
 
 import com.snek.framework.custom_displays.CustomDisplay;
 import com.snek.framework.data_types.AdditiveTransition;
@@ -99,7 +98,6 @@ public abstract class Elm {
         // Apply each transition one at a time
         int shift = 0;
         for (Transition transition : animation.getTransitions()) {
-            // System.out.println("starting at shift " + shift);
             shift += __applyAnimationTransition(transition, shift);
         }
     }
@@ -119,29 +117,16 @@ public abstract class Elm {
         // Calculate animation steps as a list of transforms
         List<Triplet<Transform, Boolean, Float>> animationSteps = new ArrayList<>();
         Transform totTransform = new Transform(); // The sum of all the changes applied by the current and previous steps of the animation
-        // for (Transition transition : animation.getTransitions()) {
+        int time = transition.getDuration();                            // The duration of this transition
+        for(int i = TRANSITION_REFRESH_TIME; i < time; i = Math.min(i + TRANSITION_REFRESH_TIME, time)) {
 
-            // For each step of the transition
-            int time = transition.getDuration();                            // The duration of this transition
-            // totTransform = transition.compute(totTransform);                // The target transformation of this transition
-            // boolean isAdditive = transition instanceof AdditiveTransition;
-            for(int i = TRANSITION_REFRESH_TIME; i < time; i = Math.min(i + TRANSITION_REFRESH_TIME, time)) {
+            // Calculate interpolation factor and add the new animation step to the list
+            float factor = (float)transition.getEasing().compute((double)i / (double)time);
+            animationSteps.add(Triplet.from(transition.compute(totTransform), transition instanceof AdditiveTransition, factor));
+        }
 
-                // Calculate interpolation factor and add the new animation step to the list
-                float factor = (float)transition.getEasing().compute((double)i / (double)time); //FIXME factor should only affect the latest transition and not the whole step
-                // System.out.println("factor: " + factor);
-                // animationSteps.add(Triplet.from(totTransform, isAdditive, factor));
-                animationSteps.add(Triplet.from(transition.compute(totTransform), transition instanceof AdditiveTransition, factor));
-            }
-
-            // Add padding step
-            animationSteps.add(Triplet.from(transition.compute(totTransform), transition instanceof AdditiveTransition, 1f));
-            // System.out.println("factor: 1");
-        // }
-        // System.out.println("New transform queue: ");
-        // for (var s : animationSteps) {
-            // System.out.println(s.first.get().getLeftRotation().angle() * s.third);
-        // }
+        // Add padding step
+        animationSteps.add(Triplet.from(transition.compute(totTransform), transition instanceof AdditiveTransition, 1f));
 
 
         // Update existing future transforms
@@ -169,15 +154,8 @@ public abstract class Elm {
         // Add remaining future transforms
         Transform lastTransform = transformQueue.isEmpty() ? transform.get() : transformQueue.getLast();
         for(; i < animationSteps.size(); ++i) {
-            // System.out.println("Adding to ft #" + i);
             var step = animationSteps.get(i);
             transformQueue.add(__applyTransitionStep(lastTransform.clone(), step));
-            // if(step.second) {
-                // transformQueue.add(lastTransform.clone().interpolate(lastTransform.clone().apply(step.first), step.third));
-            // }
-            // else {
-                // transformQueue.add(lastTransform.clone().interpolate(step.first, step.third));
-            // }
         }
 
 
@@ -195,13 +173,13 @@ public abstract class Elm {
      * @return The modified transform.
      */
     private Transform __applyTransitionStep(Transform ft, Triplet<Transform, Boolean, Float> step){
-        if(step.second) { // If the step is additive
-            ft.interpolate(ft.clone().apply(step.first), step.third); // Interpolate the transform with
-        }
-        else {
-            ft.interpolate(step.first, step.third);
-        }
-        return ft;
+        if(step.second) {                                               // If the step is additive
+            ft.interpolate(ft.clone().apply(step.first), step.third);       // Interpolate the transform with the result of applying the step's transform to it
+        }                                                                   //
+        else {                                                          // If not
+            ft.interpolate(step.first, step.third);                         // Interpolate the transform with the step's transform
+        }                                                                   //
+        return ft;                                                      // Return the modified transform
     }
 
 
@@ -283,9 +261,6 @@ public abstract class Elm {
      * @return true if no action is necessary. false if the element has been removed from the update queue.
      */
     public boolean tick() {
-        Vector3f v = new Vector3f();
-        transformQueue.peekFirst().get().getLeftRotation().getEulerAnglesXYZ(v);
-        // System.out.println("rotation: " + v.toString());
         transform.set(transformQueue.removeFirst());
         flushStyle();
         entity.setInterpolationDuration(TRANSITION_REFRESH_TIME);

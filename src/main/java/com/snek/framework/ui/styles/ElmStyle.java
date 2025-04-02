@@ -29,7 +29,7 @@ public class ElmStyle {
 
     public static final float S_SCALE  = 1.05f;        // The scale applied by the spawning animation
     public static final float S_HEIGHT = 0.05f;        // The Y translation applied by the spawning animation
-    public static final int   S_TIME   = 4;            // Spawn   time. Measured in ticks. //! Must be even
+    public static final int   S_TIME   = 40;            // Spawn   time. Measured in ticks. //! Must be even
     public static final int   D_TIME   = 8;            // Despawn time. Measured in ticks. //! Must be even
 
 
@@ -43,8 +43,8 @@ public class ElmStyle {
         viewRange        = 0.3f;
         billboardMode    = BillboardMode.FIXED;
 
-        spawnAnimation   = new Animation(new AdditiveTransition(new Transform().moveY(S_HEIGHT).scale(S_SCALE), S_TIME, Easings.sineOut)); //TODO use better easing
-        despawnAnimation = new Animation(new   TargetTransition(transform,                                      D_TIME, Easings.sineOut)); //TODO use better easing
+        spawnAnimation   = new Animation(new AdditiveTransition(new Transform().moveY(S_HEIGHT).scale(S_SCALE), S_TIME, Easings.cubicOut));
+        despawnAnimation = new Animation(new   TargetTransition(transform,                                      D_TIME, Easings.cubicOut));
     }
 
 

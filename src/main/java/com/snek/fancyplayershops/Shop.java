@@ -42,7 +42,6 @@ import net.minecraft.world.World;
 
 
 // TODO fix broken shops and blocks if they don't exist in the world when the map is loaded
-// TODO purge stray focus displays on entity loading (use custom entity data)
 public class Shop {
     private static final Path SHOP_STORAGE_DIR;
     public  static final Text EMPTY_SHOP_NAME = new Txt("[Empty]").italic().lightGray().get();
@@ -178,6 +177,7 @@ public class Shop {
      * @param owner The player.
      */
     private void saveShop() {
+
         // Create map entry if absent, then add the new shop to the player's shops
         shopsByOwner.put(ownerUUID.toString(), this);
         shopsByCoords.put(shopIdentifierCache, this);
@@ -245,7 +245,7 @@ public class Shop {
 
 
     /**
-     * Returns the Shop instance preset at a certain block position.
+     * Returns the Shop instance present at a certain block position.
      * Returns null if no shop is there.
     */
     public static Shop findShop(BlockPos pos, String worldId) {
@@ -266,7 +266,7 @@ public class Shop {
             if(focusStatusNext) {
 
                 // Create and setup the Text Display entity
-                // if(focusDisplay != null) focusDisplay.getRawEntity().despawn(); //FIXME force despawn if an entity already exists
+                if(focusDisplay != null) focusDisplay.getEntity().despawn();
                 focusDisplay = new DetailsDisplay(this);
                 focusDisplay.spawn(calcDisplayPos().add(0, 0.3d, 0));
 
