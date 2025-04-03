@@ -1,10 +1,12 @@
-package com.snek.framework.data_types;
+package com.snek.framework.data_types.animations;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
+
+import com.snek.framework.data_types.animations.transitions.Transition;
 
 
 

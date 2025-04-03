@@ -1,4 +1,4 @@
-package com.snek.framework.data_types;
+package com.snek.framework.data_types.animations;
 
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
@@ -19,10 +19,10 @@ import net.minecraft.util.math.AffineTransformation;
  * Use .get() to create an AffineTransformation from this Transform's data.
  */
 public class Transform {
-    private @NotNull Vector3f    _pos;
-    private @NotNull Quaternionf _lrot;
-    private @NotNull Vector3f    _scale;
-    private @NotNull Quaternionf _rrot;
+    protected @NotNull Vector3f    _pos;
+    protected @NotNull Quaternionf _lrot;
+    protected @NotNull Vector3f    _scale;
+    protected @NotNull Quaternionf _rrot;
 
     /**
      * Creates a new AffineTransformation using the current translation, left rotation, scale and right rotation values.

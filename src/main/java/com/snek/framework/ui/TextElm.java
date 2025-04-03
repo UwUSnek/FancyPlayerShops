@@ -33,8 +33,10 @@ public class TextElm extends Elm {
         super(_world, _entity, _style);
 
         text        = Flagged.from(((TextElmStyle)style).getText());
-        textOpacity = Flagged.from(128);              // Changed on spawn
-        background  = Flagged.from(new Vector4i(0));  // Changed on spawn
+        textOpacity = Flagged.from(((TextElmStyle)style).getTextOpacity());
+        background  = Flagged.from(((TextElmStyle)style).getBackground());
+        // textOpacity = Flagged.from(128);              // Changed on spawn
+        // background  = Flagged.from(new Vector4i(0));  // Changed on spawn
     }
 
     protected TextElm(@NotNull ServerWorld _world, @NotNull ElmStyle _style) {
@@ -70,22 +72,23 @@ public class TextElm extends Elm {
         // background .set(new Vector4i(0));
 
         // Set new opacity and background, then spawn the entity
-        textOpacity.set(((TextElmStyle)style).getTextOpacity());
-        background .set(((TextElmStyle)style).getBackground ());
+        // textOpacity.set(((TextElmStyle)style).getTextOpacity());
+        // background .set(((TextElmStyle)style).getBackground ());
         super.spawn(pos);
     }
 
 
     @Override
     public void despawn() {
-        textOpacity.set(128);
-        background .set(new Vector4i(0));
+        // textOpacity.set(128);
+        // background .set(new Vector4i(0));
         super.despawn();
     }
 
 
     @Override
     public boolean tick(){
+        System.out.println("TEXT ELM TICK");
         return super.tick();
     }
 }

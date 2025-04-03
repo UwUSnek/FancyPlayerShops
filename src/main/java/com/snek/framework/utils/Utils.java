@@ -7,6 +7,8 @@ import java.text.DecimalFormat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
+import org.joml.Vector4i;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
@@ -180,10 +182,18 @@ public class Utils {
 
 
 
-    public static @NotNull Vector3f RGBtoHSV(@NotNull Vector3f rgb) {
-        float r = rgb.x / 255.0f;
-        float g = rgb.y / 255.0f;
-        float b = rgb.z / 255.0f;
+    /**
+     * Converts an RGB color to HSV.
+     *     Hue:         0 to 360.0
+     *     Saturation:  0 to 1.0
+     *     Value:       0 to 1.0
+     * @param rgb The RGB color.
+     * @return The color as an HSV value.
+     */
+    public static @NotNull Vector3f RGBtoHSV(@NotNull Vector3i rgb) {
+        float r = (float)rgb.x / 255.0f;
+        float g = (float)rgb.y / 255.0f;
+        float b = (float)rgb.z / 255.0f;
 
         float max = Math.max(r, Math.max(g, b));
         float min = Math.min(r, Math.min(g, b));
@@ -216,7 +226,15 @@ public class Utils {
 
 
 
-    public static Vector3f HSVtoRGB(Vector3f hsv) {
+    /**
+     * Converts an HSV color to RGB.
+     *     Red:   0 to 255
+     *     Green: 0 to 255
+     *     Blue:  0 to 255
+     * @param hsv The HSV color.
+     * @return The color as an HSV value.
+     */
+    public static Vector3i HSVtoRGB(Vector3f hsv) {
         float h = hsv.x;
         float s = hsv.y;
         float v = hsv.z;
@@ -243,6 +261,94 @@ public class Utils {
 
         r += m; g += m; b += m;
 
-        return new Vector3f(r * 255, g * 255, b * 255);
+        return new Vector3i(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255));
+    }
+
+
+
+
+    /**
+     * Interpolates two RGB colors while maintaining luminosity.
+     * @param rgb1 The starting color.
+     * @param rgb2 The target color
+     * @param factor The interpolation factor.
+     * @return The resulting color.
+     */
+    public static Vector3i interpolateRGB(Vector3i rgb1, Vector3i rgb2, float factor) {
+        Vector3f hsv1 = RGBtoHSV(rgb1);
+        Vector3f hsv2 = RGBtoHSV(rgb2);
+
+        float h1 = hsv1.x, s1 = hsv1.y, v1 = hsv1.z;
+        float h2 = hsv2.x, s2 = hsv2.y, v2 = hsv2.z;
+
+        // Adjust hue to allow the interpolation to take the shortest path
+        if (Math.abs(h1 - h2) > 180) {
+            if (h1 > h2) h2 += 360;
+            else h1 += 360;
+        }
+
+        // Interpolate values and return color vector
+        return HSVtoRGB(new Vector3f(
+            interpolateF(h1, h2, factor) % 360,
+            interpolateF(s1, s2, factor),
+            interpolateF(v1, v2, factor)
+        ));
+    }
+
+
+
+
+    /**
+     * Interpolates two ARGB colors while maintaining luminosity.
+     * @param argb1 The starting color.
+     * @param argb2 The target color
+     * @param factor The interpolation factor.
+     * @return The resulting color.
+     */
+    public static Vector4i interpolateARGB(Vector4i argb1, Vector4i argb2, float factor) {
+        Vector3i rgbRet = interpolateRGB(new Vector3i(argb1.y, argb1.z, argb1.w), new Vector3i(argb2.y, argb2.z, argb2.w), factor);
+        return new Vector4i(interpolateI(argb1.x, argb2.x, factor), rgbRet.x, rgbRet.y, rgbRet.z);
+    }
+
+
+
+
+    /**
+     * Interpolates two float values.
+     * @param v1 The first value.
+     * @param v2 The second value.
+     * @param factor The interpolation factor.
+     * @return The resulting value.
+     */
+    public static float interpolateF(float v1, float v2, float factor){
+        return v1 + (v2 - v1) * factor;
+    }
+
+
+
+
+    /**
+     * Interpolates two double values.
+     * @param v1 The first value.
+     * @param v2 The second value.
+     * @param factor The interpolation factor.
+     * @return The resulting value.
+     */
+    public static double interpolateF(double v1, double v2, double factor){
+        return v1 + (v2 - v1) * factor;
+    }
+
+
+
+
+    /**
+     * Interpolates two int values.
+     * @param v1 The first value.
+     * @param v2 The second value.
+     * @param factor The interpolation factor.
+     * @return The resulting value.
+     */
+    public static int interpolateI(int v1, int v2, float factor){
+        return Math.round((float)(v1 + (v2 - v1)) * factor);
     }
 }

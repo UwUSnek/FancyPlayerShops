@@ -30,8 +30,8 @@ public class DetailsDisplay extends TextElm {
     Shop targetShop;
 
     private static final Vector3i C_RGB_PRICE      = new Vector3i(243, 255, 0);
-    private static final Vector3f C_HSV_STOCK_HIGH = Utils.RGBtoHSV(new Vector3f(0, 223, 0)); //! Float instead of int for more precision
-    private static final Vector3f C_HSV_STOCK_LOW  = Utils.RGBtoHSV(new Vector3f(200, 0, 0)); //! Float instead of int for more precision
+    private static final Vector3f C_HSV_STOCK_HIGH = Utils.RGBtoHSV(new Vector3i(0, 223, 0)); //! Float instead of int for more precision
+    private static final Vector3f C_HSV_STOCK_LOW  = Utils.RGBtoHSV(new Vector3i(200, 0, 0)); //! Float instead of int for more precision
 
 
 
@@ -50,7 +50,7 @@ public class DetailsDisplay extends TextElm {
      */
     public void updateDisplay(){
         float factor = 1.0f - (float)targetShop.getStock() / 1000f;
-        Vector3f col = Utils.HSVtoRGB(new Vector3f(C_HSV_STOCK_LOW).add(new Vector3f(C_HSV_STOCK_HIGH).sub(C_HSV_STOCK_LOW).mul(1.0f - (factor * factor))));
+        Vector3i col = Utils.HSVtoRGB(new Vector3f(C_HSV_STOCK_LOW).add(new Vector3f(C_HSV_STOCK_HIGH).sub(C_HSV_STOCK_LOW).mul(1.0f - (factor * factor))));
 
 
         // Empty shop case
@@ -69,7 +69,7 @@ public class DetailsDisplay extends TextElm {
             text.set(new Txt()
                 .cat(new Txt(Utils.getItemName(_item)).get())
                 .cat(new Txt("\nPrice: ")).cat(new Txt(price < 0.005 ? "Free" : Utils.formatPrice(price)).bold().color(C_RGB_PRICE))
-                .cat(new Txt("\nStock: ")).cat(new Txt(Utils.formatAmount(targetShop.getStock())).bold().color((int)col.x, (int)col.y, (int)col.z))
+                .cat(new Txt("\nStock: ")).cat(new Txt(Utils.formatAmount(targetShop.getStock())).bold().color(col))
             .get());
         }
 

@@ -8,17 +8,22 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
 
 import com.snek.framework.custom_displays.CustomDisplay;
-import com.snek.framework.data_types.AdditiveTransition;
-import com.snek.framework.data_types.Animation;
 import com.snek.framework.data_types.Flagged;
 import com.snek.framework.data_types.IndexedArrayDeque;
-import com.snek.framework.data_types.Transform;
-import com.snek.framework.data_types.Transition;
 import com.snek.framework.data_types.Triplet;
+import com.snek.framework.data_types.animations.Animation;
+import com.snek.framework.data_types.animations.Transform;
+import com.snek.framework.data_types.animations.steps.AnimationStep;
+import com.snek.framework.data_types.animations.steps.TextAnimationStep;
+import com.snek.framework.data_types.animations.transitions.AdditiveTransition;
+import com.snek.framework.data_types.animations.transitions.TextAdditiveTransition;
+import com.snek.framework.data_types.animations.transitions.TextTargetTransition;
+import com.snek.framework.data_types.animations.transitions.Transition;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.utils.Scheduler;
 
 import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 
 
@@ -64,6 +69,17 @@ public abstract class Elm {
         transform     = Flagged.from(style.getTransform());
         viewRange     = Flagged.from(style.getViewRange());
         billboardMode = Flagged.from(style.getBillboardMode());
+    }
+
+
+
+    /**
+     * Processes a click event using the player's view angle and current children.
+     * Reach distance is not accounted for.
+     * Calling this method on an element that hasn't been spawned yet is allowed and has no effect.
+     */
+    public void onClick(PlayerEntity player) {
+
     }
 
 
@@ -115,24 +131,31 @@ public abstract class Elm {
 
 
         // Calculate animation steps as a list of transforms
-        List<Triplet<Transform, Boolean, Float>> animationSteps = new ArrayList<>();
+        // List<Triplet<Transform, Boolean, Float>> animationSteps = new ArrayList<>();
+        List<AnimationStep> animationSteps = new ArrayList<>();
         Transform totTransform = new Transform();       // The sum of all the changes applied by the current and previous steps of the animation
         int time = transition.getDuration();            // The duration of this transition
         for(int i = TRANSITION_REFRESH_TIME; i < time; i = Math.min(i + TRANSITION_REFRESH_TIME, time)) {
 
             // Calculate interpolation factor and add the new animation step to the list
             float factor = (float)transition.getEasing().compute((double)i / (double)time);
-            animationSteps.add(Triplet.from(transition.compute(totTransform), transition instanceof AdditiveTransition, factor));
+
+            /**/ if(transition instanceof TextAdditiveTransition tt) animationSteps.add(new TextAnimationStep(transition.compute(totTransform), factor, transition instanceof AdditiveTransition, tt.getBackground(), tt.getAlpha()));//FIXME make this more readable
+            else if(transition instanceof TextTargetTransition   tt) animationSteps.add(new TextAnimationStep(transition.compute(totTransform), factor, transition instanceof AdditiveTransition, tt.getBackground(), tt.getAlpha()));//FIXME make this more readable
+            else                                                     animationSteps.add(new     AnimationStep(transition.compute(totTransform), factor, transition instanceof AdditiveTransition));                                   //FIXME make this more readable
         }
 
-        // Add padding step
-        animationSteps.add(Triplet.from(transition.compute(totTransform), transition instanceof AdditiveTransition, 1f));
+        // Add padding step //! This makes the actual duration match the duration specified in the transition (or be greater than it, which is not an issue)
+        // animationSteps.add(new AnimationStep(transition.compute(totTransform), 1f, transition instanceof AdditiveTransition));
+        /**/ if(transition instanceof TextAdditiveTransition tt) animationSteps.add(new TextAnimationStep(transition.compute(totTransform), 1, transition instanceof AdditiveTransition, tt.getBackground(), tt.getAlpha())); //FIXME make this more readable
+        else if(transition instanceof TextTargetTransition   tt) animationSteps.add(new TextAnimationStep(transition.compute(totTransform), 1, transition instanceof AdditiveTransition, tt.getBackground(), tt.getAlpha())); //FIXME make this more readable
+        else                                                     animationSteps.add(new     AnimationStep(transition.compute(totTransform), 1, transition instanceof AdditiveTransition));                                    //FIXME make this more readable
 
 
         // Update existing future transforms
         int i = 0;
         if(!transformQueue.isEmpty()) {
-            Triplet<Transform, Boolean, Float> step = null;
+            AnimationStep step = null;
 
             // Update existing future transforms
             for(; i + shift < transformQueue.size() && i < animationSteps.size(); ++i) {
@@ -172,14 +195,14 @@ public abstract class Elm {
      * @param step The animation step.
      * @return The modified transform.
      */
-    private @NotNull Transform __applyTransitionStep(@NotNull Transform ft, @NotNull Triplet<Transform, Boolean, Float> step){
-        if(step.second) {                                               // If the step is additive
-            ft.interpolate(ft.clone().apply(step.first), step.third);       // Interpolate the transform with the result of applying the step's transform to it
-        }                                                                   //
-        else {                                                          // If not
-            ft.interpolate(step.first, step.third);                         // Interpolate the transform with the step's transform
-        }                                                                   //
-        return ft;                                                      // Return the modified transform
+    private @NotNull Transform __applyTransitionStep(@NotNull Transform ft, @NotNull AnimationStep step){
+        if(step.isAdditive) {
+            ft.interpolate(ft.clone().apply(step.transform), step.factor);
+        }
+        else {
+            ft.interpolate(step.transform, step.factor);
+        }
+        return ft;
     }
 
 

@@ -6,10 +6,10 @@ import org.joml.Vector3d;
 
 import com.snek.fancyplayershops.Shop;
 import com.snek.framework.custom_displays.CustomItemDisplay;
-import com.snek.framework.data_types.AdditiveTransition;
-import com.snek.framework.data_types.Animation;
-import com.snek.framework.data_types.TargetTransition;
-import com.snek.framework.data_types.Transform;
+import com.snek.framework.data_types.animations.Animation;
+import com.snek.framework.data_types.animations.Transform;
+import com.snek.framework.data_types.animations.transitions.AdditiveTransition;
+import com.snek.framework.data_types.animations.transitions.TargetTransition;
 import com.snek.framework.ui.ItemElm;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.ui.styles.ItemElmStyle;

@@ -1,7 +1,8 @@
-package com.snek.framework.data_types;
+package com.snek.framework.data_types.animations.transitions;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.snek.framework.data_types.animations.Transform;
 import com.snek.framework.utils.Easing;
 
 

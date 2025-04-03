@@ -3,11 +3,11 @@ package com.snek.framework.ui.styles;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.snek.framework.data_types.AdditiveTransition;
-import com.snek.framework.data_types.Animation;
-import com.snek.framework.data_types.Transform;
+import com.snek.framework.data_types.animations.Animation;
+import com.snek.framework.data_types.animations.Transform;
+import com.snek.framework.data_types.animations.transitions.AdditiveTransition;
+import com.snek.framework.data_types.animations.transitions.TargetTransition;
 import com.snek.framework.utils.Easings;
-import com.snek.framework.data_types.TargetTransition;
 
 import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 
