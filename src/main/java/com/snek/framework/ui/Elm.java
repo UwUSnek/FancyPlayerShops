@@ -69,19 +69,6 @@ public abstract class Elm {
 
 
 
-    /**
-     * Processes a click event using the player's view angle and current children.
-     * Reach distance is not accounted for.
-     * Calling this method on an element that hasn't been spawned yet is allowed and has no effect.
-     */
-    public void onClick(PlayerEntity player) {
-        if(isSpawned) {
-            System.out.println("click detected");
-        }
-    }
-
-
-
 
     /**
      * Flushes changeable style values to the entity.
@@ -297,6 +284,25 @@ public abstract class Elm {
 
         for (int i = 0; i < elmUpdateQueue.size();) {
             if(elmUpdateQueue.get(i).tick()) ++i;
+        }
+    }
+
+
+
+
+    /**
+     * Processes a click event using the player's view angle and current children.
+     * Reach distance is not accounted for.
+     * Calling this method on an element that hasn't been spawned yet is allowed and has no effect.
+     *
+     * NOTICE: Click detection is only available for elements with Fixed billboard mode.
+     * Calling this function on elements with a different billboard mode is allowed and has no effect.
+     *
+     * @param player The player
+     */
+    public void onClick(PlayerEntity player) {
+        if(isSpawned && billboardMode.get() == BillboardMode.FIXED) {
+
         }
     }
 }

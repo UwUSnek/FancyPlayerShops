@@ -121,7 +121,7 @@ public abstract class CustomDisplay {
     }
 
 
-    public BillboardMode setBillboardMode() {
+    public BillboardMode getBillboardMode() {
         return (BillboardMode)Utils.invokeSafe(method_getBillboardMode, heldEntity);
     }
 
@@ -131,7 +131,7 @@ public abstract class CustomDisplay {
     }
 
 
-    public float setViewRange() {
+    public float getViewRange() {
         return (float)Utils.invokeSafe(method_getViewRange, heldEntity);
     }
 
@@ -141,7 +141,7 @@ public abstract class CustomDisplay {
     }
 
 
-    public Brightness setBrightness() {
+    public Brightness getBrightness() {
         return (Brightness)Utils.invokeSafe(method_getBrightness, heldEntity);
     }
 
