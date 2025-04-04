@@ -349,6 +349,6 @@ public class Utils {
      * @return The resulting value.
      */
     public static int interpolateI(int v1, int v2, float factor){
-        return Math.round((float)(v1 + (v2 - v1)) * factor);
+        return Math.round((float)v1 + (float)(v2 - v1) * factor);
     }
 }

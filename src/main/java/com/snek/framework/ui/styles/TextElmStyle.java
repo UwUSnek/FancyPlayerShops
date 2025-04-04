@@ -3,7 +3,9 @@ package com.snek.framework.ui.styles;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector4i;
 
+import com.snek.framework.data_types.IndexedArrayDeque;
 import com.snek.framework.data_types.animations.Animation;
+import com.snek.framework.data_types.animations.Transform;
 // import com.snek.framework.data_types.animations.TextTransform;
 import com.snek.framework.data_types.animations.transitions.AdditiveTransition;
 import com.snek.framework.data_types.animations.transitions.TargetTransition;
@@ -23,13 +25,14 @@ import net.minecraft.text.Text;
 
 
 public class TextElmStyle extends ElmStyle {
+
+    public static final Vector4i S_BG    = new Vector4i(200, 20, 20, 20);
+    public static final int      S_ALPHA = 255;
+
     private @NotNull TextAlignment alignment;
     private @NotNull Vector4i      background;
     private @NotNull Text          text;
     private @NotNull int           textOpacity;
-
-    public static final Vector4i S_BG    = new Vector4i(200, 20, 20, 20);
-    public static final int      S_ALPHA = 255;
 
 
 
@@ -42,9 +45,9 @@ public class TextElmStyle extends ElmStyle {
         // Set values
         super();
         alignment   = TextAlignment.CENTER;
-        background  = new Vector4i();
+        background  = new Vector4i(0);
         text        = new Txt("").get();
-        textOpacity = 255;
+        textOpacity = 0;
 
 
         // Adjust spawning animation //! and hope it only has 1 element
@@ -55,11 +58,6 @@ public class TextElmStyle extends ElmStyle {
             S_BG,
             S_ALPHA
         )));
-        // setSpawnAnimation(new Animation(new AdditiveTransition(
-        //     new TextTransform(_spawnAnimation.getTransitions().get(0).transform, S_BG, S_ALPHA),
-        //     _spawnAnimation.getTransitions().get(0).getDuration(),
-        //     _spawnAnimation.getTransitions().get(0).getEasing()
-        // )));
 
 
         // Adjust despawning animation //! and hope it only has 1 element
@@ -70,11 +68,6 @@ public class TextElmStyle extends ElmStyle {
             background,
             textOpacity
         )));
-        // setDespawnAnimation(new Animation(new TargetTransition(
-        //     new TextTransform(_despawnAnimation.getTransitions().get(0).transform, background, textOpacity),
-        //     _despawnAnimation.getTransitions().get(0).getDuration(),
-        //     _despawnAnimation.getTransitions().get(0).getEasing()
-        // )));
     }
 
 

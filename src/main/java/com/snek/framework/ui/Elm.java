@@ -10,14 +10,9 @@ import org.joml.Vector3d;
 import com.snek.framework.custom_displays.CustomDisplay;
 import com.snek.framework.data_types.Flagged;
 import com.snek.framework.data_types.IndexedArrayDeque;
-import com.snek.framework.data_types.Triplet;
 import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.animations.Transform;
 import com.snek.framework.data_types.animations.steps.AnimationStep;
-import com.snek.framework.data_types.animations.steps.TextAnimationStep;
-import com.snek.framework.data_types.animations.transitions.AdditiveTransition;
-import com.snek.framework.data_types.animations.transitions.TextAdditiveTransition;
-import com.snek.framework.data_types.animations.transitions.TextTargetTransition;
 import com.snek.framework.data_types.animations.transitions.Transition;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.utils.Scheduler;
@@ -131,7 +126,6 @@ public abstract class Elm {
 
 
         // Calculate animation steps as a list of transforms
-        // List<Triplet<Transform, Boolean, Float>> animationSteps = new ArrayList<>();
         List<AnimationStep> animationSteps = new ArrayList<>();
         Transform totTransform = new Transform();       // The sum of all the changes applied by the current and previous steps of the animation
         int time = transition.getDuration();            // The duration of this transition
@@ -139,17 +133,11 @@ public abstract class Elm {
 
             // Calculate interpolation factor and add the new animation step to the list
             float factor = (float)transition.getEasing().compute((double)i / (double)time);
-
-            /**/ if(transition instanceof TextAdditiveTransition tt) animationSteps.add(new TextAnimationStep(transition.compute(totTransform), factor, transition instanceof AdditiveTransition, tt.getBackground(), tt.getAlpha()));//FIXME make this more readable
-            else if(transition instanceof TextTargetTransition   tt) animationSteps.add(new TextAnimationStep(transition.compute(totTransform), factor, transition instanceof AdditiveTransition, tt.getBackground(), tt.getAlpha()));//FIXME make this more readable
-            else                                                     animationSteps.add(new     AnimationStep(transition.compute(totTransform), factor, transition instanceof AdditiveTransition));                                   //FIXME make this more readable
+            animationSteps.add(transition.createStep(totTransform, factor));
         }
 
         // Add padding step //! This makes the actual duration match the duration specified in the transition (or be greater than it, which is not an issue)
-        // animationSteps.add(new AnimationStep(transition.compute(totTransform), 1f, transition instanceof AdditiveTransition));
-        /**/ if(transition instanceof TextAdditiveTransition tt) animationSteps.add(new TextAnimationStep(transition.compute(totTransform), 1, transition instanceof AdditiveTransition, tt.getBackground(), tt.getAlpha())); //FIXME make this more readable
-        else if(transition instanceof TextTargetTransition   tt) animationSteps.add(new TextAnimationStep(transition.compute(totTransform), 1, transition instanceof AdditiveTransition, tt.getBackground(), tt.getAlpha())); //FIXME make this more readable
-        else                                                     animationSteps.add(new     AnimationStep(transition.compute(totTransform), 1, transition instanceof AdditiveTransition));                                    //FIXME make this more readable
+        animationSteps.add(transition.createStep(totTransform, 1));
 
 
         // Update existing future transforms
@@ -159,16 +147,14 @@ public abstract class Elm {
 
             // Update existing future transforms
             for(; i + shift < transformQueue.size() && i < animationSteps.size(); ++i) {
-                Transform ft = transformQueue.get(i + shift);
                 step = animationSteps.get(i);
-                __applyTransitionStep(ft, step);
+                __applyTransitionStep(i + shift, step);
             }
 
             // If the amount of future transforms is larger than the amount of steps, apply the last step to the remaining transforms
             if(i >= animationSteps.size()) {
-                for(; i < transformQueue.size(); ++i) {
-                    Transform ft = transformQueue.get(i);
-                    __applyTransitionStep(ft, step);
+                for(; i + shift < transformQueue.size(); ++i) {
+                    __applyTransitionStep(i + shift, step);
                 }
             }
         }
@@ -177,8 +163,9 @@ public abstract class Elm {
         // Add remaining future transforms
         Transform lastTransform = transformQueue.isEmpty() ? transform.get() : transformQueue.getLast();
         for(; i < animationSteps.size(); ++i) {
+            transformQueue.add(lastTransform.clone());
             var step = animationSteps.get(i);
-            transformQueue.add(__applyTransitionStep(lastTransform.clone(), step));
+            __applyTransitionStep(i + shift, step);
         }
 
 
@@ -190,18 +177,15 @@ public abstract class Elm {
 
 
     /**
-     * Applies a single animation step to a transform.
-     * @param ft The transform.
+     * Applies a single animation step.
+     * @param index The index of the future transform to apply the step to.
      * @param step The animation step.
      * @return The modified transform.
      */
-    private @NotNull Transform __applyTransitionStep(@NotNull Transform ft, @NotNull AnimationStep step){
-        if(step.isAdditive) {
-            ft.interpolate(ft.clone().apply(step.transform), step.factor);
-        }
-        else {
-            ft.interpolate(step.transform, step.factor);
-        }
+    protected @NotNull Transform __applyTransitionStep(int index, @NotNull AnimationStep step){
+        Transform ft = transformQueue.get(index);
+        if(step.isAdditive) ft.interpolate(ft.clone().apply(step.transform), step.factor);
+        else                ft.interpolate(step.transform,                   step.factor);
         return ft;
     }
 

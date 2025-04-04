@@ -4,11 +4,21 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Vector4i;
 
 import com.snek.framework.data_types.animations.Transform;
+import com.snek.framework.data_types.animations.steps.AnimationStep;
+import com.snek.framework.data_types.animations.steps.TextAnimationStep;
 import com.snek.framework.utils.Easing;
 
 
 
 
+
+
+
+
+/**
+ * A TargetTransition that includes background color and text opacity.
+ * This type of transition is meant to be used on TextElm instances.
+ */
 public class TextTargetTransition extends TargetTransition {
     private final @NotNull Vector4i bg;
     private final int alpha;
@@ -25,10 +35,17 @@ public class TextTargetTransition extends TargetTransition {
     }
 
 
+    @Override
+    public AnimationStep createStep(Transform targetTransform, float factor) {
+        return new TextAnimationStep(compute(targetTransform), factor, false, new Vector4i(bg), alpha);
+    }
+
+
     public Vector4i getBackground() { return bg;    };
     public int      getAlpha     () { return alpha; };
 }
 
 //! ---------------------------------------------------------------------------------
 //! | COPY OF TextAdditiveTransition BECAUSE JAVA DOESN'T LIKE MULTIPLE INHERITANCE |
+//! | The only difference is .createStep                                            |
 //! ---------------------------------------------------------------------------------

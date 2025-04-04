@@ -62,12 +62,12 @@ public class ShopItemDisplay extends ItemElm {
         focusAnimation = new Animation(new AdditiveTransition(
             new Transform().moveY(ElmStyle.S_HEIGHT).scale(ElmStyle.S_SCALE).rotY(L_ROT / 2),
             ElmStyle.S_TIME,
-            Easings.cubicOut
+            Easings.sineOut
         ));
         unfocusAnimation = new Animation(new TargetTransition(
             transform.get(),
             ElmStyle.D_TIME,
-            Easings.cubicOut
+            Easings.sineOut
         ));
 
 

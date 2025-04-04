@@ -3,6 +3,7 @@ package com.snek.framework.data_types.animations.transitions;
 import org.jetbrains.annotations.NotNull;
 
 import com.snek.framework.data_types.animations.Transform;
+import com.snek.framework.data_types.animations.steps.AnimationStep;
 import com.snek.framework.utils.Easing;
 
 
@@ -24,7 +25,23 @@ public abstract class Transition {
         duration  = _duration;
         easing    = _easing;
     }
+
+
+    /**
+     * Computes the target transform based on the transition type.
+     * @param initialTransform The initial transform.
+     * @return The target transform.
+     */
     public abstract Transform compute(Transform initialTransform);
+
+
+    /**
+     * Creates an animation step based on the current data and transition type.
+     * @param targetTransform
+     * @param factor
+     * @return
+     */
+    public abstract AnimationStep createStep(Transform targetTransform, float factor);
 
 
     public int getDuration() {

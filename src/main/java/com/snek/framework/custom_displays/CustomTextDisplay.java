@@ -1,6 +1,5 @@
 package com.snek.framework.custom_displays;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.jetbrains.annotations.NotNull;
@@ -62,15 +61,7 @@ public class CustomTextDisplay extends CustomDisplay {
 
 
     public void setText(@NotNull Text text) {
-        try {
-            method_setText.invoke(getRawDisplay(), text);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        Utils.invokeSafe(method_setText, heldEntity, text);
     }
 
 

@@ -25,18 +25,20 @@ public class Flagged<T> {
 
 
     /**
-     * Sets the falue and flags the object.
+     * Sets a new value.
+     * Flags the object if !this.get().equals(_value).
      * @param _value The new value.
      */
     public void set(T _value) {
+        if(!value.equals(_value)) flag = true;
         value = _value;
-        flag = true;
     }
 
 
     /**
      * Flags the object and returns a reference to its value.
      * In case of immutable types, a copy is returned.
+     * This method always flags the object without checking for changes.
      * @return The object.
      */
     public T edit() {
