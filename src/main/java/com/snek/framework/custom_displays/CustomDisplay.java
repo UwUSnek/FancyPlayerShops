@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
+import org.joml.Vector3f;
 
 import com.snek.framework.utils.Utils;
 
@@ -14,6 +15,7 @@ import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.AffineTransformation;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 
@@ -158,5 +160,15 @@ public abstract class CustomDisplay {
 
     public void setGlowing(boolean glowing) {
         heldEntity.setGlowing(glowing);
+    }
+
+
+    public Vector3f getPosCopy() {
+        return heldEntity.getPos().toVector3f();
+    }
+
+
+    public void setPos(Vector3f pos) {
+        heldEntity.setPosition(new Vec3d(pos));
     }
 }

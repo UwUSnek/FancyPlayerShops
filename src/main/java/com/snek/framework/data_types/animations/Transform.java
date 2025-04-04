@@ -155,4 +155,12 @@ public class Transform {
     public Transform setRrotZ    (float z                  ) { _rrot.rotationZ(z);                                return this; }
     public Transform setRrot     (float x, float y, float z) { setRrotX(x); setRrotY(y); setRrotZ(z);             return this; }
     public Transform setRrot     (Quaternionf r            ) { _rrot.set(r);                                      return this; }
+
+
+
+
+    public @NotNull Vector3f    getPos  () { return _pos;   }
+    public @NotNull Quaternionf getLrot () { return _lrot;  }
+    public @NotNull Vector3f    getScale() { return _scale; }
+    public @NotNull Quaternionf getRrot () { return _rrot;  }
 }

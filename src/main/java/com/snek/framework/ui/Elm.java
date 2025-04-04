@@ -6,6 +6,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
+import org.joml.Vector3f;
 
 import com.snek.framework.custom_displays.CustomDisplay;
 import com.snek.framework.data_types.Flagged;
@@ -303,6 +304,50 @@ public abstract class Elm {
     public void onClick(PlayerEntity player) {
         if(isSpawned && billboardMode.get() == BillboardMode.FIXED) {
 
+            // Calculate the world coordinates of the center of the display. //! Left rotation and scale are ignored as they doesn't affect this
+            Vector3f center =
+                entity.getPosCopy()
+                .add   (transform.get().getPos())
+                .rotate(transform.get().getRrot())
+            ;
+
+            //TODO calculate direction vector. multiply the two rotaitons
+            //TODO process clicks using a 2d plane instead of a sphere
+
+            if(checkIntersection(player.getEyePos().toVector3f(), player.getRotationVec(1f).toVector3f(), center, 0.2f)) {
+                System.out.println("ELEMENT CLICKED");
+            }
+            else {
+                System.out.println("ELEMENT NOT CLICKED");
+                System.out.println("Center: " + center.toString());
+            }
         }
     }
+
+
+
+
+    /**
+     * //TODO Checks whether a line intersects a rectangle in a 3d space
+     * Checks whether a line intersects a sphere.
+     * The line is assumed to be infinite in both directions, regardless of its length.
+     * @param lineStart The starting point of the line.
+     * @param lineDirection The direction of the line.
+     */
+    protected boolean checkIntersection(Vector3f lineStart, Vector3f lineDirection, Vector3f targetCenter, float targetRadius) {
+        Vector3f toCenter = new Vector3f(targetCenter).sub(lineDirection);
+
+        // float t = toCenter.dot(lineDirection) / lineDirection.lengthSquared();
+        float t = toCenter.dot(lineDirection);
+        Vector3f closestPoint = new Vector3f(lineDirection).mul(t).add(lineStart);
+
+        System.out.println("distance from center: " + targetCenter.distanceSquared(closestPoint));
+        return targetCenter.distanceSquared(closestPoint) <= targetRadius * targetRadius;
+    }
 }
+
+
+
+
+//FIXME SPAWN INTERACTION ENTITY WHEN SHOPS ARE FOCUSED
+//FIXME use it to visually stop client-side interactions with blocks and entities behind it
