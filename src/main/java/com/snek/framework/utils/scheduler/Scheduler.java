@@ -1,4 +1,4 @@
-package com.snek.framework.utils;
+package com.snek.framework.utils.scheduler;
 
 import java.util.Comparator;
 import java.util.PriorityQueue;

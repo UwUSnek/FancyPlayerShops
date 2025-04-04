@@ -8,6 +8,7 @@ import org.joml.Vector3i;
 import com.snek.fancyplayershops.FancyPlayerShops;
 import com.snek.fancyplayershops.Shop;
 import com.snek.framework.ui.TextElm;
+import com.snek.framework.utils.MinecraftUtils;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
 
@@ -67,7 +68,7 @@ public class DetailsDisplay extends TextElm {
         else {
             double price = targetShop.getPrice();
             text.set(new Txt()
-                .cat(new Txt(Utils.getItemName(_item)).get())
+                .cat(new Txt(MinecraftUtils.getItemName(_item)).get())
                 .cat(new Txt("\nPrice: ")).cat(new Txt(price < 0.005 ? "Free" : Utils.formatPrice(price)).bold().color(C_RGB_PRICE))
                 .cat(new Txt("\nStock: ")).cat(new Txt(Utils.formatAmount(targetShop.getStock())).bold().color(col))
             .get());

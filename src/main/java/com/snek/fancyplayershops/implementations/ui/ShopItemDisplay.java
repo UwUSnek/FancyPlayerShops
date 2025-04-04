@@ -14,9 +14,9 @@ import com.snek.framework.ui.ItemElm;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.ui.styles.ItemElmStyle;
 import com.snek.framework.utils.Easings;
-import com.snek.framework.utils.Scheduler;
-import com.snek.framework.utils.TaskHandler;
-import com.snek.framework.utils.Utils;
+import com.snek.framework.utils.MinecraftUtils;
+import com.snek.framework.utils.scheduler.Scheduler;
+import com.snek.framework.utils.scheduler.TaskHandler;
 
 import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
 import net.minecraft.item.ItemStack;
@@ -97,11 +97,11 @@ public class ShopItemDisplay extends ItemElm {
             ItemStack noItem = Items.BARRIER.getDefaultStack();
             noItem.setCustomName(Shop.EMPTY_SHOP_NAME);
             item.set(noItem);
-            entity.setCustomName(Utils.getItemName(noItem));
+            entity.setCustomName(MinecraftUtils.getItemName(noItem));
         }
         else {
             item.set(_item);
-            entity.setCustomName(Utils.getItemName(item.get()));
+            entity.setCustomName(MinecraftUtils.getItemName(item.get()));
         }
 
         flushStyle();

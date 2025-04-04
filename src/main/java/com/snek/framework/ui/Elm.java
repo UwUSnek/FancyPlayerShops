@@ -16,7 +16,8 @@ import com.snek.framework.data_types.animations.Transform;
 import com.snek.framework.data_types.animations.steps.AnimationStep;
 import com.snek.framework.data_types.animations.transitions.Transition;
 import com.snek.framework.ui.styles.ElmStyle;
-import com.snek.framework.utils.Scheduler;
+import com.snek.framework.utils.SpaceUtils;
+import com.snek.framework.utils.scheduler.Scheduler;
 
 import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 import net.minecraft.entity.player.PlayerEntity;
@@ -304,8 +305,8 @@ public abstract class Elm {
     public void onClick(PlayerEntity player) {
         if(isSpawned && billboardMode.get() == BillboardMode.FIXED) {
 
-            // Calculate the world coordinates of the center of the display. //! Left rotation and scale are ignored as they doesn't affect this
-            Vector3f center =
+            // Calculate the world coordinates of the display's origin. //! Left rotation and scale are ignored as they doesn't affect this
+            Vector3f origin =
                 entity.getPosCopy()
                 .add   (transform.get().getPos())
                 .rotate(transform.get().getRrot())
@@ -314,36 +315,19 @@ public abstract class Elm {
             //TODO calculate direction vector. multiply the two rotaitons
             //TODO process clicks using a 2d plane instead of a sphere
 
-            if(checkIntersection(player.getEyePos().toVector3f(), player.getRotationVec(1f).toVector3f(), center, 0.2f)) {
+            if(SpaceUtils.checkLineSphereIntersection(player.getEyePos().toVector3f(), player.getRotationVec(1f).toVector3f(), origin, 0.2f)) {
                 System.out.println("ELEMENT CLICKED");
             }
             else {
                 System.out.println("ELEMENT NOT CLICKED");
-                System.out.println("Center: " + center.toString());
+                // System.out.println("Center: " + center.toString());
             }
         }
     }
 
 
 
-
-    /**
-     * //TODO Checks whether a line intersects a rectangle in a 3d space
-     * Checks whether a line intersects a sphere.
-     * The line is assumed to be infinite in both directions, regardless of its length.
-     * @param lineStart The starting point of the line.
-     * @param lineDirection The direction of the line.
-     */
-    protected boolean checkIntersection(Vector3f lineStart, Vector3f lineDirection, Vector3f targetCenter, float targetRadius) {
-        Vector3f toCenter = new Vector3f(targetCenter).sub(lineDirection);
-
-        // float t = toCenter.dot(lineDirection) / lineDirection.lengthSquared();
-        float t = toCenter.dot(lineDirection);
-        Vector3f closestPoint = new Vector3f(lineDirection).mul(t).add(lineStart);
-
-        System.out.println("distance from center: " + targetCenter.distanceSquared(closestPoint));
-        return targetCenter.distanceSquared(closestPoint) <= targetRadius * targetRadius;
-    }
+    //TODO Checks whether a line intersects a rectangle in a 3d space instead of using spheres
 }
 
 

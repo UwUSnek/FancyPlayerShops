@@ -24,8 +24,8 @@ import org.slf4j.LoggerFactory;
 
 import com.snek.fancyplayershops.implementations.ui.DetailsDisplay;
 import com.snek.framework.ui.Elm;
-import com.snek.framework.utils.Scheduler;
 import com.snek.framework.utils.Txt;
+import com.snek.framework.utils.scheduler.Scheduler;
 
 
 

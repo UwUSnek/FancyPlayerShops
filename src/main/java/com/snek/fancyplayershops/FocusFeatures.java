@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.snek.framework.ui.styles.ItemElmStyle;
+import com.snek.framework.utils.MinecraftUtils;
 import com.snek.framework.utils.Utils;
 
 import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
@@ -118,7 +119,7 @@ public abstract class FocusFeatures {
 
             // Find target shop block
             for (Vec3d pos : collidingBlocks) {
-                Vec3i blockPos = Utils.doubleToBlockCoords(pos);
+                Vec3i blockPos = MinecraftUtils.doubleToBlockCoords(pos);
                 for (ItemDisplayEntity e : entitiyList) {
                     if(e.getBlockPos().equals(blockPos)) {
                         return Shop.findShop(new BlockPos(blockPos), world);
