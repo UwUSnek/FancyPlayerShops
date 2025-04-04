@@ -304,4 +304,13 @@ public class Shop {
         }
         return itemDisplay;
     }
+
+
+
+
+    public void onClick(PlayerEntity player) {
+        if(focusDisplay != null) {
+            focusDisplay.onClick(player);
+        }
+    }
 }

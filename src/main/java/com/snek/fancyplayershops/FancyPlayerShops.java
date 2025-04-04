@@ -94,8 +94,8 @@ public class FancyPlayerShops implements ModInitializer {
         // Create and register shop block rclick event
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             ActionResult r;
-            // r = ClickFeatures.onClick(world, player, hand, hitResult, ClickType.RIGHT); //FIXME add ghost cooldown. add to lclick too
-            /*if(r == ActionResult.PASS)*/ r = onItemUse(world, player, hand, hitResult);
+            r = ClickFeatures.onClick(world, player, hand, ClickType.RIGHT); //FIXME add ghost cooldown. add to lclick too
+            if(r == ActionResult.PASS) r = onItemUse(world, player, hand, hitResult);
             return r;
         });
 
@@ -103,9 +103,8 @@ public class FancyPlayerShops implements ModInitializer {
         // Create and register shop block rclick event
         AttackBlockCallback.EVENT.register((player, world, hand, blockPos, diretion) -> {
             ActionResult r;
-            // r = ClickFeatures.onClick(world, player, hand, blockPos, ClickType.LEFT); //FIXME add ghost cooldown. add to lclick too
-            // return r;
-            return ActionResult.PASS;
+            r = ClickFeatures.onClick(world, player, hand, ClickType.LEFT); //FIXME add ghost cooldown. add to lclick too
+            return r;
         });
 
 

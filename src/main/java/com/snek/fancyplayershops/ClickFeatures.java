@@ -16,9 +16,7 @@ import net.minecraft.world.World;
 
 
 
-public class ClickFeatures {
-    public ClickFeatures() { throw new UnsupportedOperationException("Utility class \"ClickFeatures\" cannot be instantiated"); }
-
+public abstract class ClickFeatures {
 
 
     //FIXME use a single onClick event and pass the click type
@@ -35,50 +33,51 @@ public class ClickFeatures {
         if(hand == Hand.MAIN_HAND && world instanceof ServerWorld serverWorld) {
             Shop targetShop = FocusFeatures.getLookedAtShop(player, serverWorld); //FIXME replace with lookup map (UUID, Shop) set by the focus system
             if(targetShop != null) {
-                boolean isOwner = targetShop.ownerUUID.equals(player.getUuid());
-                if(targetShop.user == null || targetShop.user == player) {
-                    // if(targetShop.menuStatus == MenuStatus.DETAILS) {
-                    //     if(clickType == ClickType.RIGHT) {
-                    //         targetShop.user = player;
-                    //         if(isOwner) {
-                    //             targetShop.menuStatusNext = MenuStatus.OWNER_EDIT;
-                    //             targetShop.updateMenuStatus();
-                    //         }
-                    //         else {
-                    //             targetShop.menuStatusNext = MenuStatus.CLIENT_BUY;
-                    //             targetShop.updateMenuStatus();
-                    //         }
-                    //     }
-                    //     else {
-                    //         //TODO retrieve or buy 1
-                    //     }
-                    // }
-                    // else if(targetShop.menuStatus == MenuStatus.OWNER_EDIT) {
-                    //     if(clickType == ClickType.RIGHT) {
-                    //         targetShop.user = null;
-                    //         targetShop.menuStatusNext = MenuStatus.DETAILS;
-                    //         targetShop.updateMenuStatus();
-                    //     }
+                targetShop.onClick(player);
+                // boolean isOwner = targetShop.ownerUUID.equals(player.getUuid());
+                // if(targetShop.user == null || targetShop.user == player) {
+                //     // if(targetShop.menuStatus == MenuStatus.DETAILS) {
+                //     //     if(clickType == ClickType.RIGHT) {
+                //     //         targetShop.user = player;
+                //     //         if(isOwner) {
+                //     //             targetShop.menuStatusNext = MenuStatus.OWNER_EDIT;
+                //     //             targetShop.updateMenuStatus();
+                //     //         }
+                //     //         else {
+                //     //             targetShop.menuStatusNext = MenuStatus.CLIENT_BUY;
+                //     //             targetShop.updateMenuStatus();
+                //     //         }
+                //     //     }
+                //     //     else {
+                //     //         //TODO retrieve or buy 1
+                //     //     }
+                //     // }
+                //     // else if(targetShop.menuStatus == MenuStatus.OWNER_EDIT) {
+                //     //     if(clickType == ClickType.RIGHT) {
+                //     //         targetShop.user = null;
+                //     //         targetShop.menuStatusNext = MenuStatus.DETAILS;
+                //     //         targetShop.updateMenuStatus();
+                //     //     }
 
-                    //     //TODO manage UI components click events
-                    //     //TODO click the small item display to change. maybe add a background color too
-                    //     //TODO click the set price button and enter the price in chat
-                    //     //TODO click the set max stock button and enter the max stock in chat
-                    //     //TODO click the arrows to change item Y rotation
-                    // }
-                    // else if(targetShop.menuStatus == MenuStatus.CLIENT_BUY) {
-                    //     targetShop.menuStatusNext = MenuStatus.DETAILS;
-                    //     targetShop.updateMenuStatus();
+                //     //     //TODO manage UI components click events
+                //     //     //TODO click the small item display to change. maybe add a background color too
+                //     //     //TODO click the set price button and enter the price in chat
+                //     //     //TODO click the set max stock button and enter the max stock in chat
+                //     //     //TODO click the arrows to change item Y rotation
+                //     // }
+                //     // else if(targetShop.menuStatus == MenuStatus.CLIENT_BUY) {
+                //     //     targetShop.menuStatusNext = MenuStatus.DETAILS;
+                //     //     targetShop.updateMenuStatus();
 
-                    //     //TODO manage UI components click events
-                    //     //TODO buttons to buy set amounts: 1000, 100, 10, 5, 1
-                    // }
-                }
-                else {
-                    player.sendMessage(new Txt("Someone else is already using this shop!\nLeft click to " + (
-                        isOwner ? "retrieve" : "buy"
-                    ) + " one item.").lightGray().italic().get());
-                }
+                //     //     //TODO manage UI components click events
+                //     //     //TODO buttons to buy set amounts: 1000, 100, 10, 5, 1
+                //     // }
+                // }
+                // else {
+                //     player.sendMessage(new Txt("Someone else is already using this shop!\nLeft click to " + (
+                //         isOwner ? "retrieve" : "buy"
+                //     ) + " one item.").lightGray().italic().get());
+                // }
                 return ActionResult.SUCCESS;
             }
         }

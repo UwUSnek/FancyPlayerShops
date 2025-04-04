@@ -22,8 +22,7 @@ import net.minecraft.util.math.Vec3i;
 
 
 
-public class Utils {
-    public Utils() { throw new UnsupportedOperationException("Utility class \"Utils\" cannot be instantiated"); }
+public abstract class Utils {
 
 
     /**

@@ -13,7 +13,6 @@ import net.minecraft.server.MinecraftServer;
 
 
 public abstract class Scheduler {
-    public Scheduler() { throw new UnsupportedOperationException("Utility class \"Scheduler\" cannot be instantiated"); }
     private static long tickNum = 0;
     private static final PriorityQueue<TaskHandler> taskQueue = new PriorityQueue<>(Comparator.comparingLong(e -> e.getTargetTick()));
 

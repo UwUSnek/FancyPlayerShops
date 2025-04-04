@@ -3,15 +3,9 @@ package com.snek.framework.ui.styles;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector4i;
 
-import com.snek.framework.data_types.IndexedArrayDeque;
 import com.snek.framework.data_types.animations.Animation;
-import com.snek.framework.data_types.animations.Transform;
-// import com.snek.framework.data_types.animations.TextTransform;
-import com.snek.framework.data_types.animations.transitions.AdditiveTransition;
-import com.snek.framework.data_types.animations.transitions.TargetTransition;
 import com.snek.framework.data_types.animations.transitions.TextAdditiveTransition;
 import com.snek.framework.data_types.animations.transitions.TextTargetTransition;
-import com.snek.framework.data_types.animations.transitions.Transition;
 import com.snek.framework.utils.Txt;
 
 import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity.TextAlignment;

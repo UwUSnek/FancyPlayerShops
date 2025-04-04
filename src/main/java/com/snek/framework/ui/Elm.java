@@ -52,6 +52,7 @@ public abstract class Elm {
     protected @NotNull ServerWorld   world;                                 // The world this Elm will be spawned in
     protected @NotNull CustomDisplay entity;                                // The display entity held by this element
     protected @NotNull ElmStyle      style;                                 // The style of the element
+    protected boolean isSpawned = false;                                    // Whether the element has been spawned into the world
 
 
 
@@ -74,7 +75,9 @@ public abstract class Elm {
      * Calling this method on an element that hasn't been spawned yet is allowed and has no effect.
      */
     public void onClick(PlayerEntity player) {
-
+        if(isSpawned) {
+            System.out.println("click detected");
+        }
     }
 
 
@@ -228,6 +231,7 @@ public abstract class Elm {
      * Spawns the element and its associated entities into the world.
      */
     public void spawn(Vector3d pos) {
+        isSpawned = true;
 
         // Flush previous changes to the entity to avoid bad interpolations and the entity into the world
         flushStyle();
@@ -247,6 +251,7 @@ public abstract class Elm {
      * Removes the element and its associated entities from the world.
      */
     public void despawn() {
+        isSpawned = false;
 
         // Handle animations
         Animation animation = style.getDespawnAnimation();

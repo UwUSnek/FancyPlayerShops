@@ -35,9 +35,7 @@ public class CustomTextDisplay extends CustomDisplay {
             method_getTextOpacity   = TextDisplayEntity.class.getDeclaredMethod("getTextOpacity");
             method_setBackground    = TextDisplayEntity.class.getDeclaredMethod("setBackground",              int.class);
             method_getBackground    = TextDisplayEntity.class.getDeclaredMethod("getBackground");
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (SecurityException e) {
+        } catch (NoSuchMethodException | SecurityException e) {
             e.printStackTrace();
         }
         method_setText.setAccessible(true);

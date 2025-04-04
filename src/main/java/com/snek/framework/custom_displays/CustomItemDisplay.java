@@ -24,9 +24,7 @@ public class CustomItemDisplay extends CustomDisplay {
     static {
         try {
             method_setItemStack = ItemDisplayEntity.class.getDeclaredMethod("setItemStack", ItemStack.class);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (SecurityException e) {
+        } catch (NoSuchMethodException | SecurityException e) {
             e.printStackTrace();
         }
         method_setItemStack.setAccessible(true);

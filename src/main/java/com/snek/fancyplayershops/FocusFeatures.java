@@ -30,8 +30,7 @@ import net.minecraft.world.World;
 /**
  * Utility class containing methods to detect shops players are looking at and display additional informations
  */
-public class FocusFeatures {
-    public FocusFeatures() { throw new UnsupportedOperationException("Utility class \"FocusFeatures\" cannot be instantiated"); }
+public abstract class FocusFeatures {
     private static final double MAX_DISTANCE = 5;  // Maximum distance to check
     private static final double STEP_SIZE = 0.2;
     public static List<Shop> targetedShopsOld = new ArrayList<>();
