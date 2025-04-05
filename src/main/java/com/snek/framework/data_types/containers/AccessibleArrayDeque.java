@@ -1,4 +1,4 @@
-package com.snek.framework.data_types;
+package com.snek.framework.data_types.containers;
 /*
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *

@@ -8,10 +8,13 @@
     "contact":{},
     "license":"CC0-1.0",
     "icon":"assets/fancyplayershops/icon.png",
-    "environment":"server",
+    "environment":"*",
     "entrypoints":{
         "main":[
             "com.snek.fancyplayershops.FancyPlayerShops"
+        ],
+        "client":[
+            "com.snek.fancyplayershops.FancyPlayerShopsClient"
         ],
         "mixins":[
             "fancyplayershops.mixins.json"

@@ -4,13 +4,13 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 import org.joml.Vector4i;
 
-import com.snek.framework.custom_displays.CustomDisplay;
-import com.snek.framework.custom_displays.CustomTextDisplay;
-import com.snek.framework.data_types.Flagged;
-import com.snek.framework.data_types.IndexedArrayDeque;
 import com.snek.framework.data_types.animations.Transform;
 import com.snek.framework.data_types.animations.steps.AnimationStep;
 import com.snek.framework.data_types.animations.steps.TextAnimationStep;
+import com.snek.framework.data_types.containers.Flagged;
+import com.snek.framework.data_types.containers.IndexedArrayDeque;
+import com.snek.framework.data_types.displays.CustomDisplay;
+import com.snek.framework.data_types.displays.CustomTextDisplay;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.ui.styles.TextElmStyle;
 import com.snek.framework.utils.Utils;

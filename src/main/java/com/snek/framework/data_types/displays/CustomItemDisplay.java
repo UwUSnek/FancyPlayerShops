@@ -1,4 +1,4 @@
-package com.snek.framework.custom_displays;
+package com.snek.framework.data_types.displays;
 
 import java.lang.reflect.Method;
 

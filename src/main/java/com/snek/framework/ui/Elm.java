@@ -8,13 +8,13 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
-import com.snek.framework.custom_displays.CustomDisplay;
-import com.snek.framework.data_types.Flagged;
-import com.snek.framework.data_types.IndexedArrayDeque;
 import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.animations.Transform;
 import com.snek.framework.data_types.animations.steps.AnimationStep;
 import com.snek.framework.data_types.animations.transitions.Transition;
+import com.snek.framework.data_types.containers.Flagged;
+import com.snek.framework.data_types.containers.IndexedArrayDeque;
+import com.snek.framework.data_types.displays.CustomDisplay;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.utils.SpaceUtils;
 import com.snek.framework.utils.scheduler.Scheduler;

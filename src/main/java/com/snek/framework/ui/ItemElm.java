@@ -3,10 +3,10 @@ package com.snek.framework.ui;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 
-import com.snek.framework.custom_displays.CustomDisplay;
-import com.snek.framework.custom_displays.CustomItemDisplay;
-import com.snek.framework.custom_displays.CustomTextDisplay;
-import com.snek.framework.data_types.Flagged;
+import com.snek.framework.data_types.containers.Flagged;
+import com.snek.framework.data_types.displays.CustomDisplay;
+import com.snek.framework.data_types.displays.CustomItemDisplay;
+import com.snek.framework.data_types.displays.CustomTextDisplay;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.ui.styles.ItemElmStyle;
 
