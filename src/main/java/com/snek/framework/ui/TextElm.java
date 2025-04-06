@@ -20,6 +20,7 @@ import com.snek.framework.ui.styles.TextElmStyle;
 import com.snek.framework.utils.SpaceUtils;
 import com.snek.framework.utils.Utils;
 
+import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
@@ -41,9 +42,9 @@ public class TextElm extends Elm {
     protected final @NotNull IndexedArrayDeque<Integer>  alphaQueue      = new IndexedArrayDeque<>(); // The list of alpha values to set to this instance's text in the next ticks. 1 for each update tick
 
     // Element data
-    protected @NotNull Flagged<Text>          text;
-    protected @NotNull Flagged<Integer>       textOpacity;
-    protected @NotNull Flagged<Vector4i>      background;
+    public @NotNull Flagged<Text>          text;
+    public @NotNull Flagged<Integer>       textOpacity;
+    public @NotNull Flagged<Vector4i>      background;
 
 
 
@@ -194,6 +195,8 @@ public class TextElm extends Elm {
 
     @Override
     public boolean checkIntersection(PlayerEntity player) {
+        if(!isSpawned || billboardMode.get() != BillboardMode.FIXED) return false;
+
 
         // Calculate the world coordinates of the display's origin. //! Left rotation and scale are ignored as they doesn't affect this
         Vector3f origin =

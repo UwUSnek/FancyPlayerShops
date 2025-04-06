@@ -40,9 +40,9 @@ public abstract class Elm {
     private boolean isQueued = false;                                                   // Whether this instance is queued for updates. Updated manually
 
     // Element data
-    protected @NotNull  Flagged<Transform>     transform;
-    protected @NotNull  Flagged<Float>         viewRange;
-    protected @NotNull  Flagged<BillboardMode> billboardMode;
+    public @NotNull  Flagged<Transform>     transform;
+    public @NotNull  Flagged<Float>         viewRange;
+    public @NotNull  Flagged<BillboardMode> billboardMode;
 
     // Tree data
     private @Nullable Elm parent = null;                                    // The parent element
@@ -291,31 +291,7 @@ public abstract class Elm {
 
 
     /**
-     * Processes a click event using the player's view angle and current children.
-     * Reach distance is not accounted for.
-     * Calling this method on an element that hasn't been spawned yet is allowed and has no effect.
-     *
-     * NOTICE: Click detection is only available for elements with Fixed billboard mode.
-     * Calling this function on elements with a different billboard mode is allowed and has no effect.
-     *
-     * @param player The player
-     */
-    public void onClick(PlayerEntity player) {
-        if(isSpawned && billboardMode.get() == BillboardMode.FIXED) {
-            if(checkIntersection(player)) {
-                System.out.println("ELEMENT CLICKED");
-            }
-            else {
-                System.out.println("ELEMENT NOT CLICKED");
-            }
-        }
-    }
-
-
-
-
-    /**
-     * Helpet method that checks if the player's view intersects with the hitbox of this element.
+     * Helper method that checks if the player's view intersects with the hitbox of this element.
      * @param player The player.
      * @return True if the view intersets with the hitbox, false otherwise.
      */

@@ -171,25 +171,25 @@ public abstract class FocusFeatures {
         }
         for (Shop shop : targetedShops) {
             shop.updateFocusState();
-            for (ServerWorld serverWorld : serverWorlds) for (PlayerEntity player : serverWorld.getPlayers()) {
+            // for (ServerWorld serverWorld : serverWorlds) for (PlayerEntity player : serverWorld.getPlayers()) {
 
-                //FIXME move to button element class
-                //FIXME only check players that are currently looking at the shop
-                if(shop.focusDisplay != null) {
-                    if(shop.focusDisplay.checkIntersection(player)) {
-                        if(!shop.focusDisplay.isHighlighted) {
-                            shop.focusDisplay.applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 0, Easings.linear, new Vector4i(255, 200, 200, 200), 255)));
-                            shop.focusDisplay.isHighlighted = true;
-                        }
-                    }
-                    else {
-                        if(shop.focusDisplay.isHighlighted) {
-                            shop.focusDisplay.applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 0, Easings.linear, new Vector4i(255, 0, 0, 0), 255)));
-                            shop.focusDisplay.isHighlighted = false;
-                        }
-                    }
-                }
-            }
+            //     //FIXME move to button element class
+            //     //FIXME only check players that are currently looking at the shop
+            //     if(shop.focusDisplay != null) {
+            //         if(shop.focusDisplay.checkIntersection(player)) {
+            //             if(!shop.focusDisplay.isHighlighted) {
+            //                 shop.focusDisplay.applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 0, Easings.linear, new Vector4i(255, 200, 200, 200), 255)));
+            //                 shop.focusDisplay.isHighlighted = true;
+            //             }
+            //         }
+            //         else {
+            //             if(shop.focusDisplay.isHighlighted) {
+            //                 shop.focusDisplay.applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 0, Easings.linear, new Vector4i(255, 0, 0, 0), 255)));
+            //                 shop.focusDisplay.isHighlighted = false;
+            //             }
+            //         }
+            //     }
+            // }
         }
         targetedShopsOld = targetedShops;
     }

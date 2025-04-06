@@ -34,7 +34,7 @@ public abstract class ClickFeatures {
         if(hand == Hand.MAIN_HAND && world instanceof ServerWorld serverWorld) {
             Shop targetShop = FocusFeatures.getLookedAtShop(player, serverWorld); //FIXME replace with lookup map (UUID, Shop) set by the focus system
             if(targetShop != null) {
-                targetShop.onClick(player);
+                targetShop.onClick(player, clickType);
                 // boolean isOwner = targetShop.ownerUUID.equals(player.getUuid());
                 // if(targetShop.user == null || targetShop.user == player) {
                 //     // if(targetShop.menuStatus == MenuStatus.DETAILS) {

@@ -11,6 +11,7 @@ import com.snek.framework.data_types.displays.CustomTextDisplay;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.ui.styles.ItemElmStyle;
 
+import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
@@ -24,7 +25,7 @@ import net.minecraft.server.world.ServerWorld;
 
 public class ItemElm extends Elm {
 
-    protected @NotNull Flagged<ItemStack> item;
+    public @NotNull Flagged<ItemStack> item;
 
 
 
@@ -82,6 +83,7 @@ public class ItemElm extends Elm {
 
     @Override
     public boolean checkIntersection(PlayerEntity player) {
+        if(!isSpawned) return false;
 
 
         // Calculate the world coordinates of the display's origin. //! Left rotation and scale are ignored as they doesn't affect this

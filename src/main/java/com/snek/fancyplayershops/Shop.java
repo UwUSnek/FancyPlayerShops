@@ -21,6 +21,7 @@ import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
 import com.snek.fancyplayershops.implementations.ui.DetailsDisplay;
 import com.snek.fancyplayershops.implementations.ui.ShopItemDisplay;
+import com.snek.framework.ui.interfaces.Clickable;
 import com.snek.framework.utils.Txt;
 
 import net.fabricmc.loader.api.FabricLoader;
@@ -31,6 +32,7 @@ import net.minecraft.item.Items;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+import net.minecraft.util.ClickType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -280,6 +282,10 @@ public class Shop {
 
                 // Start item animation and turn the CustomName back on
                 findItemDisplayEntityIfNeeded().leaveFocusState();
+
+                // Automatically close open menus and unset shop user
+                user = null;
+                //TODO close menus
             }
             focusStatus = focusStatusNext;
         }
@@ -309,9 +315,41 @@ public class Shop {
 
 
 
-    public void onClick(PlayerEntity player) {
+    /**
+     * Handles a single click event on this shop block.
+     * @param player The player that clicked the shop.
+     * @param click The click type.
+     */
+    public void onClick(PlayerEntity player, ClickType clickType) {
         if(focusDisplay != null) {
-            focusDisplay.onClick(player);
+
+
+            // If the shop is not currently being used, flag the player as its user
+            if(user == null) {
+                user = player;
+                //TODO open main menu or execute action
+                //TODO LEFT CLICK: retrieve one
+                //TODO RIGHT CLICK: open edit/buy menu
+                player.sendMessage(new Txt("DEBUG: OPENED MAIN MENU").green().get());
+            }
+
+
+            // If the player that clicked has already opened a menu, forward the click event to it
+            else if(user == player) {
+                //TODO forward click events to active menu
+                // ((Clickable)focusDisplay).onClick(player, click);
+                player.sendMessage(new Txt("DEBUG: CLICK EVENT FORWARDED").green().get());
+            }
+
+
+            // Send an error message to the player if someone else has already opened a menu in the same shop
+            else {
+                player.sendMessage(new Txt(
+                    "Someone else is already using this shop! Left click to " +
+                    (player.getUuid().equals(ownerUUID) ? "retrieve" : "buy") +
+                    " one item."
+                ).gray().get());
+            }
         }
     }
 }

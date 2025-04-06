@@ -8,15 +8,19 @@ import org.joml.Vector3i;
 import com.snek.fancyplayershops.FancyPlayerShops;
 import com.snek.fancyplayershops.Shop;
 import com.snek.framework.ui.TextElm;
+import com.snek.framework.ui.interfaces.Clickable;
 import com.snek.framework.utils.MinecraftUtils;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
+import com.snek.framework.utils.scheduler.Scheduler;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.util.ClickType;
 import net.minecraft.world.World;
 
 
@@ -26,7 +30,7 @@ import net.minecraft.world.World;
 
 
 
-public class DetailsDisplay extends TextElm {
+public class DetailsDisplay extends TextElm implements Clickable {
     private static final String ENTITY_CUSTOM_NAME = FancyPlayerShops.MOD_ID + ".ui.displayentity";
     Shop targetShop;
 
@@ -119,5 +123,13 @@ public class DetailsDisplay extends TextElm {
                 entity.remove(RemovalReason.KILLED);
             }
         }
+    }
+
+
+
+
+    @Override
+    public void onClick(@NotNull PlayerEntity player, @NotNull ClickType click) {
+        player.sendMessage(new Txt("CLICKED @" + Scheduler.getTickNum()).get());
     }
 }
