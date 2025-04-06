@@ -24,6 +24,7 @@ public class CustomTextDisplay extends CustomDisplay {
 
 
     static private Method method_setText;
+    static private Method method_getText;
     static private Method method_setTextOpacity;
     static private Method method_getTextOpacity;
     static private Method method_setBackground;
@@ -31,6 +32,7 @@ public class CustomTextDisplay extends CustomDisplay {
     static {
         try {
             method_setText          = TextDisplayEntity.class.getDeclaredMethod("setText",                   Text.class);
+            method_getText          = TextDisplayEntity.class.getDeclaredMethod("getText");
             method_setTextOpacity   = TextDisplayEntity.class.getDeclaredMethod("setTextOpacity",            byte.class);
             method_getTextOpacity   = TextDisplayEntity.class.getDeclaredMethod("getTextOpacity");
             method_setBackground    = TextDisplayEntity.class.getDeclaredMethod("setBackground",              int.class);
@@ -39,6 +41,7 @@ public class CustomTextDisplay extends CustomDisplay {
             e.printStackTrace();
         }
         method_setText.setAccessible(true);
+        method_getText.setAccessible(true);
         method_setTextOpacity.setAccessible(true);
         method_getTextOpacity.setAccessible(true);
         method_setBackground.setAccessible(true);
@@ -60,6 +63,11 @@ public class CustomTextDisplay extends CustomDisplay {
 
     public void setText(@NotNull Text text) {
         Utils.invokeSafe(method_setText, heldEntity, text);
+    }
+
+
+    public @NotNull Text getText() {
+        return (Text)Utils.invokeSafe(method_getText, heldEntity);
     }
 
 

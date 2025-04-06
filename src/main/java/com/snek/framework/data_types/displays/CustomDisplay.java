@@ -104,7 +104,6 @@ public abstract class CustomDisplay {
 
 
 
-
     /**
      * @param duration The duration in ticks
      */

@@ -4,11 +4,16 @@ package com.snek.framework.data_types.containers;
 
 
 public class Triplet<F, S, T> {
-    public final F first;
-    public final S second;
-    public final T third;
+    final F first;
+    final S second;
+    final T third;
 
 
+    public Triplet() {
+        first  = null;
+        second = null;
+        third  = null;
+    }
     public Triplet(F _first, S _second, T _third) {
         first  = _first;
         second = _second;

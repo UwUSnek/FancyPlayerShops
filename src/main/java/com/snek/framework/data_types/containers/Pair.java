@@ -4,10 +4,14 @@ package com.snek.framework.data_types.containers;
 
 
 public class Pair<F, S> {
-    public final F first;
-    public final S second;
+    public F first;
+    public S second;
 
 
+    public Pair() {
+        first  = null;
+        second = null;
+    }
     public Pair(F _first, S _second) {
         first  = _first;
         second = _second;

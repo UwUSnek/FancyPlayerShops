@@ -1,4 +1,4 @@
-package com.snek.fancyplayershops.generated;
+package com.snek.framework.generated;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -273,9 +273,8 @@ public final class FontSize{
     public static int getWidth(String s) {
         int r = 0;
         for(int i = 0; i < s.length(); ++i) {
-            i += widths.get(s.charAt(i));
+            r += widths.get(s.charAt(i));
         }
-        if(!s.isEmpty()) r += s.length() - 1;
         return r;
     }
 
@@ -284,6 +283,6 @@ public final class FontSize{
      * Returns the height a line would have when rendered.
      */
     public static int getHeight() {
-        return 11;
+        return 8;
     }
 }

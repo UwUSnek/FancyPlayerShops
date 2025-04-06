@@ -6,7 +6,6 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
-import org.joml.Vector3f;
 
 import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.animations.Transform;
@@ -16,7 +15,6 @@ import com.snek.framework.data_types.containers.Flagged;
 import com.snek.framework.data_types.containers.IndexedArrayDeque;
 import com.snek.framework.data_types.displays.CustomDisplay;
 import com.snek.framework.ui.styles.ElmStyle;
-import com.snek.framework.utils.SpaceUtils;
 import com.snek.framework.utils.scheduler.Scheduler;
 
 import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
@@ -304,26 +302,24 @@ public abstract class Elm {
      */
     public void onClick(PlayerEntity player) {
         if(isSpawned && billboardMode.get() == BillboardMode.FIXED) {
-
-            // Calculate the world coordinates of the display's origin. //! Left rotation and scale are ignored as they doesn't affect this
-            Vector3f origin =
-                entity.getPosCopy()
-                .add   (transform.get().getPos())
-                .rotate(transform.get().getRrot())
-            ;
-
-            //TODO calculate direction vector. multiply the two rotaitons
-            //TODO process clicks using a 2d plane instead of a sphere
-
-            if(SpaceUtils.checkLineSphereIntersection(player.getEyePos().toVector3f(), player.getRotationVec(1f).toVector3f(), origin, 0.2f)) {
+            if(checkIntersection(player)) {
                 System.out.println("ELEMENT CLICKED");
             }
             else {
                 System.out.println("ELEMENT NOT CLICKED");
-                // System.out.println("Center: " + center.toString());
             }
         }
     }
+
+
+
+
+    /**
+     * Helpet method that checks if the player's view intersects with the hitbox of this element.
+     * @param player The player.
+     * @return True if the view intersets with the hitbox, false otherwise.
+     */
+    protected abstract boolean checkIntersection(PlayerEntity player);
 
 
 

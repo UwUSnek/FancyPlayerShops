@@ -23,7 +23,7 @@ public abstract class FontWidthGenerator {
     private static String CLASS_NAME   = "FontSize";
     private static String DIR_PATH     = "fancyplayershops/generated";
     private static String FILE_PATH    = DIR_PATH + "/" + CLASS_NAME + ".java";
-    private static String PACKAGE_NAME = "com.snek.fancyplayershops.generated";
+    private static String PACKAGE_NAME = "com.snek.framework.generated";
     public List<Integer> a = new ArrayList<>();
 
 
@@ -70,13 +70,13 @@ public abstract class FontWidthGenerator {
                 "\n\n"+
                 "    /**\n" +
                 "     * Calculates the width a string would have when rendered.\n" +
+                "     * This includes the space between each character.\n" +
                 "     */\n" +
                 "    public static int getWidth(String s) {\n" +
                 "        int r = 0;\n" +
                 "        for(int i = 0; i < s.length(); ++i) {\n" +
-                "            i += widths.get(s.charAt(i));\n" +
+                "            r += widths.get(s.charAt(i));\n" +
                 "        }\n" +
-                "        if(!s.isEmpty()) r += s.length() - 1;\n" +
                 "        return r;\n" +
                 "    }\n"
             );
@@ -87,9 +87,10 @@ public abstract class FontWidthGenerator {
                 "\n\n" +
                 "    /**\n" +
                 "     * Returns the height a line would have when rendered.\n" +
+                "     * This does NOT include the space between lines.\n" +
                 "     */\n" +
                 "    public static int getHeight() {\n" +
-                "        return 11;\n" + //TODO actually calculate the height
+                "        return 8;\n" + //TODO actually calculate the height
                 "    }\n"
             );
 
