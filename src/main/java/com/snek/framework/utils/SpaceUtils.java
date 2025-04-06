@@ -54,16 +54,10 @@ public abstract class SpaceUtils {
     public static boolean checkLineRectangleIntersection(Vector3f lineOrigin, Vector3f lineDirection, Vector3f corner1, Vector3f corner2) {
 
 
-        // Calculate corner coordinates when projected onto the screen's plane
-        // Use lineOrigin as coordinates origin and lineDirection
-        Quaternionf negativeDir = new Quaternionf().rotateXYZ(-lineDirection.x, -lineDirection.y, -lineDirection.z);
+        // Calculate corner coordinates when projected onto the screen's plane. Use lineOrigin as coordinates origin and lineDirection
+        Quaternionf negativeDir = new Quaternionf().rotateTo(lineDirection, new Vector3f(0, 0, -1));
         Vector3f c1 = new Vector3f(corner1).sub(lineOrigin).rotate(negativeDir);
         Vector3f c2 = new Vector3f(corner2).sub(lineOrigin).rotate(negativeDir);
-        // Vector2f  c1 = new Vector2f(_c1.x, _c1.y);
-        // Vector2f  c2 = new Vector2f(_c2.x, _c2.y);
-        // System.out.println(c1.toString());
-        // System.out.println(c2.toString());
-        // world.spawnParticles(ParticleTypes.BUBBLE_POP, corner2.x, corner2.y, corner2.z, 0, 0, 0, 0, 0);
 
 
         // Check intersection on the X and Y axes, return true if none fail

@@ -5,7 +5,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.joml.Vector4i;
+
+import com.snek.framework.data_types.animations.Animation;
+import com.snek.framework.data_types.animations.Transform;
+import com.snek.framework.data_types.animations.transitions.TextAdditiveTransition;
 import com.snek.framework.ui.styles.ItemElmStyle;
+import com.snek.framework.utils.Easings;
 import com.snek.framework.utils.MinecraftUtils;
 import com.snek.framework.utils.Utils;
 
@@ -165,6 +171,25 @@ public abstract class FocusFeatures {
         }
         for (Shop shop : targetedShops) {
             shop.updateFocusState();
+            for (ServerWorld serverWorld : serverWorlds) for (PlayerEntity player : serverWorld.getPlayers()) {
+
+                //FIXME move to button element class
+                //FIXME only check players that are currently looking at the shop
+                if(shop.focusDisplay != null) {
+                    if(shop.focusDisplay.checkIntersection(player)) {
+                        if(!shop.focusDisplay.isHighlighted) {
+                            shop.focusDisplay.applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 0, Easings.linear, new Vector4i(255, 200, 200, 200), 255)));
+                            shop.focusDisplay.isHighlighted = true;
+                        }
+                    }
+                    else {
+                        if(shop.focusDisplay.isHighlighted) {
+                            shop.focusDisplay.applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 0, Easings.linear, new Vector4i(255, 0, 0, 0), 255)));
+                            shop.focusDisplay.isHighlighted = false;
+                        }
+                    }
+                }
+            }
         }
         targetedShopsOld = targetedShops;
     }

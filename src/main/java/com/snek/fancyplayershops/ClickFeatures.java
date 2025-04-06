@@ -19,7 +19,8 @@ import net.minecraft.world.World;
 public abstract class ClickFeatures {
 
 
-    //FIXME use a single onClick event and pass the click type
+    //FIXME detect item use events as well
+    //FIXME check if it stacks with block use event, make them not stack
     /**
      * Handles left and right clicks on shop blocks.
      * Must be called on AttackBlockCallback and UseBlockCallback events.

@@ -34,6 +34,9 @@ public class DetailsDisplay extends TextElm {
     private static final Vector3f C_HSV_STOCK_HIGH = Utils.RGBtoHSV(new Vector3i(0, 223, 0)); //! Float instead of int for more precision
     private static final Vector3f C_HSV_STOCK_LOW  = Utils.RGBtoHSV(new Vector3i(200, 0, 0)); //! Float instead of int for more precision
 
+    //FIXME move to button element class
+    public boolean isHighlighted = false;
+
 
 
 

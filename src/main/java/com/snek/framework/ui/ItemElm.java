@@ -81,7 +81,7 @@ public class ItemElm extends Elm {
 
 
     @Override
-    protected boolean checkIntersection(PlayerEntity player) {
+    public boolean checkIntersection(PlayerEntity player) {
 
 
         // Calculate the world coordinates of the display's origin. //! Left rotation and scale are ignored as they doesn't affect this

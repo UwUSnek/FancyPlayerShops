@@ -319,7 +319,7 @@ public abstract class Elm {
      * @param player The player.
      * @return True if the view intersets with the hitbox, false otherwise.
      */
-    protected abstract boolean checkIntersection(PlayerEntity player);
+    public abstract boolean checkIntersection(PlayerEntity player);
 
 
 

@@ -81,7 +81,8 @@ public class Shop {
 
 
     // Shop status
-    private transient @Nullable DetailsDisplay focusDisplay = null; //TODO this might need to be a list
+    //FIXME make display private
+    public transient @Nullable DetailsDisplay focusDisplay = null; //TODO this might need to be a list
     public  transient @Nullable PlayerEntity           user = null;
     public  transient           boolean         focusStatus = false;
     public  transient           boolean     focusStatusNext = false;
