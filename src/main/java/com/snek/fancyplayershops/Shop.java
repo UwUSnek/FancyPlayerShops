@@ -22,13 +22,20 @@ import com.mojang.serialization.JsonOps;
 import com.snek.fancyplayershops.implementations.ui.DetailsDisplay;
 import com.snek.fancyplayershops.implementations.ui.ShopItemDisplay;
 import com.snek.framework.ui.interfaces.Clickable;
+import com.snek.framework.utils.MinecraftUtils;
 import com.snek.framework.utils.Txt;
+import com.snek.framework.utils.Utils;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.scoreboard.Scoreboard;
+import net.minecraft.scoreboard.ScoreboardCriterion;
+import net.minecraft.scoreboard.ScoreboardPlayerScore;
+import net.minecraft.scoreboard.ServerScoreboard;
+import net.minecraft.scoreboard.ScoreboardCriterion.RenderType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
@@ -327,10 +334,22 @@ public class Shop {
             // If the shop is not currently being used, flag the player as its user
             if(user == null) {
                 user = player;
-                //TODO open main menu or execute action
-                //TODO LEFT CLICK: retrieve one
-                //TODO RIGHT CLICK: open edit/buy menu
-                player.sendMessage(new Txt("DEBUG: OPENED MAIN MENU").green().get());
+                if(clickType == ClickType.LEFT) {
+                    if(player.getUuid().equals(ownerUUID)) {
+                        retrieveItem(player);
+                    }
+                    else {
+                        buyItem(player, 1);
+                    }
+                }
+                else {
+                    if(player.getUuid().equals(ownerUUID)) {
+                        openEditUi(player);
+                    }
+                    else {
+                        openBuyUi(player);
+                    }
+                }
             }
 
 
@@ -344,19 +363,114 @@ public class Shop {
 
             // Send an error message to the player if someone else has already opened a menu in the same shop
             else {
-                player.sendMessage(new Txt(
-                    "Someone else is already using this shop! Left click to " +
-                    (player.getUuid().equals(ownerUUID) ? "retrieve" : "buy") +
-                    " one item."
-                ).gray().get());
+                if(clickType == ClickType.RIGHT) {
+                    player.sendMessage(new Txt(
+                        "Someone else is already using this shop! Left click to " +
+                        (player.getUuid().equals(ownerUUID) ? "retrieve" : "buy") +
+                        " one item."
+                    ).gray().get());
+                }
+                else {
+                    //TODO retrieve/buy one
+                }
             }
         }
     }
+
+
+
+
+    /**
+     * Retrieves one item from the shop at no cost and gives it to the owner.
+     * Sends an error message to the player if the shop is unconfigured or doesn't contain any item.
+     * @param owner The owner of the shop.
+     */
+    public void retrieveItem(PlayerEntity owner){
+        if(item.getItem() == Items.AIR) {
+            owner.sendMessage(new Txt("This shop is empty!").gray().get());
+        }
+        else if(stock < 1) {
+            owner.sendMessage(new Txt("This shop has no items in stock!").gray().get());
+        }
+        else {
+            --stock;
+            ItemStack _item = item.copyWithCount(1);
+            owner.giveItemStack(_item);
+        }
+    }
+
+
+
+
+    /**
+     * Makes a player buy a specified amount of items from the shop.
+     * Sends an error message to the player if the shop is unconfigured or doesn't contain enough item.
+     * @param player The player.
+     * @param amount The amount of items to buy.
+     */
+    public void buyItem(PlayerEntity player, int amount){
+        if(item.getItem() == Items.AIR) {
+            player.sendMessage(new Txt("This shop is empty!").gray().get());
+        }
+        else if(stock < 1) {
+            player.sendMessage(new Txt("This shop has no items in stock!").gray().get());
+        }
+        else if(stock < amount) {
+            player.sendMessage(new Txt("This shop doesn't have enough items in stock! Items left: " + stock).gray().get());
+        }
+        else {
+            stock -= amount;
+            final double totPrice = price * amount;
+            player.sendMessage(new Txt("Bought " + amount + "x " + MinecraftUtils.getItemName(item) + " for " + Utils.formatPrice(totPrice)).green().get());
+            addMoney(player, -totPrice);
+            ItemStack _item = item.copyWithCount(amount);
+            player.giveItemStack(_item);
+        }
+
+
+        //TODO show undo button in chat after first left click of an shop to let players undo accidental purchases
+        //TODO show undo button in chat after first left click of an shop to let players undo accidental purchases
+        //TODO show undo button in chat after first left click of an shop to let players undo accidental purchases
+
+        //TODO no need for retrieval undo as the owner can simply put the item back in
+    }
+
+
+
+
+    /**
+     * Opens the edit shop UI.
+     * @param player The player.
+     */
+    public void openEditUi(PlayerEntity player) {
+        //TODO actually open the UI
+    }
+
+
+
+
+    /**
+     * Opens the buy item UI.
+     * @param player The player.
+     */
+    public void openBuyUi(PlayerEntity player) {
+        if(item.getItem() == Items.AIR) {
+            player.sendMessage(new Txt("This shop is empty!").gray().get());
+        }
+        //TODO actually open the UI
+    }
+
+
+
+
+
+    private final String objectiveName = "tmp_balance";
+
+    //FIXME use economy mod API instead of scoreboards
+    public void addMoney(PlayerEntity player, double amount) {
+        ServerScoreboard s = player.getServer().getScoreboard();
+        if(!s.containsObjective(objectiveName)) s.addObjective(objectiveName, ScoreboardCriterion.DUMMY, new Txt(objectiveName).get(), RenderType.INTEGER);
+        ScoreboardPlayerScore score = s.getPlayerScore(player.getName().getString(), s.getObjective(objectiveName));
+        score.incrementScore((int)amount);
+    }
 }
-
-
-//TODO show undo button in chat after first left click of an shop to let players undo accidental purchases
-//TODO show undo button in chat after first left click of an shop to let players undo accidental purchases
-//TODO show undo button in chat after first left click of an shop to let players undo accidental purchases
-
-//TODO no need for retrieval undo as the owner can simply put the item back in
