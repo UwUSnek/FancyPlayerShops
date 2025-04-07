@@ -1,4 +1,4 @@
-package com.snek.fancyplayershops.implementations.ui;
+package com.snek.fancyplayershops.implementations.ui.details;
 
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
@@ -37,7 +37,7 @@ import net.minecraft.world.World;
 
 
 
-public class DetailsDisplay extends TextElm implements Clickable, Hoverable { //FIXME this should not be hoverable
+public class DetailsDisplay extends TextElm {
     private static final String ENTITY_CUSTOM_NAME = FancyPlayerShops.MOD_ID + ".ui.displayentity";
     Shop targetShop;
 
@@ -45,7 +45,7 @@ public class DetailsDisplay extends TextElm implements Clickable, Hoverable { //
     private static final Vector3f C_HSV_STOCK_HIGH = Utils.RGBtoHSV(new Vector3i(0, 223, 0)); //! Float instead of int for more precision
     private static final Vector3f C_HSV_STOCK_LOW  = Utils.RGBtoHSV(new Vector3i(200, 0, 0)); //! Float instead of int for more precision
 
-    private static final Vector4i BG_HOVER = new Vector4i(255, 100, 100, 100); //FIXME this element should not be hoverable. move to actual buttons
+    // private static final Vector4i BG_HOVER = new Vector4i(255, 100, 100, 100); //FIXME this element should not be hoverable. move to actual buttons
 
     // //FIXME move to button element class
     // public boolean isHighlighted = false;
@@ -137,26 +137,18 @@ public class DetailsDisplay extends TextElm implements Clickable, Hoverable { //
 
 
 
-    @Override
-    public void onClick(@NotNull PlayerEntity player, @NotNull ClickType click) {
-        player.sendMessage(new Txt("CLICKED @" + Scheduler.getTickNum()).get());
-    }
+    // //FIXME this element should not be hoverable
+    // @Override
+    // public void onHoverEnter() {
+    //     applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 2, Easings.linear, BG_HOVER, 255)));
+    // }
 
 
 
 
-    //FIXME this element should not be hoverable
-    @Override
-    public void onHoverEnter() {
-        applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 2, Easings.linear, BG_HOVER, 255)));
-    }
-
-
-
-
-    //FIXME this element should not be hoverable
-    @Override
-    public void onHoverExit() {
-        applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 2, Easings.linear, ((TextElmStyle)style).getBackground(), 255)));
-    }
+    // //FIXME this element should not be hoverable
+    // @Override
+    // public void onHoverExit() {
+    //     applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 2, Easings.linear, ((TextElmStyle)style).getBackground(), 255)));
+    // }
 }

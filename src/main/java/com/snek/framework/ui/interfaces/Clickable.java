@@ -23,7 +23,9 @@ public interface Clickable {
      * NOTICE: Click detection is only available for elements with Fixed billboard mode.
      * Calling this function on elements with a different billboard mode is allowed and has no effect.
      *
-     * @param player The player
+     * @param player The player.
+     * @param click The type of click.
+     * @return Whether the function consumed the click.
      */
-    public void onClick(@NotNull PlayerEntity player, @NotNull ClickType click);
+    public boolean onClick(@NotNull PlayerEntity player, @NotNull ClickType click);
 }

@@ -19,19 +19,20 @@ import org.joml.Vector3d;
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
-import com.snek.fancyplayershops.implementations.ui.DetailsDisplay;
 import com.snek.fancyplayershops.implementations.ui.ShopItemDisplay;
-import com.snek.framework.ui.interfaces.Clickable;
+import com.snek.fancyplayershops.implementations.ui.details.DetailsDisplay;
+import com.snek.fancyplayershops.implementations.ui.details.DetailsUiCanvas;
+import com.snek.framework.ui.Canvas;
 import com.snek.framework.utils.MinecraftUtils;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
+import com.snek.framework.utils.scheduler.TaskHandler;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.ScoreboardCriterion;
 import net.minecraft.scoreboard.ScoreboardPlayerScore;
 import net.minecraft.scoreboard.ServerScoreboard;
@@ -90,10 +91,9 @@ public class Shop {
 
 
     // Shop status
-    //FIXME make display private
-    public transient @Nullable DetailsDisplay focusDisplay = null; //TODO this might need to be a list
+    public  transient @Nullable Canvas         activeCanvas = null;
     public  transient @Nullable PlayerEntity           user = null;
-    public  transient           boolean         focusStatus = false;
+    private transient           boolean         focusStatus = false;
     public  transient           boolean     focusStatusNext = false;
 
 
@@ -276,23 +276,17 @@ public class Shop {
             if(focusStatusNext) {
 
                 // Create and setup the Text Display entity
-                if(focusDisplay != null) focusDisplay.getEntity().despawn();
-                focusDisplay = new DetailsDisplay(this);
-                focusDisplay.spawn(calcDisplayPos().add(0, 0.3d, 0));
+                if(activeCanvas != null) activeCanvas.despawnNow();
+                activeCanvas = new DetailsUiCanvas(this);
+                activeCanvas.spawn(calcDisplayPos().add(0, 0.3d, 0));
 
                 // Start item animation and turn off the CustomName
                 findItemDisplayEntityIfNeeded().enterFocusState();
             }
             else {
-                // Despawn the text display
-                focusDisplay.despawn();
-
-                // Start item animation and turn the CustomName back on
-                findItemDisplayEntityIfNeeded().leaveFocusState();
-
-                // Automatically close open menus and unset shop user
-                user = null;
-                //TODO close menus
+                activeCanvas.despawn();                             // Despawn the active canvas
+                findItemDisplayEntityIfNeeded().leaveFocusState();  // Turn the CustomName back on
+                user = null;                                        // Reset shop user
             }
             focusStatus = focusStatusNext;
         }
@@ -328,50 +322,50 @@ public class Shop {
      * @param click The click type.
      */
     public void onClick(PlayerEntity player, ClickType clickType) {
-        if(focusDisplay != null) {
 
-
-            // If the shop is not currently being used, flag the player as its user
-            if(user == null) {
-                user = player;
-                if(clickType == ClickType.LEFT) {
-                    if(player.getUuid().equals(ownerUUID)) {
-                        retrieveItem(player);
-                    }
-                    else {
-                        buyItem(player, 1);
-                    }
+        // If the shop is not currently being used, flag the player as its user
+        if(user == null) {
+            if(clickType == ClickType.LEFT) {
+                if(player.getUuid().equals(ownerUUID)) {
+                    retrieveItem(player);
                 }
                 else {
-                    if(player.getUuid().equals(ownerUUID)) {
-                        openEditUi(player);
-                    }
-                    else {
-                        openBuyUi(player);
-                    }
+                    buyItem(player, 1);
                 }
             }
-
-
-            // If the player that clicked has already opened a menu, forward the click event to it
-            else if(user == player) {
-                //TODO forward click events to active menu
-                // ((Clickable)focusDisplay).onClick(player, click);
-                player.sendMessage(new Txt("DEBUG: CLICK EVENT FORWARDED").green().get());
-            }
-
-
-            // Send an error message to the player if someone else has already opened a menu in the same shop
             else {
-                if(clickType == ClickType.RIGHT) {
-                    player.sendMessage(new Txt(
-                        "Someone else is already using this shop! Left click to " +
-                        (player.getUuid().equals(ownerUUID) ? "retrieve" : "buy") +
-                        " one item."
-                    ).gray().get());
+                user = player;
+                if(player.getUuid().equals(ownerUUID)) {
+                    openEditUi(player);
                 }
                 else {
-                    //TODO retrieve/buy one
+                    openBuyUi(player);
+                }
+            }
+        }
+
+
+        // If the player that clicked has already opened a menu, forward the click event to it
+        else if(user == player) {
+            activeCanvas.forwardClick(player, clickType);
+        }
+
+
+        // Send an error message to the player if someone else has already opened a menu in the same shop
+        else {
+            if(clickType == ClickType.RIGHT) {
+                player.sendMessage(new Txt(
+                    "Someone else is already using this shop! Left click to " +
+                    (player.getUuid().equals(ownerUUID) ? "retrieve" : "buy") +
+                    " one item."
+                ).gray().get(), true);
+            }
+            else {
+                if(player.getUuid().equals(ownerUUID)) {
+                    retrieveItem(player);
+                }
+                else {
+                    buyItem(player, 1);
                 }
             }
         }
@@ -387,10 +381,10 @@ public class Shop {
      */
     public void retrieveItem(PlayerEntity owner){
         if(item.getItem() == Items.AIR) {
-            owner.sendMessage(new Txt("This shop is empty!").gray().get());
+            owner. sendMessage(new Txt("This shop is empty!").lightGray().get(), true);
         }
         else if(stock < 1) {
-            owner.sendMessage(new Txt("This shop has no items in stock!").gray().get());
+            owner.sendMessage(new Txt("This shop has no items in stock!").lightGray().get(), true);
         }
         else {
             --stock;
@@ -410,13 +404,13 @@ public class Shop {
      */
     public void buyItem(PlayerEntity player, int amount){
         if(item.getItem() == Items.AIR) {
-            player.sendMessage(new Txt("This shop is empty!").gray().get());
+            player.sendMessage(new Txt("This shop is empty!").lightGray().get(), true);
         }
         else if(stock < 1) {
-            player.sendMessage(new Txt("This shop has no items in stock!").gray().get());
+            player.sendMessage(new Txt("This shop has no items in stock!").lightGray().get(), true);
         }
         else if(stock < amount) {
-            player.sendMessage(new Txt("This shop doesn't have enough items in stock! Items left: " + stock).gray().get());
+            player.sendMessage(new Txt("This shop doesn't have enough items in stock! Items left: " + stock).lightGray().get(), true);
         }
         else {
             stock -= amount;
@@ -429,9 +423,6 @@ public class Shop {
 
 
         //TODO show undo button in chat after first left click of an shop to let players undo accidental purchases
-        //TODO show undo button in chat after first left click of an shop to let players undo accidental purchases
-        //TODO show undo button in chat after first left click of an shop to let players undo accidental purchases
-
         //TODO no need for retrieval undo as the owner can simply put the item back in
     }
 

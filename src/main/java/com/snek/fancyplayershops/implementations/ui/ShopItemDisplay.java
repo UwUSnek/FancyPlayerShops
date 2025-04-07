@@ -37,6 +37,9 @@ public class ShopItemDisplay extends ItemElm {
     // private static       float defaultRotation       = (float) Math.toRadians(45);
 
     private @Nullable TaskHandler loopHandler = null;
+    private transient @Nullable TaskHandler nameToggleHandler = null;
+
+
     public static final int L_TIME = 32;
     public static final float L_ROT = (float)Math.toRadians(120);
 
@@ -129,6 +132,7 @@ public class ShopItemDisplay extends ItemElm {
     public void enterFocusState(){
 
         // Hide custom name and start focus animation
+        if(nameToggleHandler != null) nameToggleHandler.cancel();
         entity.setCustomNameVisible(false);
         applyAnimation(focusAnimation);
 
@@ -149,7 +153,7 @@ public class ShopItemDisplay extends ItemElm {
         applyAnimation(unfocusAnimation);
 
         // Show custom name after animations end
-        Scheduler.schedule(unfocusAnimation.getTotalDuration(), () -> {
+        nameToggleHandler = Scheduler.schedule(unfocusAnimation.getTotalDuration(), () -> {
             entity.setCustomNameVisible(true);
         });
     }

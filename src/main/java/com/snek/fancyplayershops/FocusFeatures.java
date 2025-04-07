@@ -161,8 +161,7 @@ public abstract class FocusFeatures {
 
                     // Tick hoverable elements if this player is the user of the shop
                     if(targetShop.user == player) {
-                        //FIXME tick the menu instead of the display
-                        if(targetShop.focusDisplay != null) targetShop.focusDisplay.updateHoverStatus(player);
+                        if(targetShop.activeCanvas != null) targetShop.activeCanvas.forwardHover(player);
                     }
                 }
             }
@@ -172,7 +171,7 @@ public abstract class FocusFeatures {
         // Update the displays of all the previously and currently focused shops to their next state and update the targeted shops list
         targetedShopsOld.removeAll(targetedShops);
         for (Shop shop : targetedShopsOld) {
-            if(shop.focusDisplay != null) shop.focusDisplay.updateHoverStatus(null);
+            if(shop.activeCanvas != null) shop.activeCanvas.forwardHover(null);
             shop.updateFocusState();
         }
         for (Shop shop : targetedShops) {

@@ -258,6 +258,17 @@ public abstract class Elm {
 
 
     /**
+     * Instantly removes the entities associated with this element from the world.
+     */
+    public void despawnNow() {
+        isSpawned = false;
+        entity.despawn();
+    }
+
+
+
+
+    /**
      * Processes transitions and other tick features of this Elm and all of its children, recursively.
      * Must be called at the end of the tick every TRANSITION_REFRESH_TIME ticks.
      * @return true if no action is necessary. false if the element has been removed from the update queue.
