@@ -9,6 +9,9 @@ import org.joml.Vector4i;
 import com.snek.framework.data_types.animations.Transform;
 import com.snek.framework.data_types.animations.steps.AnimationStep;
 import com.snek.framework.data_types.animations.steps.TextAnimationStep;
+import com.snek.framework.data_types.animations.transitions.TextAdditiveTransition;
+import com.snek.framework.data_types.animations.transitions.TextTargetTransition;
+import com.snek.framework.data_types.animations.transitions.Transition;
 import com.snek.framework.data_types.containers.Flagged;
 import com.snek.framework.data_types.containers.IndexedArrayDeque;
 import com.snek.framework.data_types.containers.Pair;
@@ -22,7 +25,6 @@ import com.snek.framework.utils.Utils;
 
 import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 
@@ -35,7 +37,7 @@ import net.minecraft.text.Text;
 
 public class TextElm extends Elm {
     // This value identifies the amount of rendered text pixels that fit in a minecraft block
-    public final int TEXT_PIXEL_BLOCK_RATIO = 40;
+    public static final int TEXT_PIXEL_BLOCK_RATIO = 40;
 
     // Animations
     protected final @NotNull IndexedArrayDeque<Vector4i> backgroundQueue = new IndexedArrayDeque<>(); // The list of backgrounds to apply to this instance in the next ticks. 1 for each update tick
@@ -55,8 +57,6 @@ public class TextElm extends Elm {
         text        = Flagged.from(((TextElmStyle)style).getText());
         textOpacity = Flagged.from(((TextElmStyle)style).getTextOpacity());
         background  = Flagged.from(((TextElmStyle)style).getBackground());
-        // textOpacity = Flagged.from(128);              // Changed on spawn
-        // background  = Flagged.from(new Vector4i(0));  // Changed on spawn
     }
 
     protected TextElm(@NotNull ServerWorld _world, @NotNull ElmStyle _style) {
@@ -86,6 +86,22 @@ public class TextElm extends Elm {
 
 
 
+    @Override
+    protected void __applyAnimationTransitionNow(@NotNull Transition transition) {
+        if(transition instanceof TextAdditiveTransition t) {
+            background.set(t.getBackground());
+            textOpacity.set(t.getAlpha());
+        }
+        if(transition instanceof TextTargetTransition t) {
+            background.set(t.getBackground());
+            textOpacity.set(t.getAlpha());
+        }
+        super.__applyAnimationTransitionNow(transition);
+    }
+
+
+
+
     /**
      * Applies a single animation step.
      * @param index The index of the future background and alpha to apply the step to.
@@ -98,8 +114,8 @@ public class TextElm extends Elm {
 
         if(step instanceof TextAnimationStep s) {
             // Calculate subclass step and get queued data
-            Vector4i bg = backgroundQueue.getOrAdd(index, () -> { return new Vector4i(background.get()); });
-            int       a =      alphaQueue.getOrAdd(index, () -> { return textOpacity.get(); });
+            Vector4i bg = backgroundQueue.getOrAdd(index, () -> new Vector4i(background.get()));
+            int       a =      alphaQueue.getOrAdd(index, () -> textOpacity.get());
 
             // Interpolate background and alpha
             bg.set(Utils.interpolateARGB(bg, s.background, step.factor));
@@ -116,6 +132,7 @@ public class TextElm extends Elm {
 
     @Override
     public void spawn(Vector3d pos) {
+        if(style.getDespawnAnimation() != null) applyAnimationNow(style.getDespawnAnimation());
         super.spawn(pos);
     }
 
@@ -128,8 +145,8 @@ public class TextElm extends Elm {
 
     @Override
     public boolean tick(){
-        background .set(backgroundQueue.removeFirst());
-        textOpacity.set(     alphaQueue.removeFirst());
+        if(!backgroundQueue.isEmpty()) background .set(backgroundQueue.removeFirst());
+        if(     !alphaQueue.isEmpty()) textOpacity.set(     alphaQueue.removeFirst());
         //! Update queue not checked as it depends exclusively on transform changes.
         //! Each transform change always corresponds to one background and one alpha change.
 

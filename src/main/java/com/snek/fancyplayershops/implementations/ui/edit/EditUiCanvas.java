@@ -1,6 +1,8 @@
 package com.snek.fancyplayershops.implementations.ui.edit;
 
-import com.snek.framework.ui.Canvas;
+import com.snek.fancyplayershops.Shop;
+import com.snek.fancyplayershops.implementations.ui.ShopCanvas;
+import com.snek.fancyplayershops.implementations.ui.details.DetailsDisplay;
 
 
 
@@ -9,6 +11,10 @@ import com.snek.framework.ui.Canvas;
 
 
 
-public class EditUiCanvas extends Canvas {
+public class EditUiCanvas extends ShopCanvas {
 
+    public EditUiCanvas(Shop shop){
+        super();
+        addChild(new DetailsDisplay(shop));
+    }
 }

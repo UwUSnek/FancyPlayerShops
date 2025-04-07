@@ -39,6 +39,9 @@ public class Canvas {
     public void clearChildren() {
         children.clear();
     }
+    public List<Elm> getChildren() {
+        return children;
+    }
 
 
 
@@ -52,6 +55,21 @@ public class Canvas {
     public void applyAnimation(@NotNull Animation animation) {
         for (Elm elm : children) {
             elm.applyAnimation(animation);
+        }
+    }
+
+
+
+
+    /**
+     * Instantly applies an animation to all the elements of this canvas, ignoring transition times and easings.
+     * Use right rotations to rotate around the center of the canvas.
+     * ! Partial steps at the end of the animation are expanded to cover the entire step.
+     * @param animation The animation to apply.
+     */
+    public void applyAnimationNow(@NotNull Animation animation) {
+        for (Elm elm : children) {
+            elm.applyAnimationNow(animation);
         }
     }
 

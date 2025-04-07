@@ -4,30 +4,19 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
-import org.joml.Vector4i;
 
 import com.snek.fancyplayershops.FancyPlayerShops;
 import com.snek.fancyplayershops.Shop;
-import com.snek.framework.data_types.animations.Animation;
-import com.snek.framework.data_types.animations.Transform;
-import com.snek.framework.data_types.animations.transitions.TextAdditiveTransition;
 import com.snek.framework.ui.TextElm;
-import com.snek.framework.ui.interfaces.Clickable;
-import com.snek.framework.ui.interfaces.Hoverable;
-import com.snek.framework.ui.styles.TextElmStyle;
-import com.snek.framework.utils.Easings;
 import com.snek.framework.utils.MinecraftUtils;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
-import com.snek.framework.utils.scheduler.Scheduler;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.util.ClickType;
 import net.minecraft.world.World;
 
 

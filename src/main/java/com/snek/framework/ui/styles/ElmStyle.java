@@ -26,10 +26,10 @@ public class ElmStyle {
     private @Nullable Animation     spawnAnimation;     // The spawning animation. Played when the entity is spawned into the world
     private @Nullable Animation     despawnAnimation;   // The despawning animation. Played before the entity is removed from the world
 
-    public static final float S_SCALE  = 1.05f;        // The scale applied by the spawning animation
-    public static final float S_HEIGHT = 0.05f;        // The Y translation applied by the spawning animation
-    public static final int   S_TIME   = 4;            // Spawn   time. Measured in ticks
-    public static final int   D_TIME   = 8;            // Despawn time. Measured in ticks
+    public static final float S_SCALE  = 1.02f;         // The scale applied by the spawning animation
+    public static final float S_HEIGHT = 0.05f;         // The Y translation applied by the spawning animation
+    public static final int   S_TIME   = 4;             // Spawn   time. Measured in ticks
+    public static final int   D_TIME   = 8;             // Despawn time. Measured in ticks
 
 
 
@@ -42,8 +42,8 @@ public class ElmStyle {
         viewRange        = 0.3f;
         billboardMode    = BillboardMode.FIXED;
 
-        spawnAnimation   = new Animation(new AdditiveTransition(new Transform().moveY(S_HEIGHT).scale(S_SCALE), S_TIME, Easings.sineOut));
-        despawnAnimation = new Animation(new   TargetTransition(transform,                                      D_TIME, Easings.sineOut));
+        spawnAnimation   = null;
+        despawnAnimation = null;
     }
 
 
@@ -63,6 +63,6 @@ public class ElmStyle {
     public ElmStyle  setSpawnAnimation  (@Nullable Animation _animation) { spawnAnimation   = _animation; return this; }
     public ElmStyle  setDespawnAnimation(@Nullable Animation _animation) { despawnAnimation = _animation; return this; }
 
-    public Animation getSpawnAnimation  () { return spawnAnimation;   }
-    public Animation getDespawnAnimation() { return despawnAnimation; }
+    public @Nullable Animation getSpawnAnimation  () { return spawnAnimation;   }
+    public @Nullable Animation getDespawnAnimation() { return despawnAnimation; }
 }

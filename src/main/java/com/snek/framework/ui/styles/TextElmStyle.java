@@ -4,8 +4,9 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Vector4i;
 
 import com.snek.framework.data_types.animations.Animation;
+import com.snek.framework.data_types.animations.Transform;
 import com.snek.framework.data_types.animations.transitions.TextAdditiveTransition;
-import com.snek.framework.data_types.animations.transitions.TextTargetTransition;
+import com.snek.framework.utils.Easings;
 import com.snek.framework.utils.Txt;
 
 import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity.TextAlignment;
@@ -20,8 +21,8 @@ import net.minecraft.text.Text;
 
 public class TextElmStyle extends ElmStyle {
 
-    public static final Vector4i S_BG    = new Vector4i(200, 20, 20, 20);
-    public static final int      S_ALPHA = 255;
+    // public static final Vector4i S_BG    = new Vector4i(0);
+    // public static final int      S_ALPHA = 0;
 
     private @NotNull TextAlignment alignment;
     private @NotNull Vector4i      background;
@@ -39,28 +40,26 @@ public class TextElmStyle extends ElmStyle {
         // Set values
         super();
         alignment   = TextAlignment.CENTER;
-        background  = new Vector4i(0);
+        background  = new Vector4i(200, 20, 20, 20);
         text        = new Txt("").get();
-        textOpacity = 0;
+        textOpacity = 255;
 
 
-        // Adjust spawning animation //! and hope it only has 1 element
-        //! Changed made by subclasses aren't aknowledged until this function ends, so the animation is never null
-        Animation  _spawnAnimation = getSpawnAnimation();
-        setSpawnAnimation(new Animation(new TextAdditiveTransition(
-            _spawnAnimation.getTransitions().get(0),
-            S_BG,
-            S_ALPHA
+        // Set default spawning animation
+        setSpawnAnimation(new Animation(new TextAdditiveTransition(new Transform(),
+            ElmStyle.S_TIME,
+            Easings.sineOut,
+            background,
+            255
         )));
 
 
-        // Adjust despawning animation //! and hope it only has 1 element
-        //! Changed made by subclasses aren't aknowledged until this function ends, so the animation is never null
-        Animation _despawnAnimation = getDespawnAnimation();
-        setDespawnAnimation(new Animation(new TextTargetTransition(
-            _despawnAnimation.getTransitions().get(0),
-            background,
-            textOpacity
+        // Set default despawning animation
+        setDespawnAnimation(new Animation(new TextAdditiveTransition(new Transform(),
+            ElmStyle.D_TIME,
+            Easings.sineOut,
+            new Vector4i(0),
+            0
         )));
     }
 

@@ -35,10 +35,10 @@ import net.minecraft.server.world.ServerWorld;
 public abstract class Elm {
 
     // Animations
-    public static int TRANSITION_REFRESH_TIME = 2;                                      // The time between transition updates. Measured in ticks
-    private static final @NotNull List<Elm> elmUpdateQueue = new ArrayList<>();         // The list of instances with pending transform updates
-    protected final @NotNull IndexedArrayDeque<Transform> transformQueue = new IndexedArrayDeque<>(); // The list of transforms to apply to this instance in the next ticks. 1 for each update tick
-    private boolean isQueued = false;                                                   // Whether this instance is queued for updates. Updated manually
+    public    static final int TRANSITION_REFRESH_TIME = 2;                         // The time between transition updates. Measured in ticks
+    private   static final @NotNull List<Elm> elmUpdateQueue = new ArrayList<>();   // The list of instances with pending transform updates
+    protected        final @NotNull IndexedArrayDeque<Transform> transformQueue = new IndexedArrayDeque<>(); // The list of transforms to apply to this instance in the next ticks. 1 for each update tick
+    private boolean isQueued = false;                                               // Whether this instance is queued for updates. Updated manually
 
     // Element data
     public @NotNull  Flagged<Transform>     transform;
@@ -54,7 +54,7 @@ public abstract class Elm {
     protected @NotNull CustomDisplay entity;    // The display entity held by this element
     protected @NotNull ElmStyle      style;     // The style of the element
     protected boolean isSpawned = false;        // Whether the element has been spawned into the world
-    private   boolean hoverStatus = false;        // Whether the element is being hovered on by a player's crosshair. //! Only valid in Hoverable instances
+    private   boolean isHovered = false;        // Whether the element is being hovered on by a player's crosshair. //! Only valid in Hoverable instances
 
 
 
@@ -103,6 +103,29 @@ public abstract class Elm {
         for (Transition transition : animation.getTransitions()) {
             shift += __applyAnimationTransition(transition, shift);
         }
+    }
+
+
+
+
+    /**
+     * Instantly applies an animation, ignoring transition times and easings. This does not wait for the tick cycle. Entities are updated instantly.
+     * @param animation The animation to apply.
+     */
+    public void applyAnimationNow(@NotNull Animation animation) {
+
+        // Apply each transition one at a time
+        for (Transition transition : animation.getTransitions()) {
+            __applyAnimationTransitionNow(transition);
+        }
+        flushStyle();
+        entity.setInterpolationDuration(0);
+        entity.setStartInterpolation();
+    }
+
+
+    protected void __applyAnimationTransitionNow(@NotNull Transition transition) {
+        transform.set(transition.compute(transform.get()));
     }
 
 
@@ -246,12 +269,13 @@ public abstract class Elm {
         Animation animation = style.getDespawnAnimation();
         if(animation != null) {
             applyAnimation(animation);
-        }
 
-        // Remove entity from the world
-        Scheduler.schedule(animation.getTotalDuration(), () -> {
+            // Remove entity from the world after a delay
+            Scheduler.schedule(animation.getTotalDuration(), entity::despawn );
+        }
+        else {
             entity.despawn();
-        });
+        }
     }
 
 
@@ -274,6 +298,7 @@ public abstract class Elm {
      * @return true if no action is necessary. false if the element has been removed from the update queue.
      */
     public boolean tick() {
+        // if(!transformQueue.isEmpty()) transform.set(transformQueue.removeFirst());
         transform.set(transformQueue.removeFirst());
         flushStyle();
         entity.setInterpolationDuration(TRANSITION_REFRESH_TIME);
@@ -334,9 +359,9 @@ public abstract class Elm {
 
 
             // Update current status and run hover status change callbacks if needed
-            if(hoverStatus != hoverStatusNext) {
-                hoverStatus = hoverStatusNext;
-                if(hoverStatus) {
+            if(isHovered != hoverStatusNext) {
+                isHovered = hoverStatusNext;
+                if(isHovered) {
                     // System.out.println("new status: on");
                     h.onHoverEnter();
                 }

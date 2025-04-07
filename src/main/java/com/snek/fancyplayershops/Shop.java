@@ -19,14 +19,14 @@ import org.joml.Vector3d;
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
+import com.snek.fancyplayershops.implementations.ui.ShopCanvas;
 import com.snek.fancyplayershops.implementations.ui.ShopItemDisplay;
-import com.snek.fancyplayershops.implementations.ui.details.DetailsDisplay;
 import com.snek.fancyplayershops.implementations.ui.details.DetailsUiCanvas;
-import com.snek.framework.ui.Canvas;
+import com.snek.fancyplayershops.implementations.ui.edit.EditUiCanvas;
 import com.snek.framework.utils.MinecraftUtils;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
-import com.snek.framework.utils.scheduler.TaskHandler;
+import com.snek.framework.utils.scheduler.Scheduler;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
@@ -43,6 +43,14 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ClickType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+
+
+
+
+
+
+
 
 
 
@@ -91,7 +99,7 @@ public class Shop {
 
 
     // Shop status
-    public  transient @Nullable Canvas         activeCanvas = null;
+    public  transient @Nullable ShopCanvas     activeCanvas = null;
     public  transient @Nullable PlayerEntity           user = null;
     private transient           boolean         focusStatus = false;
     public  transient           boolean     focusStatusNext = false;
@@ -275,15 +283,18 @@ public class Shop {
         if(focusStatus != focusStatusNext) {
             if(focusStatusNext) {
 
-                // Create and setup the Text Display entity
+                // Create details canvas
                 if(activeCanvas != null) activeCanvas.despawnNow();
                 activeCanvas = new DetailsUiCanvas(this);
+                activeCanvas.menuAnimationInitial = null;
+                activeCanvas.menuAnimationIn = null;
                 activeCanvas.spawn(calcDisplayPos().add(0, 0.3d, 0));
 
                 // Start item animation and turn off the CustomName
                 findItemDisplayEntityIfNeeded().enterFocusState();
             }
             else {
+                activeCanvas.menuAnimationOut = null;
                 activeCanvas.despawn();                             // Despawn the active canvas
                 findItemDisplayEntityIfNeeded().leaveFocusState();  // Turn the CustomName back on
                 user = null;                                        // Reset shop user
@@ -430,11 +441,25 @@ public class Shop {
 
 
     /**
+     * Switches the active canvas with a new one (after a delay to avoid overlapping them).
+     * @param canvas The new canvas.
+     */
+    public void changeCanvas(ShopCanvas canvas) {
+        activeCanvas.despawn();
+        activeCanvas = canvas;
+
+        Scheduler.schedule(5, () -> activeCanvas.spawn(calcDisplayPos().add(0, 0.3d, 0)));
+    }
+
+
+
+
+    /**
      * Opens the edit shop UI.
      * @param player The player.
      */
     public void openEditUi(PlayerEntity player) {
-        //TODO actually open the UI
+        changeCanvas(new EditUiCanvas(this));
     }
 
 
@@ -455,7 +480,7 @@ public class Shop {
 
 
 
-    private final String objectiveName = "tmp_balance";
+    private static final String objectiveName = "tmp_balance";
 
     //FIXME use economy mod API instead of scoreboards
     public void addMoney(PlayerEntity player, double amount) {

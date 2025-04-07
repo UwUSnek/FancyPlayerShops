@@ -1,7 +1,7 @@
 package com.snek.fancyplayershops.implementations.ui.details;
 
 import com.snek.fancyplayershops.Shop;
-import com.snek.framework.ui.Canvas;
+import com.snek.fancyplayershops.implementations.ui.ShopCanvas;
 
 
 
@@ -10,7 +10,7 @@ import com.snek.framework.ui.Canvas;
 
 
 
-public class DetailsUiCanvas extends Canvas {
+public class DetailsUiCanvas extends ShopCanvas {
 
     public DetailsUiCanvas(Shop shop){
         super();
