@@ -353,3 +353,10 @@ public class Shop {
         }
     }
 }
+
+
+//TODO show undo button in chat after first left click of an shop to let players undo accidental purchases
+//TODO show undo button in chat after first left click of an shop to let players undo accidental purchases
+//TODO show undo button in chat after first left click of an shop to let players undo accidental purchases
+
+//TODO no need for retrieval undo as the owner can simply put the item back in

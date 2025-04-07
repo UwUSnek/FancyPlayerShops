@@ -14,6 +14,7 @@ import com.snek.framework.data_types.animations.transitions.Transition;
 import com.snek.framework.data_types.containers.Flagged;
 import com.snek.framework.data_types.containers.IndexedArrayDeque;
 import com.snek.framework.data_types.displays.CustomDisplay;
+import com.snek.framework.ui.interfaces.Hoverable;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.utils.scheduler.Scheduler;
 
@@ -49,10 +50,11 @@ public abstract class Elm {
     private @NotNull  List<@NotNull Elm> children = new ArrayList<>();      // A list of child elements
 
     // In-world data
-    protected @NotNull ServerWorld   world;                                 // The world this Elm will be spawned in
-    protected @NotNull CustomDisplay entity;                                // The display entity held by this element
-    protected @NotNull ElmStyle      style;                                 // The style of the element
-    protected boolean isSpawned = false;                                    // Whether the element has been spawned into the world
+    protected @NotNull ServerWorld   world;     // The world this Elm will be spawned in
+    protected @NotNull CustomDisplay entity;    // The display entity held by this element
+    protected @NotNull ElmStyle      style;     // The style of the element
+    protected boolean isSpawned = false;        // Whether the element has been spawned into the world
+    private   boolean hoverStatus = false;        // Whether the element is being hovered on by a player's crosshair. //! Only valid in Hoverable instances
 
 
 
@@ -299,7 +301,41 @@ public abstract class Elm {
 
 
 
-    //TODO Checks whether a line intersects a rectangle in a 3d space instead of using spheres
+
+    /**
+     * Updates the new hover status of the element and executes the specified callbacks.
+     * @param player The player to check the view of. Can be null.
+     */
+    public void updateHoverStatus(@Nullable PlayerEntity player){
+        if(this instanceof Hoverable h) {
+            boolean hoverStatusNext;
+
+
+            // Calculate next hover status
+            if(player == null) {
+                hoverStatusNext = false;
+                // System.out.println("NULL player");
+            }
+            else {
+                hoverStatusNext = checkIntersection(player);
+                // System.out.println("VALID player, set to " + hoverStatusNext);
+            }
+
+
+            // Update current status and run hover status change callbacks if needed
+            if(hoverStatus != hoverStatusNext) {
+                hoverStatus = hoverStatusNext;
+                if(hoverStatus) {
+                    // System.out.println("new status: on");
+                    h.onHoverEnter();
+                }
+                else {
+                    // System.out.println("new status: off");
+                    h.onHoverExit();
+                }
+            }
+        }
+    }
 }
 
 

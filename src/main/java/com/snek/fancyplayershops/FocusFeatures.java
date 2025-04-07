@@ -5,15 +5,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.joml.Vector4i;
-
-import com.snek.framework.data_types.animations.Animation;
-import com.snek.framework.data_types.animations.Transform;
-import com.snek.framework.data_types.animations.transitions.TextAdditiveTransition;
-import com.snek.framework.ui.styles.ItemElmStyle;
-import com.snek.framework.utils.Easings;
+import com.snek.framework.ui.interfaces.Hoverable;
 import com.snek.framework.utils.MinecraftUtils;
-import com.snek.framework.utils.Utils;
 
 import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -148,25 +141,38 @@ public abstract class FocusFeatures {
      */
     public static void tick(Iterable<ServerWorld> serverWorlds) {
 
+
         // Set all previously focused shops's next focus state to false
         for (Shop shop : targetedShopsOld) {
             shop.focusStatusNext = false;
         }
 
-        // Find currently focused shops and set their next focus state to true
+
+        // Find currently focused shops
         final List<Shop> targetedShops = new ArrayList<>();
         for (ServerWorld serverWorld : serverWorlds) {
             for (PlayerEntity player : serverWorld.getPlayers()) {
                 Shop targetShop = FocusFeatures.getLookedAtShop(player, serverWorld);
                 if(targetShop != null) {
+
+                    // Set their next focus state to true
                     targetShop.focusStatusNext = true;
                     targetedShops.add(targetShop);
+
+                    // Tick hoverable elements if this player is the user of the shop
+                    if(targetShop.user == player) {
+                        //FIXME tick the menu instead of the display
+                        if(targetShop.focusDisplay != null) targetShop.focusDisplay.updateHoverStatus(player);
+                    }
                 }
             }
         }
 
+
         // Update the displays of all the previously and currently focused shops to their next state and update the targeted shops list
+        targetedShopsOld.removeAll(targetedShops);
         for (Shop shop : targetedShopsOld) {
+            if(shop.focusDisplay != null) shop.focusDisplay.updateHoverStatus(null);
             shop.updateFocusState();
         }
         for (Shop shop : targetedShops) {

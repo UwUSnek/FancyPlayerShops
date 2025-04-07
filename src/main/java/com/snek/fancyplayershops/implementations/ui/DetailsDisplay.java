@@ -4,11 +4,18 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
+import org.joml.Vector4i;
 
 import com.snek.fancyplayershops.FancyPlayerShops;
 import com.snek.fancyplayershops.Shop;
+import com.snek.framework.data_types.animations.Animation;
+import com.snek.framework.data_types.animations.Transform;
+import com.snek.framework.data_types.animations.transitions.TextAdditiveTransition;
 import com.snek.framework.ui.TextElm;
 import com.snek.framework.ui.interfaces.Clickable;
+import com.snek.framework.ui.interfaces.Hoverable;
+import com.snek.framework.ui.styles.TextElmStyle;
+import com.snek.framework.utils.Easings;
 import com.snek.framework.utils.MinecraftUtils;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
@@ -30,7 +37,7 @@ import net.minecraft.world.World;
 
 
 
-public class DetailsDisplay extends TextElm implements Clickable {
+public class DetailsDisplay extends TextElm implements Clickable, Hoverable { //FIXME this should not be hoverable
     private static final String ENTITY_CUSTOM_NAME = FancyPlayerShops.MOD_ID + ".ui.displayentity";
     Shop targetShop;
 
@@ -38,9 +45,11 @@ public class DetailsDisplay extends TextElm implements Clickable {
     private static final Vector3f C_HSV_STOCK_HIGH = Utils.RGBtoHSV(new Vector3i(0, 223, 0)); //! Float instead of int for more precision
     private static final Vector3f C_HSV_STOCK_LOW  = Utils.RGBtoHSV(new Vector3i(200, 0, 0)); //! Float instead of int for more precision
 
-    //FIXME move to button element class
-    public boolean isHighlighted = false;
+    private static final Vector4i BG_HOVER = new Vector4i(255, 100, 100, 100); //FIXME this element should not be hoverable. move to actual buttons
 
+    // //FIXME move to button element class
+    // public boolean isHighlighted = false;
+    //TODO REMOVE ^
 
 
 
@@ -131,5 +140,23 @@ public class DetailsDisplay extends TextElm implements Clickable {
     @Override
     public void onClick(@NotNull PlayerEntity player, @NotNull ClickType click) {
         player.sendMessage(new Txt("CLICKED @" + Scheduler.getTickNum()).get());
+    }
+
+
+
+
+    //FIXME this element should not be hoverable
+    @Override
+    public void onHoverEnter() {
+        applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 2, Easings.linear, BG_HOVER, 255)));
+    }
+
+
+
+
+    //FIXME this element should not be hoverable
+    @Override
+    public void onHoverExit() {
+        applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 2, Easings.linear, ((TextElmStyle)style).getBackground(), 255)));
     }
 }
