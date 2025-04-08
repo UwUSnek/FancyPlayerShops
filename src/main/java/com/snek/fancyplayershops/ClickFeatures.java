@@ -35,7 +35,7 @@ public abstract class ClickFeatures {
      */
     public static ActionResult onClick(World world, PlayerEntity player, Hand hand, ClickType clickType) {
         if(hand == Hand.MAIN_HAND && world instanceof ServerWorld serverWorld) {
-            Shop targetShop = FocusFeatures.getLookedAtShop(player, serverWorld);
+        Shop targetShop = FocusFeatures.getLookedAtShop(player, serverWorld);
             if(targetShop != null) {
                 targetShop.onClick(player, clickType);
                 return ActionResult.SUCCESS;
@@ -58,7 +58,6 @@ public abstract class ClickFeatures {
      * @return SUCCESS if the player clicked a shop, PASS if not.
      */
     public static ActionResult onClickEntity(World world, PlayerEntity player, Hand hand, ClickType clickType, Entity entity) {
-        System.out.println("ENTITY CLICKED");
         if(entity instanceof InteractionEntity && entity.hasCustomName() && entity.getCustomName().getString().equals(InteractionBlocker.ENTITY_CUSTOM_NAME)){
             return onClick(world, player, hand, clickType);
         }

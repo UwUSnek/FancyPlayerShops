@@ -107,6 +107,7 @@ public class Shop {
     public  transient @Nullable PlayerEntity                     user = null;
     private transient           boolean                   focusStatus = false;
     private transient           boolean               focusStatusNext = false;
+    private transient           long                    lastClickTick = 0; //! Used to limit click rate and prevent accidental double clicks
 
     public void setFocusStatusNext(boolean v) {
         focusStatusNext = v;
@@ -366,6 +367,10 @@ public class Shop {
      * @param click The click type.
      */
     public void onClick(PlayerEntity player, ClickType clickType) {
+        if(lastClickTick < Scheduler.getTickNum()) lastClickTick = Scheduler.getTickNum();
+        else return;
+        System.out.println("ENTITY CLICKED");
+
 
         // If the shop is not currently being used, flag the player as its user
         if(user == null) {

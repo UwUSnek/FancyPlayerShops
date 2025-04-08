@@ -92,7 +92,7 @@ public class FancyPlayerShops implements ModInitializer {
         // Create and register shop block rclick event
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             ActionResult r;
-            r = ClickFeatures.onClick(world, player, hand, ClickType.RIGHT); //FIXME add ghost cooldown. add to lclick too
+            r = ClickFeatures.onClick(world, player, hand, ClickType.RIGHT);
             if(r == ActionResult.PASS) r = onItemUse(world, player, hand, hitResult);
             return r;
         });
@@ -106,7 +106,7 @@ public class FancyPlayerShops implements ModInitializer {
         // Create and register shop block lclick event
         AttackBlockCallback.EVENT.register((player, world, hand, blockPos, diretion) -> {
             ActionResult r;
-            r = ClickFeatures.onClick(world, player, hand, ClickType.LEFT); //FIXME add ghost cooldown. add to lclick too
+            r = ClickFeatures.onClick(world, player, hand, ClickType.LEFT);
             return r;
         });
         AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
@@ -144,10 +144,10 @@ public class FancyPlayerShops implements ModInitializer {
                 stack.setCount(stack.getCount() - 1);
                 BlockPos blockPos = hitResult.getBlockPos().add(hitResult.getSide().getVector());
                 new Shop(serverWorld, blockPos, player);
-                player.sendMessage(new Txt("New shop created! Right click it to configure.").green().get());
+                player.sendMessage(new Txt("New shop created! Right click it to configure.").green().get(), true);
             }
             else {
-                player.sendMessage(new Txt("You cannot create a shop here!").darkRed().get());
+                player.sendMessage(new Txt("You cannot create a shop here!").darkRed().get(), true);
             }
             return ActionResult.SUCCESS;
         }
