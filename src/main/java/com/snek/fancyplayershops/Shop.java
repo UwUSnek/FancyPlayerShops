@@ -19,7 +19,7 @@ import org.joml.Vector3d;
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
-import com.snek.fancyplayershops.implementations.InteractionBlocker;
+import com.snek.fancyplayershops.implementations.ui.InteractionBlocker;
 import com.snek.fancyplayershops.implementations.ui.ShopCanvas;
 import com.snek.fancyplayershops.implementations.ui.ShopItemDisplay;
 import com.snek.fancyplayershops.implementations.ui.details.DetailsUiCanvas;
@@ -87,7 +87,6 @@ public class Shop {
     private String worldId;
     private transient ShopItemDisplay itemDisplay = null; //! Searched when needed instead of on data loading. The chunk needs to be loaded.
     private UUID itemDisplayUUID;
-    private  UUID ownerUUID;
     private BlockPos pos;
     private transient String shopIdentifierCache;
     private transient String shopIdentifierCache_noWorld;
@@ -96,9 +95,11 @@ public class Shop {
 
     // Shop data
     private transient ItemStack item = Items.AIR.getDefaultStack();
+    private UUID   ownerUUID;
     private String serializedItem;
-    private double price = 0;
-    private int stock = 0;
+    private double price    = 0;
+    private int    stock    = 0;
+    private int    maxStock = 1000;
 
 
     // Shop status
@@ -115,11 +116,12 @@ public class Shop {
 
 
     // Accessors
-    public @NotNull ServerWorld getWorld() { return world; }
-    public @NotNull BlockPos    getPos  () { return pos;   }
-    public @NotNull ItemStack   getItem () { return item;  }
-    public          double      getPrice() { return price; }
-    public          int         getStock() { return stock; }
+    public @NotNull ServerWorld getWorld() { return world;    }
+    public @NotNull BlockPos    getPos  () { return pos;      }
+    public @NotNull ItemStack   getItem () { return item;     }
+    public          double      getPrice() { return price;    }
+    public          int         getStock() { return stock;    }
+    public          int      getMaxStock() { return maxStock; }
 
 
 
@@ -369,7 +371,6 @@ public class Shop {
     public void onClick(PlayerEntity player, ClickType clickType) {
         if(lastClickTick < Scheduler.getTickNum()) lastClickTick = Scheduler.getTickNum();
         else return;
-        System.out.println("ENTITY CLICKED");
 
 
         // If the shop is not currently being used, flag the player as its user

@@ -24,8 +24,8 @@ import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.snek.fancyplayershops.implementations.InteractionBlocker;
-import com.snek.fancyplayershops.implementations.ui.details.DetailsDisplay;
+import com.snek.fancyplayershops.implementations.ui.InteractionBlocker;
+import com.snek.fancyplayershops.implementations.ui.TrackedTextElm;
 import com.snek.framework.ui.Elm;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.scheduler.Scheduler;
@@ -122,7 +122,7 @@ public class FancyPlayerShops implements ModInitializer {
 
         // Register focus display purge
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
-            DetailsDisplay.onEntityLoad(entity);
+            TrackedTextElm.onEntityLoad(entity);
             InteractionBlocker.onEntityLoad(entity);
         });
     }

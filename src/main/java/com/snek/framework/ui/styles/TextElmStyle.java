@@ -21,9 +21,6 @@ import net.minecraft.text.Text;
 
 public class TextElmStyle extends ElmStyle {
 
-    // public static final Vector4i S_BG    = new Vector4i(0);
-    // public static final int      S_ALPHA = 0;
-
     private @NotNull TextAlignment alignment;
     private @NotNull Vector4i      background;
     private @NotNull Text          text;

@@ -1,23 +1,17 @@
 package com.snek.fancyplayershops.implementations.ui.details;
 
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3d;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
-import com.snek.fancyplayershops.FancyPlayerShops;
 import com.snek.fancyplayershops.Shop;
-import com.snek.framework.ui.TextElm;
+import com.snek.fancyplayershops.implementations.ui.TrackedTextElm;
 import com.snek.framework.utils.MinecraftUtils;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.Entity.RemovalReason;
-import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.world.World;
 
 
 
@@ -26,8 +20,7 @@ import net.minecraft.world.World;
 
 
 
-public class DetailsDisplay extends TextElm {
-    private static final String ENTITY_CUSTOM_NAME = FancyPlayerShops.MOD_ID + ".ui.displayentity";
+public class DetailsDisplay extends TrackedTextElm {
     Shop targetShop;
 
     private static final Vector3i C_RGB_PRICE      = new Vector3i(243, 255, 0);
@@ -76,54 +69,4 @@ public class DetailsDisplay extends TextElm {
         // Flush style
         flushStyle();
     }
-
-
-
-
-    @Override
-    public void spawn(Vector3d pos){
-        super.spawn(pos);
-        entity.setCustomNameVisible(false);
-        entity.setCustomName(new Txt(ENTITY_CUSTOM_NAME).get());
-    }
-
-
-
-
-    /**
-     * Checks for stray focus displays and purges them.
-     * Any TextDisplayEntity not registered as active display and in the same block as a shop is considered a stray display.
-     * Must be called on entity load event.
-     * @param entity The entity.
-     */
-    public static void onEntityLoad(@NotNull Entity entity) {
-        if (entity instanceof TextDisplayEntity) {
-            World world = entity.getWorld();
-            if(
-                world != null &&
-                entity.getCustomName() != null &&
-                entity.getCustomName().getString().equals(ENTITY_CUSTOM_NAME)
-            ) {
-                entity.remove(RemovalReason.KILLED);
-            }
-        }
-    }
-
-
-
-
-    // //FIXME move to actual button elements
-    // @Override
-    // public void onHoverEnter() {
-    //     applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 2, Easings.linear, BG_HOVER, 255)));
-    // }
-
-
-
-
-    // //FIXME move to actual button elements
-    // @Override
-    // public void onHoverExit() {
-    //     applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 2, Easings.linear, ((TextElmStyle)style).getBackground(), 255)));
-    // }
 }
