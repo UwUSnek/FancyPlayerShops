@@ -57,8 +57,8 @@ public class InteractionBlocker {
     public InteractionBlocker(Shop _shop) {
         shop = _shop;
         entity = new InteractionEntity(EntityType.INTERACTION, shop.getWorld());
-        Utils.invokeSafe(method_setHeight, entity, 0.9f);
-        Utils.invokeSafe(method_setWidth, entity, 0.9f);
+        Utils.invokeSafe(method_setHeight, entity, 1.01f);
+        Utils.invokeSafe(method_setWidth,  entity, 1.01f);
     }
 
 

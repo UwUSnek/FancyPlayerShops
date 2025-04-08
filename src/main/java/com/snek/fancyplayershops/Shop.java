@@ -481,7 +481,9 @@ public class Shop {
         activeCanvas.despawn();
         activeCanvas = canvas;
 
-        Scheduler.schedule(5, () -> activeCanvas.spawn(calcDisplayPos().add(0, 0.3d, 0)));
+        Scheduler.schedule(5, () -> {
+            if(activeCanvas != null) activeCanvas.spawn(calcDisplayPos().add(0, 0.3d, 0));
+        });
     }
 
 
