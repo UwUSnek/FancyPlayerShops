@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.snek.framework.ui.interfaces.Hoverable;
 import com.snek.framework.utils.MinecraftUtils;
 
 import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
@@ -31,9 +30,10 @@ import net.minecraft.world.World;
  * Utility class containing methods to detect shops players are looking at and display additional informations
  */
 public abstract class FocusFeatures {
+    private FocusFeatures(){}
     private static final double MAX_DISTANCE = 5;  // Maximum distance to check
     private static final double STEP_SIZE = 0.2;
-    public static List<Shop> targetedShopsOld = new ArrayList<>();
+    private static List<Shop> targetedShopsOld = new ArrayList<>();
 
 
 
@@ -144,7 +144,7 @@ public abstract class FocusFeatures {
 
         // Set all previously focused shops's next focus state to false
         for (Shop shop : targetedShopsOld) {
-            shop.focusStatusNext = false;
+            shop.setFocusStatusNext(false);
         }
 
 
@@ -156,12 +156,12 @@ public abstract class FocusFeatures {
                 if(targetShop != null) {
 
                     // Set their next focus state to true
-                    targetShop.focusStatusNext = true;
+                    targetShop.setFocusStatusNext(true);
                     targetedShops.add(targetShop);
 
                     // Tick hoverable elements if this player is the user of the shop
-                    if(targetShop.user == player) {
-                        if(targetShop.activeCanvas != null) targetShop.activeCanvas.forwardHover(player);
+                    if(targetShop.user == player && targetShop.activeCanvas != null) {
+                        targetShop.activeCanvas.forwardHover(player);
                     }
                 }
             }
@@ -176,25 +176,6 @@ public abstract class FocusFeatures {
         }
         for (Shop shop : targetedShops) {
             shop.updateFocusState();
-            // for (ServerWorld serverWorld : serverWorlds) for (PlayerEntity player : serverWorld.getPlayers()) {
-
-            //     //FIXME move to button element class
-            //     //FIXME only check players that are currently looking at the shop
-            //     if(shop.focusDisplay != null) {
-            //         if(shop.focusDisplay.checkIntersection(player)) {
-            //             if(!shop.focusDisplay.isHighlighted) {
-            //                 shop.focusDisplay.applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 0, Easings.linear, new Vector4i(255, 200, 200, 200), 255)));
-            //                 shop.focusDisplay.isHighlighted = true;
-            //             }
-            //         }
-            //         else {
-            //             if(shop.focusDisplay.isHighlighted) {
-            //                 shop.focusDisplay.applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 0, Easings.linear, new Vector4i(255, 0, 0, 0), 255)));
-            //                 shop.focusDisplay.isHighlighted = false;
-            //             }
-            //         }
-            //     }
-            // }
         }
         targetedShopsOld = targetedShops;
     }

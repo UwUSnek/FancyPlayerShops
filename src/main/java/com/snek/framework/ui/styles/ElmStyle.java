@@ -5,9 +5,6 @@ import org.jetbrains.annotations.Nullable;
 
 import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.animations.Transform;
-import com.snek.framework.data_types.animations.transitions.AdditiveTransition;
-import com.snek.framework.data_types.animations.transitions.TargetTransition;
-import com.snek.framework.utils.Easings;
 
 import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 

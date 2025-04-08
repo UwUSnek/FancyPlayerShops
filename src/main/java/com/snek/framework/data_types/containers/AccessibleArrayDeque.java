@@ -1225,7 +1225,6 @@ import java.util.function.Consumer;
          // Use head and tail fields with empty slot at tail strategy.
          // head == tail disambiguates to "empty".
          try {
-             int capacity = elements.length;
              // assert 0 <= head && head < capacity;
              // assert 0 <= tail && tail < capacity;
              // assert capacity > 0;

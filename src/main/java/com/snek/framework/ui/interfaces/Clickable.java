@@ -2,7 +2,6 @@ package com.snek.framework.ui.interfaces;
 
 import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ClickType;
 

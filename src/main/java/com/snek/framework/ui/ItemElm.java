@@ -1,7 +1,6 @@
 package com.snek.framework.ui;
 
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 import com.snek.framework.data_types.containers.Flagged;
@@ -11,7 +10,6 @@ import com.snek.framework.data_types.displays.CustomTextDisplay;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.ui.styles.ItemElmStyle;
 
-import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
@@ -56,26 +54,6 @@ public class ItemElm extends Elm {
         super.flushStyle();
         CustomItemDisplay e2 = (CustomItemDisplay)entity;
         if(item.isFlagged()) { e2.setItemStack(item.get()); item.unflag(); }
-    }
-
-
-
-
-    @Override
-    public void spawn(Vector3d pos) {
-        super.spawn(pos);
-    }
-
-
-    @Override
-    public void despawn() {
-        super.despawn();
-    }
-
-
-    @Override
-    public boolean tick(){
-        return super.tick();
     }
 
 

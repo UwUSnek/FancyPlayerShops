@@ -4,9 +4,6 @@ package com.snek.fancyplayershops;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
@@ -20,11 +17,11 @@ import net.minecraft.client.font.TextRenderer;
 
 
 public abstract class FontWidthGenerator {
-    private static String CLASS_NAME   = "FontSize";
-    private static String DIR_PATH     = "fancyplayershops/generated";
-    private static String FILE_PATH    = DIR_PATH + "/" + CLASS_NAME + ".java";
-    private static String PACKAGE_NAME = "com.snek.framework.generated";
-    public List<Integer> a = new ArrayList<>();
+    private FontWidthGenerator(){}
+    public static final String CLASS_NAME   = "FontSize";
+    public static final String DIR_PATH     = "fancyplayershops/generated";
+    public static final String FILE_PATH    = DIR_PATH + "/" + CLASS_NAME + ".java";
+    public static final String PACKAGE_NAME = "com.snek.framework.generated";
 
 
 
@@ -41,7 +38,7 @@ public abstract class FontWidthGenerator {
         }
 
 
-        // Print the widths to the source filetry {
+        // Print the widths to the source file
         try(FileWriter f = new FileWriter(FabricLoader.getInstance().getConfigDir().resolve(FILE_PATH).toString())) {
             f.write(
                 "package " + PACKAGE_NAME + ";\n" +
@@ -67,31 +64,34 @@ public abstract class FontWidthGenerator {
 
             // Write string length function
             f.write(
-                "\n\n"+
-                "    /**\n" +
-                "     * Calculates the width a string would have when rendered.\n" +
-                "     * This includes the space between each character.\n" +
-                "     */\n" +
-                "    public static int getWidth(String s) {\n" +
-                "        int r = 0;\n" +
-                "        for(int i = 0; i < s.length(); ++i) {\n" +
-                "            r += widths.get(s.charAt(i));\n" +
-                "        }\n" +
-                "        return r;\n" +
-                "    }\n"
+                """
+                    /**
+                     * Calculates the width a string would have when rendered.
+                     * This includes the space between each character.
+                     */
+                    public static int getWidth(String s) {
+                        int r = 0;
+                        for(int i = 0; i < s.length(); ++i) {
+                            r += widths.get(s.charAt(i));
+                        }
+                        return r;
+                    }
+                """
             );
 
 
+            //TODO actually calculate the height
             // Write string width function
             f.write(
-                "\n\n" +
-                "    /**\n" +
-                "     * Returns the height a line would have when rendered.\n" +
-                "     * This does NOT include the space between lines.\n" +
-                "     */\n" +
-                "    public static int getHeight() {\n" +
-                "        return 8;\n" + //TODO actually calculate the height
-                "    }\n"
+                """
+                    /**
+                     * Returns the height a line would have when rendered.
+                     * This does NOT include the space between lines.
+                     */
+                    public static int getHeight() {
+                        return 8;
+                    }
+                """
             );
 
 
@@ -102,6 +102,6 @@ public abstract class FontWidthGenerator {
 
 
         // Print output notice
-        System.err.println("Character dimensions written to \"config/" + FILE_PATH + "\"");
+        System.out.println("Character dimensions written to \"config/" + FILE_PATH + "\"");
     }
 }

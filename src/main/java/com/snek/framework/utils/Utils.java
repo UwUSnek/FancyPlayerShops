@@ -10,12 +10,6 @@ import org.joml.Vector3f;
 import org.joml.Vector3i;
 import org.joml.Vector4i;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
-
-
 
 
 
@@ -23,6 +17,9 @@ import net.minecraft.util.math.Vec3i;
 
 
 public abstract class Utils {
+    private Utils(){}
+
+
 
 
     /**
@@ -57,21 +54,6 @@ public abstract class Utils {
 
 
 
-    //FIXME TextRenderer cannot be used by the server
-    //FIXME find a way to calculate text width
-    // public static int getTextWidth(String text) {
-    //     MinecraftClient client = MinecraftClient.getInstance();
-    //     if (client == null || client.textRenderer == null) {
-    //         return 0;
-    //     }
-
-    //     TextRenderer renderer = client.textRenderer;
-    //     return renderer.getWidth(Text.literal(text));
-    // }
-
-
-
-
     /**
      * Runs a task on a secondary thread after a specified delay.
      * @param delay The delay expressed in milliseconds.
@@ -83,6 +65,7 @@ public abstract class Utils {
                 Thread.sleep(delay);
             } catch (InterruptedException e1) {
                 e1.printStackTrace();
+                Thread.currentThread().interrupt();
             }
             task.run();
         }).start();
@@ -114,7 +97,7 @@ public abstract class Utils {
 
         // Separator
         else {
-            r = String.format(currency + "%.2f", price);
+            r = String.format("%s%.2f", currency, price);
         }
 
         // Add trailing 0 if there is only one decimal digit
@@ -161,13 +144,15 @@ public abstract class Utils {
      * @return The color as an HSV value.
      */
     public static @NotNull Vector3f RGBtoHSV(@NotNull Vector3i rgb) {
-        float r = (float)rgb.x / 255.0f;
-        float g = (float)rgb.y / 255.0f;
-        float b = (float)rgb.z / 255.0f;
+        float r = rgb.x / 255.0f;
+        float g = rgb.y / 255.0f;
+        float b = rgb.z / 255.0f;
 
         float max = Math.max(r, Math.max(g, b));
         float min = Math.min(r, Math.min(g, b));
-        float h = 0, s, v = max;
+        float h = 0;
+        float s;
+        float v = max;
 
         float delta = max - min;
 
@@ -213,7 +198,9 @@ public abstract class Utils {
         float x = c * (1 - Math.abs(((h / 60) % 2) - 1));
         float m = v - c;
 
-        float r = 0, g = 0, b = 0;
+        float r = 0;
+        float g = 0;
+        float b = 0;
 
         if (0 <= h && h < 60) {
             r = c; g = x; b = 0;
@@ -248,8 +235,13 @@ public abstract class Utils {
         Vector3f hsv1 = RGBtoHSV(rgb1);
         Vector3f hsv2 = RGBtoHSV(rgb2);
 
-        float h1 = hsv1.x, s1 = hsv1.y, v1 = hsv1.z;
-        float h2 = hsv2.x, s2 = hsv2.y, v2 = hsv2.z;
+        float h1 = hsv1.x;
+        float s1 = hsv1.y;
+        float v1 = hsv1.z;
+
+        float h2 = hsv2.x;
+        float s2 = hsv2.y;
+        float v2 = hsv2.z;
 
         // Adjust hue to allow the interpolation to take the shortest path
         if (Math.abs(h1 - h2) > 180) {
@@ -319,6 +311,6 @@ public abstract class Utils {
      * @return The resulting value.
      */
     public static int interpolateI(int v1, int v2, float factor){
-        return Math.round((float)v1 + (float)(v2 - v1) * factor);
+        return Math.round(v1 + (v2 - v1) * factor);
     }
 }

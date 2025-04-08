@@ -34,12 +34,6 @@ public class DetailsDisplay extends TextElm {
     private static final Vector3f C_HSV_STOCK_HIGH = Utils.RGBtoHSV(new Vector3i(0, 223, 0)); //! Float instead of int for more precision
     private static final Vector3f C_HSV_STOCK_LOW  = Utils.RGBtoHSV(new Vector3i(200, 0, 0)); //! Float instead of int for more precision
 
-    // private static final Vector4i BG_HOVER = new Vector4i(255, 100, 100, 100); //FIXME this element should not be hoverable. move to actual buttons
-
-    // //FIXME move to button element class
-    // public boolean isHighlighted = false;
-    //TODO REMOVE ^
-
 
 
     public DetailsDisplay(@NotNull Shop _targetShop){
@@ -55,7 +49,7 @@ public class DetailsDisplay extends TextElm {
      * Updates the displayed values using the current item name, price and stock.
      */
     public void updateDisplay(){
-        float factor = 1.0f - (float)targetShop.getStock() / 1000f;
+        float factor = 1.0f - targetShop.getStock() / 1000f;
         Vector3i col = Utils.HSVtoRGB(new Vector3f(C_HSV_STOCK_LOW).add(new Vector3f(C_HSV_STOCK_HIGH).sub(C_HSV_STOCK_LOW).mul(1.0f - (factor * factor))));
 
 
@@ -96,14 +90,6 @@ public class DetailsDisplay extends TextElm {
 
 
 
-    @Override
-    public void despawn(){
-        super.despawn();
-    }
-
-
-
-
     /**
      * Checks for stray focus displays and purges them.
      * Any TextDisplayEntity not registered as active display and in the same block as a shop is considered a stray display.
@@ -126,7 +112,7 @@ public class DetailsDisplay extends TextElm {
 
 
 
-    // //FIXME this element should not be hoverable
+    // //FIXME move to actual button elements
     // @Override
     // public void onHoverEnter() {
     //     applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 2, Easings.linear, BG_HOVER, 255)));
@@ -135,7 +121,7 @@ public class DetailsDisplay extends TextElm {
 
 
 
-    // //FIXME this element should not be hoverable
+    // //FIXME move to actual button elements
     // @Override
     // public void onHoverExit() {
     //     applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 2, Easings.linear, ((TextElmStyle)style).getBackground(), 255)));

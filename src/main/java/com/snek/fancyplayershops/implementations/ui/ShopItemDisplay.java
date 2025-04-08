@@ -2,7 +2,6 @@ package com.snek.fancyplayershops.implementations.ui;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3d;
 
 import com.snek.fancyplayershops.Shop;
 import com.snek.framework.data_types.animations.Animation;
@@ -37,7 +36,7 @@ public class ShopItemDisplay extends ItemElm {
     // private static       float defaultRotation       = (float) Math.toRadians(45);
 
     private @Nullable TaskHandler loopHandler = null;
-    private transient @Nullable TaskHandler nameToggleHandler = null;
+    private @Nullable TaskHandler nameToggleHandler = null;
 
 
     public static final int L_TIME = 32;
@@ -113,22 +112,6 @@ public class ShopItemDisplay extends ItemElm {
 
 
 
-    @Override
-    public void spawn(Vector3d pos){
-        super.spawn(pos);
-    }
-
-
-
-
-    @Override
-    public void despawn(){
-        super.despawn();
-    }
-
-
-
-
     public void enterFocusState(){
 
         // Hide custom name and start focus animation
@@ -137,9 +120,7 @@ public class ShopItemDisplay extends ItemElm {
         applyAnimation(focusAnimation);
 
         // Queue loop animation
-        loopHandler = Scheduler.loop(0, loopAnimation.getTotalDuration(), () -> {
-            applyAnimation(loopAnimation);
-        });
+        loopHandler = Scheduler.loop(0, loopAnimation.getTotalDuration(), () -> applyAnimation(loopAnimation));
     }
 
 
@@ -153,8 +134,6 @@ public class ShopItemDisplay extends ItemElm {
         applyAnimation(unfocusAnimation);
 
         // Show custom name after animations end
-        nameToggleHandler = Scheduler.schedule(unfocusAnimation.getTotalDuration(), () -> {
-            entity.setCustomNameVisible(true);
-        });
+        nameToggleHandler = Scheduler.schedule(unfocusAnimation.getTotalDuration(), () -> entity.setCustomNameVisible(true));
     }
 }

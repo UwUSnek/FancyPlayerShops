@@ -56,26 +56,7 @@ public class FancyPlayerShops implements ModInitializer {
 
 
 
-
-        // Create shop item recipe
-        // Identifier recipeIdentifier = new Identifier(MOD_ID, "shop_item");
-        // DefaultedList<Ingredient> recipeIngredients = DefaultedList.copyOf(Ingredient.EMPTY,
-        //     Ingredient.ofItems(Items.GLASS_PANE), Ingredient.ofItems(Items.GLASS_PANE), Ingredient.ofItems(Items.GLASS_PANE),
-        //     Ingredient.ofItems(Items.GLASS_PANE), Ingredient.fromTag(ItemTags.SIGNS),   Ingredient.ofItems(Items.GLASS_PANE),
-        //     Ingredient.ofItems(Items.REDSTONE),   Ingredient.ofItems(Items.REDSTONE),   Ingredient.ofItems(Items.REDSTONE)
-        // );
-        // ShapedRecipe shopItemRecipe = new ShapedRecipe(
-        //     recipeIdentifier,
-        //     "fancyplayershops",
-        //     CraftingRecipeCategory.MISC,
-        //     3, 3,
-        //     recipeIngredients,
-        //     shopItem
-        // );
-        // // Registry.register(Registries.RECIPE_SERIALIZER, recipeIdentifier, shopItemRecipe.getSerializer());
-
-        // RecipeManager.setRecipes(List.of(shopItemRecipe));
-        ServerLifecycleEvents.SERVER_STARTED.register((server) -> {
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
 
             // Load shop data
             Shop.loadData(server);
@@ -84,7 +65,7 @@ public class FancyPlayerShops implements ModInitializer {
             Scheduler.loop(0, Elm.TRANSITION_REFRESH_TIME, Elm::processUpdateQueueTick);
 
             // Schedule focus features loop
-            Scheduler.loop(0, 2, () -> { FocusFeatures.tick(server.getWorlds()); });
+            Scheduler.loop(0, 2, () -> FocusFeatures.tick(server.getWorlds()));
 
             // Log initialization success
             LOGGER.info("FancyPlayerShops initialized. :3");
@@ -109,15 +90,11 @@ public class FancyPlayerShops implements ModInitializer {
 
 
         // Register scheduler
-        ServerTickEvents.END_SERVER_TICK.register(server -> {
-            Scheduler.tick(server);
-        });
+        ServerTickEvents.END_SERVER_TICK.register(Scheduler::tick);
 
 
         // Register focus display purge
-        ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
-            DetailsDisplay.onEntityLoad(entity);
-        });
+        ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> DetailsDisplay.onEntityLoad(entity));
     }
 
 
@@ -129,10 +106,10 @@ public class FancyPlayerShops implements ModInitializer {
     public static ActionResult onItemUse(World world, PlayerEntity player, Hand hand, BlockHitResult hitResult){
         ItemStack stack = player.getStackInHand(hand);
         if (stack.getItem() == SHOP_ITEM_ID && stack.hasNbt() && stack.getNbt().contains(SHOP_ITEM_NBT_KEY)) {
-            if(world instanceof ServerWorld) {
+            if(world instanceof ServerWorld serverWorld) {
                 stack.setCount(stack.getCount() - 1);
                 BlockPos blockPos = hitResult.getBlockPos().add(hitResult.getSide().getVector());
-                new Shop((ServerWorld)world, blockPos, player);
+                new Shop(serverWorld, blockPos, player);
                 player.sendMessage(new Txt("New shop created! Right click it to configure.").green().get());
             }
             else {

@@ -61,8 +61,10 @@ import net.minecraft.world.World;
 
 // TODO fix broken shops and blocks if they don't exist in the world when the map is loaded
 public class Shop {
-    private static final Path SHOP_STORAGE_DIR;
     public  static final Text EMPTY_SHOP_NAME = new Txt("[Empty]").italic().lightGray().get();
+    private static final Text SHOP_EMPTY_TEXT = new Txt("This shop is empty!").lightGray().get();
+    private static final Text SHOP_STOCK_TEXT = new Txt("This shop has no items in stock!").lightGray().get();
+    private static final Path SHOP_STORAGE_DIR;
     static {
         SHOP_STORAGE_DIR = FabricLoader.getInstance().getConfigDir().resolve(FancyPlayerShops.MOD_ID + "/shops");
         try {
@@ -84,7 +86,7 @@ public class Shop {
     private String worldId;
     private transient ShopItemDisplay itemDisplay = null; //! Searched when needed instead of on data loading. The chunk needs to be loaded.
     private UUID itemDisplayUUID;
-    public  UUID ownerUUID;
+    private  UUID ownerUUID;
     private BlockPos pos;
     private transient String shopIdentifierCache;
     private transient String shopIdentifierCache_noWorld;
@@ -102,7 +104,11 @@ public class Shop {
     public  transient @Nullable ShopCanvas     activeCanvas = null;
     public  transient @Nullable PlayerEntity           user = null;
     private transient           boolean         focusStatus = false;
-    public  transient           boolean     focusStatusNext = false;
+    private transient           boolean     focusStatusNext = false;
+
+    public void setFocusStatusNext(boolean v) {
+        focusStatusNext = v;
+    }
 
 
     // Accessors
@@ -117,10 +123,20 @@ public class Shop {
 
 
     private void calcSerializedItem() {
-        serializedItem = ItemStack.CODEC.encode(item, JsonOps.INSTANCE, JsonOps.INSTANCE.empty()).result().get().toString();
+        var result = ItemStack.CODEC.encode(item, JsonOps.INSTANCE, JsonOps.INSTANCE.empty()).result();
+        if(result.isEmpty()) {
+            throw new RuntimeException("Could not serialize shop item");
+        }
+        serializedItem = result.get().toString();
     }
+
+
     private void calcDeserializedItem() {
-        item = ItemStack.CODEC.decode(JsonOps.INSTANCE, JsonParser.parseString(serializedItem)).result().get().getFirst();
+        var result = ItemStack.CODEC.decode(JsonOps.INSTANCE, JsonParser.parseString(serializedItem)).result();
+        if(result.isEmpty()) {
+            throw new RuntimeException("Could not deserialize shop item");
+        }
+        item = result.get().getFirst();
     }
 
 
@@ -244,17 +260,19 @@ public class Shop {
                 }
 
                 // Recalculate transient members and update shop maps
-                retrievedShop.focusStatus     = false;
-                retrievedShop.focusStatusNext = false;
-                retrievedShop.cacheShopIdentifier();
-                retrievedShop.calcDeserializedItem();
-                try {
-                    retrievedShop.calcDeserializedWorldId(server);
-                } catch (RuntimeException e) {
-                    e.printStackTrace();
+                if(retrievedShop != null) {
+                    retrievedShop.focusStatus     = false;
+                    retrievedShop.focusStatusNext = false;
+                    retrievedShop.cacheShopIdentifier();
+                    try {
+                        retrievedShop.calcDeserializedItem();
+                        retrievedShop.calcDeserializedWorldId(server);
+                        shopsByOwner.put(retrievedShop.ownerUUID.toString(), retrievedShop);
+                        shopsByCoords.put(retrievedShop.shopIdentifierCache, retrievedShop);
+                    } catch (RuntimeException e) {
+                        e.printStackTrace();
+                    }
                 }
-                shopsByOwner.put(retrievedShop.ownerUUID.toString(), retrievedShop);
-                shopsByCoords.put(retrievedShop.shopIdentifierCache, retrievedShop);
             }
         }
     }
@@ -392,7 +410,7 @@ public class Shop {
      */
     public void retrieveItem(PlayerEntity owner){
         if(item.getItem() == Items.AIR) {
-            owner. sendMessage(new Txt("This shop is empty!").lightGray().get(), true);
+            owner. sendMessage(SHOP_EMPTY_TEXT, true);
         }
         else if(stock < 1) {
             owner.sendMessage(new Txt("This shop has no items in stock!").lightGray().get(), true);
@@ -415,13 +433,13 @@ public class Shop {
      */
     public void buyItem(PlayerEntity player, int amount){
         if(item.getItem() == Items.AIR) {
-            player.sendMessage(new Txt("This shop is empty!").lightGray().get(), true);
+            player.sendMessage(SHOP_EMPTY_TEXT, true);
         }
         else if(stock < 1) {
-            player.sendMessage(new Txt("This shop has no items in stock!").lightGray().get(), true);
+            player.sendMessage(SHOP_STOCK_TEXT, true);
         }
         else if(stock < amount) {
-            player.sendMessage(new Txt("This shop doesn't have enough items in stock! Items left: " + stock).lightGray().get(), true);
+            player.sendMessage(SHOP_STOCK_TEXT.copy().append(new Txt(" Items left: " + stock).lightGray().get()), true);
         }
         else {
             stock -= amount;
@@ -471,7 +489,7 @@ public class Shop {
      */
     public void openBuyUi(PlayerEntity player) {
         if(item.getItem() == Items.AIR) {
-            player.sendMessage(new Txt("This shop is empty!").gray().get());
+            player.sendMessage(SHOP_EMPTY_TEXT);
         }
         //TODO actually open the UI
     }
