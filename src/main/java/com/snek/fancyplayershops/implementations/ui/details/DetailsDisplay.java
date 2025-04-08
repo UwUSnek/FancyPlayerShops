@@ -83,8 +83,8 @@ public class DetailsDisplay extends TextElm {
     @Override
     public void spawn(Vector3d pos){
         super.spawn(pos);
-        entity.setCustomName(new Txt(ENTITY_CUSTOM_NAME).get());
         entity.setCustomNameVisible(false);
+        entity.setCustomName(new Txt(ENTITY_CUSTOM_NAME).get());
     }
 
 

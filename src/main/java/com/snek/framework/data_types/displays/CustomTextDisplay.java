@@ -23,12 +23,12 @@ public class CustomTextDisplay extends CustomDisplay {
     public @NotNull TextDisplayEntity getRawDisplay() { return (TextDisplayEntity)heldEntity; }
 
 
-    static private Method method_setText;
-    static private Method method_getText;
-    static private Method method_setTextOpacity;
-    static private Method method_getTextOpacity;
-    static private Method method_setBackground;
-    static private Method method_getBackground;
+    private static Method method_setText;
+    private static Method method_getText;
+    private static Method method_setTextOpacity;
+    private static Method method_getTextOpacity;
+    private static Method method_setBackground;
+    private static Method method_getBackground;
     static {
         try {
             method_setText          = TextDisplayEntity.class.getDeclaredMethod("setText",                   Text.class);

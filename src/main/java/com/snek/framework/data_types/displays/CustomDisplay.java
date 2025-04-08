@@ -29,15 +29,15 @@ public abstract class CustomDisplay {
     protected @NotNull DisplayEntity heldEntity;
 
 
-    static private Method method_setTransformation;
-    static private Method method_setInterpolationDuration;
-    static private Method method_setStartInterpolation;
-    static private Method method_setBillboardMode;
-    static private Method method_getBillboardMode;
-    static private Method method_setViewRange;
-    static private Method method_getViewRange;
-    static private Method method_setBrightness;
-    static private Method method_getBrightness;
+    private static Method method_setTransformation;
+    private static Method method_setInterpolationDuration;
+    private static Method method_setStartInterpolation;
+    private static Method method_setBillboardMode;
+    private static Method method_getBillboardMode;
+    private static Method method_setViewRange;
+    private static Method method_getViewRange;
+    private static Method method_setBrightness;
+    private static Method method_getBrightness;
     static {
         try {
             method_setTransformation        = DisplayEntity.class.getDeclaredMethod("setTransformation", AffineTransformation.class);
@@ -84,8 +84,8 @@ public abstract class CustomDisplay {
 
 
     public void spawn(@NotNull World world, Vector3d pos) {
-        world.spawnEntity(heldEntity);
         heldEntity.setPosition(pos.x, pos.y, pos.z);
+        world.spawnEntity(heldEntity);
     }
 
 

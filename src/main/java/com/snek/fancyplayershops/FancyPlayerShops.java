@@ -5,7 +5,9 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
+import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -22,10 +24,19 @@ import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.snek.fancyplayershops.implementations.InteractionBlocker;
 import com.snek.fancyplayershops.implementations.ui.details.DetailsDisplay;
 import com.snek.framework.ui.Elm;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.scheduler.Scheduler;
+
+
+
+
+
+
+
+
 
 
 
@@ -46,6 +57,10 @@ public class FancyPlayerShops implements ModInitializer {
         NbtCompound nbt = shopItem.getOrCreateNbt();
         nbt.putBoolean(SHOP_ITEM_NBT_KEY, true);
     }
+
+
+
+
 
 
 
@@ -72,6 +87,8 @@ public class FancyPlayerShops implements ModInitializer {
         });
 
 
+
+
         // Create and register shop block rclick event
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             ActionResult r;
@@ -79,14 +96,24 @@ public class FancyPlayerShops implements ModInitializer {
             if(r == ActionResult.PASS) r = onItemUse(world, player, hand, hitResult);
             return r;
         });
+        UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
+            return ClickFeatures.onClickEntity(world, player, hand, ClickType.RIGHT, entity);
+        });
 
 
-        // Create and register shop block rclick event
+
+
+        // Create and register shop block lclick event
         AttackBlockCallback.EVENT.register((player, world, hand, blockPos, diretion) -> {
             ActionResult r;
             r = ClickFeatures.onClick(world, player, hand, ClickType.LEFT); //FIXME add ghost cooldown. add to lclick too
             return r;
         });
+        AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
+            return ClickFeatures.onClickEntity(world, player, hand, ClickType.LEFT, entity);
+        });
+
+
 
 
         // Register scheduler
@@ -94,8 +121,15 @@ public class FancyPlayerShops implements ModInitializer {
 
 
         // Register focus display purge
-        ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> DetailsDisplay.onEntityLoad(entity));
+        ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
+            DetailsDisplay.onEntityLoad(entity);
+            InteractionBlocker.onEntityLoad(entity);
+        });
     }
+
+
+
+
 
 
 

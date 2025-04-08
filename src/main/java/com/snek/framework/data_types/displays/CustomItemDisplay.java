@@ -20,7 +20,7 @@ import net.minecraft.world.World;
 
 public class CustomItemDisplay extends CustomDisplay {
     public @NotNull ItemDisplayEntity getRawDisplay() { return (ItemDisplayEntity)heldEntity; }
-    static private Method method_setItemStack;
+    private static Method method_setItemStack;
     static {
         try {
             method_setItemStack = ItemDisplayEntity.class.getDeclaredMethod("setItemStack", ItemStack.class);

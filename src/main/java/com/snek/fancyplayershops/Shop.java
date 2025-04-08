@@ -19,6 +19,7 @@ import org.joml.Vector3d;
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
+import com.snek.fancyplayershops.implementations.InteractionBlocker;
 import com.snek.fancyplayershops.implementations.ui.ShopCanvas;
 import com.snek.fancyplayershops.implementations.ui.ShopItemDisplay;
 import com.snek.fancyplayershops.implementations.ui.details.DetailsUiCanvas;
@@ -101,10 +102,11 @@ public class Shop {
 
 
     // Shop status
-    public  transient @Nullable ShopCanvas     activeCanvas = null;
-    public  transient @Nullable PlayerEntity           user = null;
-    private transient           boolean         focusStatus = false;
-    private transient           boolean     focusStatusNext = false;
+    private transient @Nullable InteractionBlocker interactionBlocker = null;
+    public  transient @Nullable ShopCanvas               activeCanvas = null;
+    public  transient @Nullable PlayerEntity                     user = null;
+    private transient           boolean                   focusStatus = false;
+    private transient           boolean               focusStatusNext = false;
 
     public void setFocusStatusNext(boolean v) {
         focusStatusNext = v;
@@ -299,7 +301,8 @@ public class Shop {
      */
     public void updateFocusState(){
         if(focusStatus != focusStatusNext) {
-            if(focusStatusNext) {
+            focusStatus = focusStatusNext;
+            if(focusStatus) {
 
                 // Create details canvas
                 if(activeCanvas != null) activeCanvas.despawnNow();
@@ -308,16 +311,28 @@ public class Shop {
                 activeCanvas.menuAnimationIn = null;
                 activeCanvas.spawn(calcDisplayPos().add(0, 0.3d, 0));
 
+                // Create interaction blocker
+                interactionBlocker = new InteractionBlocker(this);
+                interactionBlocker.spawn(new Vector3d(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5));
+
                 // Start item animation and turn off the CustomName
                 findItemDisplayEntityIfNeeded().enterFocusState();
             }
             else {
+
+                // Despawn active canvas
                 activeCanvas.menuAnimationOut = null;
-                activeCanvas.despawn();                             // Despawn the active canvas
-                findItemDisplayEntityIfNeeded().leaveFocusState();  // Turn the CustomName back on
-                user = null;                                        // Reset shop user
+                activeCanvas.despawn();
+                activeCanvas = null;
+
+                // Despawn interaction blocker
+                interactionBlocker.despawn();
+                interactionBlocker = null;
+
+                // Turn the CustomName back on and reset user
+                findItemDisplayEntityIfNeeded().leaveFocusState();
+                user = null;
             }
-            focusStatus = focusStatusNext;
         }
     }
 
