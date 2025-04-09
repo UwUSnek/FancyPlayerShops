@@ -17,5 +17,6 @@ public class EditUiCanvas extends ShopCanvas {
         addChild(new EditUiTitle(shop));
         addChild(new EditUiPriceButton(shop));
         addChild(new EditUiMaxStockButton(shop));
+        addChild(new EditUiBackground(shop));
     }
 }

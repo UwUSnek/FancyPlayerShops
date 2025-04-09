@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.snek.fancyplayershops.implementations.ui.InteractionBlocker;
+import com.snek.fancyplayershops.implementations.ui.ShopPanelElm;
 import com.snek.fancyplayershops.implementations.ui.TrackedTextElm;
 import com.snek.framework.ui.Elm;
 import com.snek.framework.utils.Txt;
@@ -125,6 +126,7 @@ public class FancyPlayerShops implements ModInitializer {
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
             TrackedTextElm.onEntityLoad(entity);
             InteractionBlocker.onEntityLoad(entity);
+            ShopPanelElm.onEntityLoad(entity);
         });
 
 

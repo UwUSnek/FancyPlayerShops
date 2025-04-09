@@ -7,10 +7,6 @@ import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.animations.Transform;
 import com.snek.framework.data_types.animations.transitions.TextAdditiveTransition;
 import com.snek.framework.utils.Easings;
-import com.snek.framework.utils.Txt;
-
-import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity.TextAlignment;
-import net.minecraft.text.Text;
 
 
 
@@ -19,34 +15,32 @@ import net.minecraft.text.Text;
 
 
 
-public class TextElmStyle extends ElmStyle {
+public class PanelElmStyle extends ElmStyle {
+    private @NotNull Vector4i color;
 
-    private @NotNull TextAlignment alignment;
-    private @NotNull Vector4i      background;
-    private @NotNull Text          text;
-    private @NotNull int           textOpacity;
+    // The amount of panel elements of default size would be needed to cover the width of a block
+    public static final float ENTITY_BLOCK_RATIO_X = 40f;
+    public static final float ENTITY_BLOCK_RATIO_Y = 40f;
 
 
 
 
     /**
-     * Creates a new default TextElmStyle.
+     * Creates a new default PanelElmStyle.
      */
-    public TextElmStyle() {
+    public PanelElmStyle() {
 
         // Set values
         super();
-        alignment   = TextAlignment.CENTER;
-        background  = new Vector4i(230, 37, 40, 40);
-        text        = new Txt("").get();
-        textOpacity = 255;
+        setTransform(new Transform().scaleX(ENTITY_BLOCK_RATIO_X).scaleY(ENTITY_BLOCK_RATIO_Y).moveX(-0.5f));
+        color = new Vector4i(130, 2, 20, 20);
 
 
         // Set default spawning animation
         setSpawnAnimation(new Animation(new TextAdditiveTransition(new Transform(),
             ElmStyle.S_TIME,
             Easings.sineOut,
-            background,
+            color,
             255
         )));
 
@@ -63,13 +57,7 @@ public class TextElmStyle extends ElmStyle {
 
 
 
-    public TextElmStyle setAlignment  (TextAlignment _alignment  ) { alignment   = _alignment;   return this; }
-    public TextElmStyle setBackground (Vector4i      _background ) { background  = _background;  return this; }
-    public TextElmStyle setText       (Text          _text       ) { text        = _text;        return this; }
-    public TextElmStyle setTextOpacity(int           _textOpacity) { textOpacity = _textOpacity; return this; }
+    public PanelElmStyle setColor (Vector4i _color ) { color = _color; return this; }
 
-    public TextAlignment getAlignment  () { return alignment;   }
-    public Vector4i      getBackground () { return background;  }
-    public Text          getText       () { return text;        }
-    public int           getTextOpacity() { return textOpacity; }
+    public Vector4i getColor () { return color;  }
 }

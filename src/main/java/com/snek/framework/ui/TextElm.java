@@ -148,7 +148,6 @@ public class TextElm extends Elm {
         if(!backgroundQueue.isEmpty()) background .set(backgroundQueue.removeFirst());
         if(     !alphaQueue.isEmpty()) textOpacity.set(     alphaQueue.removeFirst());
         //! Update queue not checked as it depends exclusively on transform changes.
-        //! Each transform change always corresponds to one background and one alpha change.
 
         return super.tick();
     }

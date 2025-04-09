@@ -92,7 +92,7 @@ public class Shop {
     private BlockPos pos;
     private transient String shopIdentifierCache;
     private transient String shopIdentifierCache_noWorld;
-    public Vector3d calcDisplayPos() { return new Vector3d(pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5); }
+    public Vector3d calcDisplayPos() { return new Vector3d(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5); }
 
 
     // Shop data
@@ -314,7 +314,7 @@ public class Shop {
                 activeCanvas = new DetailsUiCanvas(this);
                 activeCanvas.menuAnimationInitial = null;
                 activeCanvas.menuAnimationIn = null;
-                activeCanvas.spawn(calcDisplayPos().add(0, 0.3d, 0));
+                activeCanvas.spawn(calcDisplayPos());
 
                 // Create interaction blocker
                 interactionBlocker = new InteractionBlocker(this);
@@ -493,7 +493,7 @@ public class Shop {
         activeCanvas = canvas;
 
         Scheduler.schedule(CANVAS_ANIMATION_DELAY, () -> {
-            if(activeCanvas != null) activeCanvas.spawn(calcDisplayPos().add(0, 0.3d, 0));
+            if(activeCanvas != null) activeCanvas.spawn(calcDisplayPos());
         });
     }
 

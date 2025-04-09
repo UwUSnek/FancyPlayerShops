@@ -64,6 +64,7 @@ public class ShopItemDisplay extends ItemElm {
     public ShopItemDisplay(@NotNull Shop _targetShop, @NotNull CustomItemDisplay _display) {
         super(_targetShop.getWorld(), _display, new ItemElmStyle().setDespawnAnimation(null));
         targetShop = _targetShop;
+        transform.edit().moveY(0.3f);
         entity.setCustomNameVisible(true);
         updateDisplay();
 

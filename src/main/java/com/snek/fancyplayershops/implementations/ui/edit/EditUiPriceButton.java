@@ -1,14 +1,12 @@
 package com.snek.fancyplayershops.implementations.ui.edit;
 
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3d;
 
 import com.snek.fancyplayershops.ChatInput;
 import com.snek.fancyplayershops.Shop;
 import com.snek.fancyplayershops.implementations.ui.ShopButton;
+import com.snek.fancyplayershops.implementations.ui.ShopTextElm;
 import com.snek.fancyplayershops.implementations.ui.details.DetailsUiDisplay;
-import com.snek.framework.generated.FontSize;
-import com.snek.framework.ui.TextElm;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
 
@@ -22,6 +20,7 @@ public class EditUiPriceButton extends ShopButton {
 
     public EditUiPriceButton(@NotNull Shop _shop) {
         super(_shop);
+        transform.edit().moveY(calcHeight() * 1.6f * 1f + 0.05f + ShopTextElm.SHIFT_Y);
         updateDisplay();
     }
 
@@ -61,13 +60,5 @@ public class EditUiPriceButton extends ShopButton {
         } catch(NumberFormatException e) {
             return false;
         }
-    }
-
-
-
-
-    @Override
-    public void spawn(Vector3d pos) {
-        super.spawn(new Vector3d(pos).add(0, calcHeight() * 1.6 * 1 + 0.05, 0)); //TODO replace with calcLineHeight()
     }
 }

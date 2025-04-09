@@ -20,6 +20,7 @@ import com.snek.framework.utils.Easings;
 
 
 public class ShopCanvas extends Canvas {
+
     // Animation data //! Calculate translation from rotation
     public static final float    ANIMATION_ROT_Y    = (float)Math.toRadians(5);
     public static final Vector3f ANIMATION_MOVE_IN  = new Vector3f(0, 0, 1).rotateY(-ANIMATION_ROT_Y).sub(0, 0, 1);
