@@ -46,8 +46,10 @@ public abstract class Elm {
     public @NotNull  Flagged<BillboardMode> billboardMode;
 
     // Tree data
-    private @Nullable Elm parent = null;                                    // The parent element
-    private @NotNull  List<@NotNull Elm> children = new ArrayList<>();      // A list of child elements
+    private @Nullable Canvas parent = null;                                    // The parent element
+    public void setParent(@Nullable Canvas _parent) { parent = _parent; };
+    // private @Nullable Elm parent = null;                                    // The parent element          //TODO
+    // private @NotNull  List<@NotNull Elm> children = new ArrayList<>();      // A list of child elements    //TODO
 
     // In-world data
     protected @NotNull ServerWorld   world;     // The world this Elm will be spawned in
@@ -218,23 +220,23 @@ public abstract class Elm {
 
 
 
-    /**
-     * Adds a child to this Elm, then sets it's parent to this.
-     * @param child The new child.
-     */
-    public void addChild(Elm child) {
-        children.add(child);
-        child.parent = this;
-    }
+    // /**
+    //  * Adds a child to this Elm, then sets it's parent to this.
+    //  * @param child The new child.
+    //  */
+    // public void addChild(Elm child) {
+    //     children.add(child);
+    //     child.parent = this;
+    // }
 
 
-    /**
-     * Returns the list of children of this Elm.
-     * @return The list of children.
-     */
-    public List<Elm> getChildren() {
-        return children;
-    }
+    // /**
+    //  * Returns the list of children of this Elm.
+    //  * @return The list of children.
+    //  */
+    // public List<Elm> getChildren() {
+    //     return children;
+    // }
 
 
 

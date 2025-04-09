@@ -32,11 +32,14 @@ public class Canvas {
 
     public void addChild(Elm elm) {
         children.add(elm);
+        elm.setParent(this);
     }
     public void removeChild(Elm elm) {
         children.remove(elm);
+        elm.setParent(null);
     }
     public void clearChildren() {
+        for(Elm elm : children) elm.setParent(null);
         children.clear();
     }
     public List<Elm> getChildren() {
