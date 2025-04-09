@@ -34,7 +34,7 @@ public class ShopButton extends TrackedTextElm implements Hoverable, Clickable {
 
     public ShopButton(@NotNull Shop _shop) {
         super(_shop.getWorld());
-        transform.edit().moveY(ShopTextElm.SHIFT_Y);
+        style.editTransform().moveY(ShopTextElm.SHIFT_Y);
         flushStyle();
         shop = _shop;
     }
@@ -48,7 +48,7 @@ public class ShopButton extends TrackedTextElm implements Hoverable, Clickable {
 
     @Override
     public void onHoverExit() {
-        applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 2, Easings.linear, ((TextElmStyle)defaultStyle).getBackground(), 255)));
+        applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 2, Easings.linear, ((TextElmStyle)style).getBackground(), 255)));
     }
 
 

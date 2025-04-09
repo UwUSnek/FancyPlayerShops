@@ -3,7 +3,7 @@ package com.snek.framework.data_types.ui;
 
 
 
-public enum HorizontalAlignment {
+public enum AlignmentX {
     NONE  (-1),
     LEFT  (0),
     CENTER(1),
@@ -11,7 +11,7 @@ public enum HorizontalAlignment {
 
 
     public final int value;
-    HorizontalAlignment(int _value) {
+    AlignmentX(int _value) {
         value = _value;
     }
 }

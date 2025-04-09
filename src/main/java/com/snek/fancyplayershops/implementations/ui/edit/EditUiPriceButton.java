@@ -6,6 +6,7 @@ import com.snek.fancyplayershops.ChatInput;
 import com.snek.fancyplayershops.Shop;
 import com.snek.fancyplayershops.implementations.ui.ShopButton;
 import com.snek.fancyplayershops.implementations.ui.details.DetailsUiDisplay;
+import com.snek.framework.ui.styles.TextElmStyle;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
 
@@ -19,7 +20,7 @@ public class EditUiPriceButton extends ShopButton {
 
     public EditUiPriceButton(@NotNull Shop _shop) {
         super(_shop);
-        transform.edit().moveY(calcHeight() * 1.6f * 1f + 0.05f);
+        style.editTransform().moveY(calcHeight() * 1.6f * 1f + 0.05f);
         updateDisplay();
     }
 
@@ -27,7 +28,7 @@ public class EditUiPriceButton extends ShopButton {
 
 
     public void updateDisplay() {
-        text.set(new Txt()
+        ((TextElmStyle)style).setText(new Txt()
             .cat(new Txt(" 🖍 ").lightGray())
             .cat(new Txt(Utils.formatPrice(shop.getPrice())).color(DetailsUiDisplay.C_RGB_PRICE))
             .cat(" ")

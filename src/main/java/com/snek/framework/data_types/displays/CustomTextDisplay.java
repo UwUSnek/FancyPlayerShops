@@ -9,6 +9,9 @@ import com.snek.framework.utils.Utils;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity;
+import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity.TextAlignment;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.text.Text;
 import net.minecraft.world.World;
 
@@ -92,7 +95,7 @@ public class CustomTextDisplay extends CustomDisplay {
 
 
     public int getTextOpacity() {
-        int a = (int)(byte)Utils.invokeSafe(method_getTextOpacity, getRawDisplay());
+        int a = (byte)Utils.invokeSafe(method_getTextOpacity, getRawDisplay());
         return a < 0 ? a + 256 : a;
     }
 
@@ -109,5 +112,15 @@ public class CustomTextDisplay extends CustomDisplay {
     public @NotNull Vector4i getBackground() {
         int bg = (int)Utils.invokeSafe(method_getBackground, getRawDisplay());
         return new Vector4i((bg >> 24) & 0xFF, (bg >> 16) & 0xFF, (bg >> 8) & 0xFF, bg & 0xFF);
+    }
+
+
+
+
+    public void setTextAlignment(TextAlignment alignment) {
+        NbtCompound nbt = new NbtCompound();
+        heldEntity.writeNbt(nbt);
+        nbt.putString("alignment", alignment.asString());
+        heldEntity.readNbt(nbt);
     }
 }

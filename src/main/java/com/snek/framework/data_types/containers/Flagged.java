@@ -1,7 +1,6 @@
 package com.snek.framework.data_types.containers;
 
-
-
+import java.util.Objects;
 
 public class Flagged<T> {
     private T value;
@@ -11,7 +10,7 @@ public class Flagged<T> {
         this.value = _value;
     }
     public static <T> Flagged<T> from(T value) {
-        return new Flagged<T>(value);
+        return new Flagged<>(value);
     }
 
 
@@ -30,7 +29,7 @@ public class Flagged<T> {
      * @param _value The new value.
      */
     public void set(T _value) {
-        if(!value.equals(_value)) flag = true;
+        if(!Objects.equals(value, _value)) flag = true;
         value = _value;
     }
 

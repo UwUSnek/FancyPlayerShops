@@ -15,7 +15,7 @@ public class ShopTextElm extends TrackedTextElm {
 
     public ShopTextElm(@NotNull Shop _shop) {
         super(_shop.getWorld());
-        transform.edit().moveY(SHIFT_Y);
+        style.editTransform().moveY(SHIFT_Y);
         shop = _shop;
     }
 }

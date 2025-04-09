@@ -3,7 +3,7 @@ package com.snek.framework.data_types.ui;
 
 
 
-public enum VerticalAlignment {
+public enum AlignmentY {
     NONE  (-1),
     TOP   (0),
     CENTER(1),
@@ -11,7 +11,7 @@ public enum VerticalAlignment {
 
 
     public final int value;
-    VerticalAlignment(int _value) {
+    AlignmentY(int _value) {
         value = _value;
     }
 }

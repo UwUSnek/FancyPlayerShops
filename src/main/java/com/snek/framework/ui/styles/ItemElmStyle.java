@@ -2,6 +2,8 @@ package com.snek.framework.ui.styles;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.snek.framework.data_types.containers.Flagged;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 
@@ -13,7 +15,7 @@ import net.minecraft.item.Items;
 
 
 public class ItemElmStyle extends ElmStyle {
-    private @NotNull ItemStack item;
+    private Flagged<ItemStack> item = null;
 
 
 
@@ -23,13 +25,15 @@ public class ItemElmStyle extends ElmStyle {
      */
     public ItemElmStyle() {
         super();
-        item = Items.AIR.getDefaultStack();
+        resetItem();
     }
 
 
 
 
-    public ItemElmStyle setItem(ItemStack _item) { item = _item; return this; }
-
-    public ItemStack getItem() { return item; }
+    public void resetItem() { item = Flagged.from(Items.AIR.getDefaultStack()); }
+    public void setItem(@NotNull ItemStack _item) { item.set(_item); }
+    public @NotNull Flagged<ItemStack> getFlaggedItem() { return item; }
+    public @NotNull ItemStack getItem() { return item.get(); }
+    public @NotNull ItemStack editItem() { return item.edit(); }
 }

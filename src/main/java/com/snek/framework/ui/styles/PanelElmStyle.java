@@ -6,6 +6,7 @@ import org.joml.Vector4i;
 import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.animations.Transform;
 import com.snek.framework.data_types.animations.transitions.TextAdditiveTransition;
+import com.snek.framework.data_types.containers.Flagged;
 import com.snek.framework.utils.Easings;
 
 
@@ -16,11 +17,14 @@ import com.snek.framework.utils.Easings;
 
 
 public class PanelElmStyle extends ElmStyle {
-    private @NotNull Vector4i color;
 
     // The amount of panel elements of default size would be needed to cover the width of a block
     public static final float ENTITY_BLOCK_RATIO_X = 40f;
     public static final float ENTITY_BLOCK_RATIO_Y = 40f;
+
+
+    private Flagged<Vector4i> color = null;
+
 
 
 
@@ -32,21 +36,24 @@ public class PanelElmStyle extends ElmStyle {
 
         // Set values
         super();
+        resetColor();
         setTransform(new Transform().scaleX(ENTITY_BLOCK_RATIO_X).scaleY(ENTITY_BLOCK_RATIO_Y).moveX(-0.5f));
-        color = new Vector4i(130, 2, 20, 20);
 
 
+        //TODO make additive and target interfaces
         // Set default spawning animation
-        setSpawnAnimation(new Animation(new TextAdditiveTransition(new Transform(),
+        setSpawnAnimation(new Animation(new TextAdditiveTransition(
+            new Transform(), //TODO dont include in text transitions
             ElmStyle.S_TIME,
             Easings.sineOut,
-            color,
+            color.get(),
             255
         )));
 
 
         // Set default despawning animation
-        setDespawnAnimation(new Animation(new TextAdditiveTransition(new Transform(),
+        setDespawnAnimation(new Animation(new TextAdditiveTransition(
+            new Transform(), //TODO dont include in text transitions
             ElmStyle.D_TIME,
             Easings.sineOut,
             new Vector4i(0),
@@ -57,7 +64,9 @@ public class PanelElmStyle extends ElmStyle {
 
 
 
-    public PanelElmStyle setColor (Vector4i _color ) { color = _color; return this; }
-
-    public Vector4i getColor () { return color;  }
+    public void resetColor () { color = Flagged.from(new Vector4i(130, 2, 20, 20)); }
+    public void setColor (@NotNull Vector4i _color ) { color.set(_color); }
+    public @NotNull Flagged<Vector4i> getFlaggedColor () { return color; }
+    public @NotNull Vector4i getColor () { return color.get(); }
+    public @NotNull Vector4i editColor () { return color.edit(); }
 }

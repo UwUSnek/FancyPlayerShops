@@ -36,6 +36,8 @@ import net.minecraft.text.Text;
 
 
 public class TextElm extends Elm {
+    private TextElmStyle getStyle() { return (TextElmStyle)style; }
+
     // This value identifies the amount of rendered text pixels that fit in a minecraft block
     public static final int TEXT_PIXEL_BLOCK_RATIO = 40;
 
@@ -43,24 +45,15 @@ public class TextElm extends Elm {
     protected final @NotNull IndexedArrayDeque<Vector4i> backgroundQueue = new IndexedArrayDeque<>(); // The list of backgrounds to apply to this instance in the next ticks. 1 for each update tick
     protected final @NotNull IndexedArrayDeque<Integer>  alphaQueue      = new IndexedArrayDeque<>(); // The list of alpha values to set to this instance's text in the next ticks. 1 for each update tick
 
-    // Element data
-    public @NotNull Flagged<Text>          text;
-    public @NotNull Flagged<Integer>       textOpacity;
-    public @NotNull Flagged<Vector4i>      background;
 
 
 
-
-    protected TextElm(@NotNull ServerWorld _world, @NotNull CustomDisplay _entity, @NotNull ElmStyle _defaultStyle) {
-        super(_world, _entity, _defaultStyle);
-
-        text        = Flagged.from(((TextElmStyle)defaultStyle).getText());
-        textOpacity = Flagged.from(((TextElmStyle)defaultStyle).getTextOpacity());
-        background  = Flagged.from(((TextElmStyle)defaultStyle).getBackground());
+    protected TextElm(@NotNull ServerWorld _world, @NotNull CustomDisplay _entity, @NotNull ElmStyle _style) {
+        super(_world, _entity, _style);
     }
 
-    protected TextElm(@NotNull ServerWorld _world, @NotNull ElmStyle _defaultStyle) {
-        this(_world, new CustomTextDisplay(_world), _defaultStyle);
+    protected TextElm(@NotNull ServerWorld _world, @NotNull ElmStyle _style) {
+        this(_world, new CustomTextDisplay(_world), _style);
     }
 
     public TextElm(@NotNull ServerWorld _world){
@@ -78,9 +71,9 @@ public class TextElm extends Elm {
     public void flushStyle() {
         super.flushStyle();
         CustomTextDisplay e2 = (CustomTextDisplay)entity;
-        if(text       .isFlagged()) { e2.setText       (text       .get()); text       .unflag(); }
-        if(textOpacity.isFlagged()) { e2.setTextOpacity(textOpacity.get()); textOpacity.unflag(); }
-        if(background .isFlagged()) { e2.setBackground (background .get()); background .unflag(); }
+        { Flagged<Text>     f = getStyle().getFlaggedText();        if(f.isFlagged()) { e2.setText       (f.get()); f.unflag(); }}
+        { Flagged<Integer>  f = getStyle().getFlaggedTextOpacity(); if(f.isFlagged()) { e2.setTextOpacity(f.get()); f.unflag(); }}
+        { Flagged<Vector4i> f = getStyle().getFlaggedBackground();  if(f.isFlagged()) { e2.setBackground (f.get()); f.unflag(); }}
     }
 
 
@@ -89,12 +82,12 @@ public class TextElm extends Elm {
     @Override
     protected void __applyAnimationTransitionNow(@NotNull Transition transition) {
         if(transition instanceof TextAdditiveTransition t) {
-            background.set(t.getBackground());
-            textOpacity.set(t.getAlpha());
+            getStyle().setBackground(t.getBackground());
+            getStyle().setTextOpacity(t.getAlpha());
         }
         if(transition instanceof TextTargetTransition t) {
-            background.set(t.getBackground());
-            textOpacity.set(t.getAlpha());
+            getStyle().setBackground(t.getBackground());
+            getStyle().setTextOpacity(t.getAlpha());
         }
         super.__applyAnimationTransitionNow(transition);
     }
@@ -114,8 +107,8 @@ public class TextElm extends Elm {
 
         if(step instanceof TextAnimationStep s) {
             // Calculate subclass step and get queued data
-            Vector4i bg = backgroundQueue.getOrAdd(index, () -> new Vector4i(background.get()));
-            int       a =      alphaQueue.getOrAdd(index, () -> textOpacity.get());
+            Vector4i bg = backgroundQueue.getOrAdd(index, () -> new Vector4i(getStyle().getBackground()));
+            int       a =      alphaQueue.getOrAdd(index, () ->              getStyle().getTextOpacity());
 
             // Interpolate background and alpha
             bg.set(Utils.interpolateARGB(bg, s.background, step.factor));
@@ -132,7 +125,7 @@ public class TextElm extends Elm {
 
     @Override
     public void spawn(Vector3d pos) {
-        if(defaultStyle.getDespawnAnimation() != null) applyAnimationNow(defaultStyle.getDespawnAnimation());
+        if(style.getDespawnAnimation() != null) applyAnimationNow(style.getDespawnAnimation());
         super.spawn(pos);
     }
 
@@ -145,8 +138,8 @@ public class TextElm extends Elm {
 
     @Override
     public boolean tick(){
-        if(!backgroundQueue.isEmpty()) background .set(backgroundQueue.removeFirst());
-        if(     !alphaQueue.isEmpty()) textOpacity.set(     alphaQueue.removeFirst());
+        if(!backgroundQueue.isEmpty()) getStyle().setBackground (backgroundQueue.removeFirst());
+        if(     !alphaQueue.isEmpty()) getStyle().setTextOpacity(     alphaQueue.removeFirst());
         //! Update queue not checked as it depends exclusively on transform changes.
 
         return super.tick();
@@ -170,7 +163,7 @@ public class TextElm extends Elm {
         if(lineNum == 0) return 0;
 
         // Calculate their height and return it
-        return ((lineNum == 1 ? 0 : lineNum - 1) * 2 + lineNum * FontSize.getHeight()) / TEXT_PIXEL_BLOCK_RATIO * transform.get().getScale().y;
+        return ((lineNum == 1 ? 0 : lineNum - 1) * 2 + lineNum * FontSize.getHeight()) / TEXT_PIXEL_BLOCK_RATIO * style.getTransform().getScale().y;
     }
 
 
@@ -203,7 +196,7 @@ public class TextElm extends Elm {
         }
 
         // Calculate its length and return it
-        return (float)FontSize.getWidth(line.first) / TEXT_PIXEL_BLOCK_RATIO * transform.get().getScale().x;
+        return (float)FontSize.getWidth(line.first) / TEXT_PIXEL_BLOCK_RATIO * style.getTransform().getScale().x;
     }
 
 
@@ -211,14 +204,14 @@ public class TextElm extends Elm {
 
     @Override
     public boolean checkIntersection(PlayerEntity player) {
-        if(!isSpawned || billboardMode.get() != BillboardMode.FIXED) return false;
+        if(!isSpawned || style.getBillboardMode() != BillboardMode.FIXED) return false;
 
 
         // Calculate the world coordinates of the display's origin. //! Left rotation and scale are ignored as they doesn't affect this
         Vector3f origin =
             entity.getPosCopy()
-            .add   (transform.get().getPos())
-            .rotate(transform.get().getRrot())
+            .add   (style.getTransform().getPos())
+            .rotate(style.getTransform().getRrot())
         ;
 
 
@@ -231,7 +224,7 @@ public class TextElm extends Elm {
 
         // Calculate corner X position relative to the origin using the entity's local coordinate system
         Vector3f shiftX = new Vector3f(size.x / 2, 0,0 );
-        shiftX.rotate(transform.get().getLrot()).rotate(transform.get().getRrot());
+        shiftX.rotate(style.getTransform().getLrot()).rotate(style.getTransform().getRrot());
 
 
         // Check view intersection with the display's box

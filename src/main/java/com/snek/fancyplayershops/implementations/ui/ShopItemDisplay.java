@@ -62,9 +62,9 @@ public class ShopItemDisplay extends ItemElm {
 
 
     public ShopItemDisplay(@NotNull Shop _targetShop, @NotNull CustomItemDisplay _display) {
-        super(_targetShop.getWorld(), _display, new ItemElmStyle().setDespawnAnimation(null));
+        super(_targetShop.getWorld(), _display, new ItemElmStyle());
         targetShop = _targetShop;
-        transform.edit().moveY(0.3f);
+        style.editTransform().moveY(0.3f);
         entity.setCustomNameVisible(true);
         updateDisplay();
 
@@ -76,7 +76,7 @@ public class ShopItemDisplay extends ItemElm {
             Easings.sineOut
         ));
         unfocusAnimation = new Animation(new TargetTransition(
-            transform.get(),
+            style.getTransform(),
             ElmStyle.D_TIME,
             Easings.sineOut
         ));
@@ -124,12 +124,12 @@ public class ShopItemDisplay extends ItemElm {
         if(_item.getItem() == Items.AIR) {
             ItemStack noItem = Items.BARRIER.getDefaultStack();
             noItem.setCustomName(Shop.EMPTY_SHOP_NAME);
-            item.set(noItem);
+            ((ItemElmStyle)style).setItem(noItem);
             entity.setCustomName(MinecraftUtils.getItemName(noItem));
         }
         else {
-            item.set(_item);
-            entity.setCustomName(MinecraftUtils.getItemName(item.get()));
+            ((ItemElmStyle)style).setItem(_item);
+            entity.setCustomName(MinecraftUtils.getItemName(((ItemElmStyle)style).getItem()));
         }
 
         flushStyle();

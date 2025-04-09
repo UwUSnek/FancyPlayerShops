@@ -9,7 +9,9 @@ import com.snek.framework.data_types.displays.CustomItemDisplay;
 import com.snek.framework.data_types.displays.CustomTextDisplay;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.ui.styles.ItemElmStyle;
+import com.snek.framework.ui.styles.TextElmStyle;
 
+import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
@@ -22,24 +24,21 @@ import net.minecraft.server.world.ServerWorld;
 
 
 public class ItemElm extends Elm {
-
-    public @NotNull Flagged<ItemStack> item;
-
+    private ItemElmStyle getStyle() { return (ItemElmStyle)style; }
 
 
 
-    protected ItemElm(@NotNull ServerWorld _world, @NotNull CustomDisplay _entity, @NotNull ElmStyle _defaultStyle) {
-        super(_world, _entity, _defaultStyle);
 
-        item = Flagged.from(((ItemElmStyle)defaultStyle).getItem());
+    protected ItemElm(@NotNull ServerWorld _world, @NotNull CustomDisplay _entity, @NotNull ElmStyle _style) {
+        super(_world, _entity, _style);
     }
 
     public ItemElm(@NotNull ServerWorld _world){
         this(_world, new CustomTextDisplay(_world), new ItemElmStyle());
     }
 
-    protected ItemElm(@NotNull ServerWorld _world, @NotNull ElmStyle _defaultStyle) {
-        this(_world, new CustomItemDisplay(_world), _defaultStyle);
+    protected ItemElm(@NotNull ServerWorld _world, @NotNull ElmStyle _style) {
+        this(_world, new CustomItemDisplay(_world), _style);
     }
 
 
@@ -53,7 +52,7 @@ public class ItemElm extends Elm {
     public void flushStyle() {
         super.flushStyle();
         CustomItemDisplay e2 = (CustomItemDisplay)entity;
-        if(item.isFlagged()) { e2.setItemStack(item.get()); item.unflag(); }
+        { Flagged<ItemStack> f = getStyle().getFlaggedItem(); if(f.isFlagged()) { e2.setItemStack(f.get()); f.unflag(); }}
     }
 
 
@@ -67,8 +66,8 @@ public class ItemElm extends Elm {
         // Calculate the world coordinates of the display's origin. //! Left rotation and scale are ignored as they doesn't affect this
         Vector3f origin =
             entity.getPosCopy()
-            .add   (transform.get().getPos())
-            .rotate(transform.get().getRrot())
+            .add   (style.getTransform().getPos())
+            .rotate(style.getTransform().getRrot())
         ;
 
 

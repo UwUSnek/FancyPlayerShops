@@ -8,6 +8,7 @@ import com.snek.fancyplayershops.Shop;
 import com.snek.fancyplayershops.implementations.ui.ShopButton;
 import com.snek.fancyplayershops.implementations.ui.ShopTextElm;
 import com.snek.fancyplayershops.implementations.ui.details.DetailsUiDisplay;
+import com.snek.framework.ui.styles.TextElmStyle;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
 
@@ -26,7 +27,7 @@ public class EditUiMaxStockButton extends ShopButton {
 
     public EditUiMaxStockButton(@NotNull Shop _shop) {
         super(_shop);
-        transform.edit().moveY(0.05f);
+        style.editTransform().moveY(0.05f);
         updateDisplay();
     }
 
@@ -34,7 +35,7 @@ public class EditUiMaxStockButton extends ShopButton {
 
 
     public void updateDisplay() {
-        text.set(new Txt()
+        ((TextElmStyle)style).setText(new Txt()
             .cat(new Txt(" 🖍 ").lightGray())
             .cat(new Txt(Utils.formatAmount(shop.getMaxStock(), true, true)).color(RGB_STOCK_COLOR))
             .cat(" ")

@@ -16,10 +16,12 @@ import com.snek.framework.data_types.displays.CustomDisplay;
 import com.snek.framework.data_types.displays.CustomTextDisplay;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.ui.styles.PanelElmStyle;
+import com.snek.framework.ui.styles.TextElmStyle;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 
 
@@ -38,25 +40,23 @@ import net.minecraft.server.world.ServerWorld;
 
 
 public class PanelElm extends Elm {
+    private PanelElmStyle getStyle() { return (PanelElmStyle)style; }
 
     // Animations
     protected final @NotNull IndexedArrayDeque<Vector4i> colorQueue = new IndexedArrayDeque<>(); // The list of backgrounds to apply to this instance in the next ticks. 1 for each update tick
 
-    // Element data
-    public @NotNull Flagged<Vector4i> color;
 
 
 
 
-    protected PanelElm(@NotNull ServerWorld _world, @NotNull CustomDisplay _entity, @NotNull ElmStyle _defaultStyle) {
-        super(_world, _entity, _defaultStyle);
-        color = Flagged.from(((PanelElmStyle)defaultStyle).getColor());
+    protected PanelElm(@NotNull ServerWorld _world, @NotNull CustomDisplay _entity, @NotNull ElmStyle _style) {
+        super(_world, _entity, _style);
         ((CustomTextDisplay)entity).setText(new Txt("").get());
         flushStyle();
     }
 
-    protected PanelElm(@NotNull ServerWorld _world, @NotNull ElmStyle _defaultStyle) {
-        this(_world, new CustomTextDisplay(_world), _defaultStyle);
+    protected PanelElm(@NotNull ServerWorld _world, @NotNull ElmStyle _style) {
+        this(_world, new CustomTextDisplay(_world), _style);
     }
 
     public PanelElm(@NotNull ServerWorld _world){
@@ -74,7 +74,7 @@ public class PanelElm extends Elm {
     public void flushStyle() {
         super.flushStyle();
         CustomTextDisplay e2 = (CustomTextDisplay)entity;
-        if(color.isFlagged()) { e2.setBackground(color.get()); color.unflag(); }
+        { Flagged<Vector4i> f = getStyle().getFlaggedColor(); if(f.isFlagged()) { e2.setBackground(f.get()); f.unflag(); }}
     }
 
 
@@ -83,10 +83,10 @@ public class PanelElm extends Elm {
     @Override
     protected void __applyAnimationTransitionNow(@NotNull Transition transition) {
         if(transition instanceof TextAdditiveTransition t) {
-            color.set(t.getBackground());
+            getStyle().setColor(t.getBackground());
         }
         if(transition instanceof TextTargetTransition t) {
-            color.set(t.getBackground());
+            getStyle().setColor(t.getBackground());
         }
         super.__applyAnimationTransitionNow(transition);
     }
@@ -106,7 +106,7 @@ public class PanelElm extends Elm {
 
         if(step instanceof TextAnimationStep s) {
             // Calculate subclass step and get queued data
-            Vector4i bg = colorQueue.getOrAdd(index, () -> new Vector4i(color.get()));
+            Vector4i bg = colorQueue.getOrAdd(index, () -> new Vector4i(getStyle().getColor()));
 
             // Interpolate background and alpha
             bg.set(Utils.interpolateARGB(bg, s.background, step.factor));
@@ -122,7 +122,7 @@ public class PanelElm extends Elm {
 
     @Override
     public void spawn(Vector3d pos) {
-        if(defaultStyle.getDespawnAnimation() != null) applyAnimationNow(defaultStyle.getDespawnAnimation());
+        if(style.getDespawnAnimation() != null) applyAnimationNow(style.getDespawnAnimation());
         super.spawn(pos);
     }
 
@@ -135,7 +135,7 @@ public class PanelElm extends Elm {
 
     @Override
     public boolean tick(){
-        if(!colorQueue.isEmpty()) color.set(colorQueue.removeFirst());
+        if(!colorQueue.isEmpty()) getStyle().setColor(colorQueue.removeFirst());
         //! Update queue not checked as it depends exclusively on transform changes.
 
         return super.tick();

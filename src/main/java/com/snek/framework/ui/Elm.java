@@ -14,6 +14,8 @@ import com.snek.framework.data_types.animations.transitions.Transition;
 import com.snek.framework.data_types.containers.Flagged;
 import com.snek.framework.data_types.containers.IndexedArrayDeque;
 import com.snek.framework.data_types.displays.CustomDisplay;
+import com.snek.framework.data_types.ui.AlignmentX;
+import com.snek.framework.data_types.ui.AlignmentY;
 import com.snek.framework.ui.interfaces.Hoverable;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.utils.scheduler.Scheduler;
@@ -29,46 +31,49 @@ import net.minecraft.server.world.ServerWorld;
 
 
 
+
+
+
+
+
+
+
+
 /**
  * An abstract class that represents a UI Element.
  */
 public abstract class Elm {
 
-    // Animations
+    // Animation handling
     public    static final int TRANSITION_REFRESH_TIME = 2;                         // The time between transition updates. Measured in ticks
     private   static final @NotNull List<Elm> elmUpdateQueue = new ArrayList<>();   // The list of instances with pending transform updates
     protected        final @NotNull IndexedArrayDeque<Transform> transformQueue = new IndexedArrayDeque<>(); // The list of transforms to apply to this instance in the next ticks. 1 for each update tick
     private boolean isQueued = false;                                               // Whether this instance is queued for updates. Updated manually
 
-    // Element data
-    public @NotNull  Flagged<Transform>     transform;
-    public @NotNull  Flagged<Float>         viewRange;
-    public @NotNull  Flagged<BillboardMode> billboardMode;
 
     // Tree data
-    private @Nullable Canvas parent = null;                                    // The parent element
-    public void setParent(@Nullable Canvas _parent) { parent = _parent; };
-    // private @Nullable Elm parent = null;                                    // The parent element          //TODO
-    // private @NotNull  List<@NotNull Elm> children = new ArrayList<>();      // A list of child elements    //TODO
+    private @Nullable Canvas parent = null;
+    public void setParent(@Nullable Canvas _parent) { parent = _parent; }
+
 
     // In-world data
     protected @NotNull ServerWorld   world;     // The world this Elm will be spawned in
     protected @NotNull CustomDisplay entity;    // The display entity held by this element
-    protected @NotNull ElmStyle      defaultStyle;     // The style of the element
+    protected @NotNull ElmStyle      style;     // The style of the element
     protected boolean isSpawned = false;        // Whether the element has been spawned into the world
     private   boolean isHovered = false;        // Whether the element is being hovered on by a player's crosshair. //! Only valid in Hoverable instances
 
 
 
 
-    protected Elm(@NotNull ServerWorld _world, CustomDisplay _entity, @NotNull ElmStyle _defaultStyle) {
+
+
+
+
+    protected Elm(@NotNull ServerWorld _world, CustomDisplay _entity, @NotNull ElmStyle _style) {
         world  = _world;
         entity = _entity;
-        defaultStyle  = _defaultStyle;
-
-        transform     = Flagged.from(defaultStyle.getTransform());
-        viewRange     = Flagged.from(defaultStyle.getViewRange());
-        billboardMode = Flagged.from(defaultStyle.getBillboardMode());
+        style  = _style;
     }
 
 
@@ -79,9 +84,9 @@ public abstract class Elm {
      * This does not start an interpolation.
      */
     public void flushStyle() {
-        if(transform    .isFlagged()) { entity.setTransformation(transform.get().get()); transform    .unflag(); }
-        if(viewRange    .isFlagged()) { entity.setViewRange     (viewRange      .get()); viewRange    .unflag(); }
-        if(billboardMode.isFlagged()) { entity.setBillboardMode (billboardMode  .get()); billboardMode.unflag(); }
+        { Flagged<Transform>     f = style.getFlaggedTransform();     if(f.isFlagged()) { entity.setTransformation(f.get().get()); f.unflag(); }}
+        { Flagged<Float>         f = style.getFlaggedViewRange();     if(f.isFlagged()) { entity.setViewRange     (f.get()      ); f.unflag(); }}
+        { Flagged<BillboardMode> f = style.getFlaggedBillboardMode(); if(f.isFlagged()) { entity.setBillboardMode (f.get()      ); f.unflag(); }}
     }
 
 
@@ -127,7 +132,7 @@ public abstract class Elm {
 
 
     protected void __applyAnimationTransitionNow(@NotNull Transition transition) {
-        transform.set(transition.compute(transform.get()));
+        style.editTransform().set(transition.compute(style.getTransform()));
     }
 
 
@@ -178,7 +183,7 @@ public abstract class Elm {
 
 
         // Add remaining future transforms
-        Transform lastTransform = transformQueue.isEmpty() ? transform.get() : transformQueue.getLast();
+        Transform lastTransform = transformQueue.isEmpty() ? style.getTransform() : transformQueue.getLast();
         for(; i < animationSteps.size(); ++i) {
             transformQueue.add(lastTransform.clone());
             var step = animationSteps.get(i);
@@ -252,7 +257,7 @@ public abstract class Elm {
         entity.spawn(world, pos);
 
         // Handle animations
-        Animation animation = defaultStyle.getSpawnAnimation();
+        Animation animation = style.getSpawnAnimation();
         if(animation != null) {
             applyAnimation(animation);
         }
@@ -268,7 +273,7 @@ public abstract class Elm {
         isSpawned = false;
 
         // Handle animations
-        Animation animation = defaultStyle.getDespawnAnimation();
+        Animation animation = style.getDespawnAnimation();
         if(animation != null) {
             applyAnimation(animation);
 
@@ -300,7 +305,7 @@ public abstract class Elm {
      * @return true if no action is necessary. false if the element has been removed from the update queue.
      */
     public boolean tick() {
-        transform.set(transformQueue.removeFirst());
+        style.setTransform(transformQueue.removeFirst());
         flushStyle();
         entity.setInterpolationDuration(TRANSITION_REFRESH_TIME);
         entity.setStartInterpolation();
