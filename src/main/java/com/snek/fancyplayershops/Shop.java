@@ -14,6 +14,7 @@ import java.util.UUID;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Math;
 import org.joml.Vector3d;
 
 import com.google.gson.Gson;
@@ -62,6 +63,7 @@ import net.minecraft.world.World;
 
 // TODO fix broken shops and blocks if they don't exist in the world when the map is loaded
 public class Shop {
+    public  static final int CANVAS_ANIMATION_DELAY = 5;
     public  static final Text EMPTY_SHOP_NAME = new Txt("[Empty]").italic().lightGray().get();
     private static final Text SHOP_EMPTY_TEXT = new Txt("This shop is empty!").lightGray().get();
     private static final Text SHOP_STOCK_TEXT = new Txt("This shop has no items in stock!").lightGray().get();
@@ -332,9 +334,12 @@ public class Shop {
                 interactionBlocker.despawn();
                 interactionBlocker = null;
 
-                // Turn the CustomName back on and reset user
-                findItemDisplayEntityIfNeeded().leaveFocusState();
+                // Cancel chat input callbacks, then reset the user
+                if(user != null) ChatInput.removeCallback(user);
                 user = null;
+
+                // Turn the item display's custom name back on
+                findItemDisplayEntityIfNeeded().leaveFocusState();
             }
         }
     }
@@ -484,10 +489,10 @@ public class Shop {
      * @param canvas The new canvas.
      */
     public void changeCanvas(ShopCanvas canvas) {
-        activeCanvas.despawn();
+        if(activeCanvas != null) activeCanvas.despawn();
         activeCanvas = canvas;
 
-        Scheduler.schedule(5, () -> {
+        Scheduler.schedule(CANVAS_ANIMATION_DELAY, () -> {
             if(activeCanvas != null) activeCanvas.spawn(calcDisplayPos().add(0, 0.3d, 0));
         });
     }
@@ -501,6 +506,7 @@ public class Shop {
      */
     public void openEditUi(PlayerEntity player) {
         changeCanvas(new EditUiCanvas(this));
+        findItemDisplayEntityIfNeeded().enterEditState();
     }
 
 
@@ -529,5 +535,52 @@ public class Shop {
         if(!s.containsObjective(objectiveName)) s.addObjective(objectiveName, ScoreboardCriterion.DUMMY, new Txt(objectiveName).get(), RenderType.INTEGER);
         ScoreboardPlayerScore score = s.getPlayerScore(player.getName().getString(), s.getObjective(objectiveName));
         score.incrementScore((int)amount);
+    }
+
+
+
+
+    /**
+     * Tries to set a new price for the item and sends an error message to the user if it's invalid.
+     *     Prices are automatically rounded to the nearest hundredth.
+     *     Prices under 0.01 are rounded to 0.01
+     *     Prices under 0.00001 are rounded to 0.
+     *     Negative values are considered invalid and return false without changing the price.
+     * @param newPrice The new price
+     * @return Whether the new value could be set.
+     */
+    public boolean setPrice(float newPrice) {
+        System.out.println("Setting price " + newPrice); //TODO REMOVE
+        if(newPrice < 0) {
+            if(user != null) user.sendMessage(new Txt("The price cannot be negative").red().get(), true);
+            return false;
+        }
+        else if(newPrice < 0.00001) price = 0;
+        else if(newPrice < 0.01000) price = 0.01;
+        else price = Math.round(newPrice * 100f) / 100f;
+        saveShop();
+        return true;
+    }
+
+
+
+
+    /**
+     * Tries to set a new stock limit for the item and sends an error message to the user if it's invalid.
+     *     Amounts are rounded to the nearest integer.
+     *     Negative values and 0 are considered invalid and return false without changing the stock limit.
+     *     Values that are higher than the shop's storage capacity are also considered invalid. //TODO implement shop tiers
+     * @param newStockLimit The new stock limit.
+     * @return Whether the new value could be set.
+     */
+    public boolean setStockLimit(float newStockLimit) {
+        System.out.println("Setting stock " + newStockLimit); //TODO REMOVE
+        if(newStockLimit < 0.9999) {
+            if(user != null) user.sendMessage(new Txt("The stock limit must be at least 1").red().get(), true);
+            return false;
+        }
+        else maxStock = Math.round(newStockLimit);
+        saveShop();
+        return true;
     }
 }

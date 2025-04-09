@@ -298,7 +298,6 @@ public abstract class Elm {
      * @return true if no action is necessary. false if the element has been removed from the update queue.
      */
     public boolean tick() {
-        // if(!transformQueue.isEmpty()) transform.set(transformQueue.removeFirst());
         transform.set(transformQueue.removeFirst());
         flushStyle();
         entity.setInterpolationDuration(TRANSITION_REFRESH_TIME);
@@ -350,11 +349,9 @@ public abstract class Elm {
             // Calculate next hover status
             if(player == null) {
                 hoverStatusNext = false;
-                // System.out.println("NULL player");
             }
             else {
                 hoverStatusNext = checkIntersection(player);
-                // System.out.println("VALID player, set to " + hoverStatusNext);
             }
 
 
@@ -362,11 +359,9 @@ public abstract class Elm {
             if(isHovered != hoverStatusNext) {
                 isHovered = hoverStatusNext;
                 if(isHovered) {
-                    // System.out.println("new status: on");
                     h.onHoverEnter();
                 }
                 else {
-                    // System.out.println("new status: off");
                     h.onHoverExit();
                 }
             }

@@ -37,7 +37,7 @@ public class TextElmStyle extends ElmStyle {
         // Set values
         super();
         alignment   = TextAlignment.CENTER;
-        background  = new Vector4i(200, 20, 20, 20);
+        background  = new Vector4i(230, 37, 40, 40);
         text        = new Txt("").get();
         textOpacity = 255;
 

@@ -2,6 +2,7 @@ package com.snek.fancyplayershops.implementations.ui;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 import com.snek.fancyplayershops.Shop;
 import com.snek.framework.data_types.animations.Animation;
@@ -39,8 +40,12 @@ public class ShopItemDisplay extends ItemElm {
     private @Nullable TaskHandler nameToggleHandler = null;
 
 
-    public static final int L_TIME = 32;
-    public static final float L_ROT = (float)Math.toRadians(120);
+    public static final int      LOOP_TIME   = 32;
+    public static final float    LOOP_ROT    = (float)Math.toRadians(120);
+
+    public static final Vector3f EDIT_SCALE  = new Vector3f(0.5f);
+    public static final Vector3f EDIT_MOVE   = new Vector3f(-0.25f, 0.25f, 0).mul(1f - 0.5f);
+    public static final Vector3f EDIT_MOVE_2 = new Vector3f(-0.1f, 0, 0);
 
 
 
@@ -49,6 +54,9 @@ public class ShopItemDisplay extends ItemElm {
     private final @NotNull Animation focusAnimation;
     private final @NotNull Animation unfocusAnimation;
     private final @NotNull Animation loopAnimation;
+
+    private final @NotNull Animation enterEditAnimation;
+    //! leaveEditAnimation not needed as the unfocus animation uses a target transform
 
 
 
@@ -62,7 +70,7 @@ public class ShopItemDisplay extends ItemElm {
 
         // Setup spawn and despawn animations animation
         focusAnimation = new Animation(new AdditiveTransition(
-            new Transform().moveY(ElmStyle.S_HEIGHT).scale(ElmStyle.S_SCALE).rotY(L_ROT / 2),
+            new Transform().moveY(ElmStyle.S_HEIGHT).scale(ElmStyle.S_SCALE).rotY(LOOP_ROT / 2),
             ElmStyle.S_TIME,
             Easings.sineOut
         ));
@@ -75,9 +83,26 @@ public class ShopItemDisplay extends ItemElm {
 
         // Setup loop animation
         loopAnimation = new Animation(
-            new AdditiveTransition(new Transform().rotY(L_ROT), L_TIME, Easings.linear)
+            new AdditiveTransition(new Transform().rotY(LOOP_ROT), LOOP_TIME, Easings.linear)
+        );
+
+
+        // Setup edit animiations
+        enterEditAnimation = new Animation(
+            new AdditiveTransition(
+                new Transform().scale(EDIT_SCALE).move(EDIT_MOVE).rotY(LOOP_ROT / 2),
+                Shop.CANVAS_ANIMATION_DELAY,
+                Easings.sineOut
+            ),
+            new AdditiveTransition(
+                new Transform().move(EDIT_MOVE_2),
+                ElmStyle.S_TIME,
+                Easings.sineOut
+            )
         );
     }
+
+
 
 
     public ShopItemDisplay(@NotNull Shop _targetShop, @NotNull ItemDisplayEntity _rawDisplay) {
@@ -135,5 +160,20 @@ public class ShopItemDisplay extends ItemElm {
 
         // Show custom name after animations end
         nameToggleHandler = Scheduler.schedule(unfocusAnimation.getTotalDuration(), () -> entity.setCustomNameVisible(true));
+    }
+
+
+
+
+    public void enterEditState(){
+        applyAnimation(enterEditAnimation);
+    }
+
+
+
+
+    public void leaveEditState(){
+        // Empty
+        //! leaveEditAnimation not needed as the unfocus animation uses a target transform
     }
 }

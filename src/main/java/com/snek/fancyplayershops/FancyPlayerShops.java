@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -124,6 +125,14 @@ public class FancyPlayerShops implements ModInitializer {
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
             TrackedTextElm.onEntityLoad(entity);
             InteractionBlocker.onEntityLoad(entity);
+        });
+
+
+
+
+        // Register chat input handler
+        ServerMessageEvents.ALLOW_CHAT_MESSAGE.register((message, sender, params) -> {
+            return !ChatInput.onMessage(message, sender);
         });
     }
 

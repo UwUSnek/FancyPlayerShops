@@ -15,7 +15,6 @@ import com.snek.framework.utils.Easings;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ClickType;
 
-import com.snek.framework.ui.TextElm;
 import com.snek.framework.ui.styles.TextElmStyle;
 
 
@@ -26,7 +25,7 @@ import com.snek.framework.ui.styles.TextElmStyle;
 
 
 public class ShopButton extends TrackedTextElm implements Hoverable, Clickable {
-    public static final Vector4i BG_HOVER = new Vector4i(200, 128, 128, 128);
+    public static final Vector4i BG_HOVER = new Vector4i(240, 95, 100, 100);
 
     protected final @NotNull Shop shop;
 
