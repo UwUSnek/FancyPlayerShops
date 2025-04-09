@@ -413,7 +413,7 @@ public class Shop {
                     "Someone else is already using this shop! Left click to " +
                     (player.getUuid().equals(ownerUUID) ? "retrieve" : "buy") +
                     " one item."
-                ).gray().get(), true);
+                ).lightGray().get(), true);
             }
             else {
                 if(player.getUuid().equals(ownerUUID)) {
@@ -518,7 +518,7 @@ public class Shop {
      */
     public void openBuyUi(PlayerEntity player) {
         if(item.getItem() == Items.AIR) {
-            player.sendMessage(SHOP_EMPTY_TEXT);
+            player.sendMessage(SHOP_EMPTY_TEXT, true);
         }
         //TODO actually open the UI
     }

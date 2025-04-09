@@ -8,6 +8,8 @@ import com.snek.fancyplayershops.ChatInput;
 import com.snek.fancyplayershops.Shop;
 import com.snek.fancyplayershops.implementations.ui.ShopButton;
 import com.snek.fancyplayershops.implementations.ui.details.DetailsUiDisplay;
+import com.snek.framework.generated.FontSize;
+import com.snek.framework.ui.TextElm;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
 
@@ -33,7 +35,11 @@ public class EditUiMaxStockButton extends ShopButton {
 
 
     public void updateDisplay() {
-        text.set(new Txt(" 🖍 Stock limit: ").cat(new Txt(Utils.formatAmount(shop.getMaxStock())).color(RGB_STOCK_COLOR)).cat(" ").get());
+        text.set(new Txt()
+            .cat(new Txt(" 🖍 ").lightGray())
+            .cat(new Txt(Utils.formatAmount(shop.getMaxStock(), true, true)).color(RGB_STOCK_COLOR))
+            .cat(" ")
+        .get());
         flushStyle();
     }
 
@@ -74,6 +80,6 @@ public class EditUiMaxStockButton extends ShopButton {
 
     @Override
     public void spawn(Vector3d pos) {
-        super.spawn(new Vector3d(pos).add(0, 0.0, 0));
+        super.spawn(new Vector3d(pos).add(0, 0.05, 0)); //TODO replace with calcLineHeight()
     }
 }

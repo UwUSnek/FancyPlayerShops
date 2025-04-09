@@ -45,7 +45,7 @@ public class ShopItemDisplay extends ItemElm {
 
     public static final Vector3f EDIT_SCALE  = new Vector3f(0.5f);
     public static final Vector3f EDIT_MOVE   = new Vector3f(-0.25f, 0.25f, 0).mul(1f - 0.5f);
-    public static final Vector3f EDIT_MOVE_2 = new Vector3f(-0.1f, 0, 0);
+    public static final Vector3f EDIT_MOVE_2 = new Vector3f(-0.2f, 0, 0);
 
 
 

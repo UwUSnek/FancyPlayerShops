@@ -72,7 +72,9 @@ public abstract class FontWidthGenerator {
                     public static int getWidth(String s) {
                         int r = 0;
                         for(int i = 0; i < s.length(); ++i) {
-                            r += widths.get(s.charAt(i));
+                            final char c = s.charAt(i);
+                            if(c >= 256) r += 9;
+                            else r += widths.get(c);
                         }
                         return r;
                     }

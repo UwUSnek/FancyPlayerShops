@@ -171,7 +171,7 @@ public class TextElm extends Elm {
         if(lineNum == 0) return 0;
 
         // Calculate their height and return it
-        return ((lineNum == 1 ? 0 : lineNum - 1) * 2 + lineNum * (float)FontSize.getHeight()) / TEXT_PIXEL_BLOCK_RATIO * transform.get().getScale().y;
+        return ((lineNum == 1 ? 0 : lineNum - 1) * 2 + lineNum * FontSize.getHeight()) / TEXT_PIXEL_BLOCK_RATIO * transform.get().getScale().y;
     }
 
 
