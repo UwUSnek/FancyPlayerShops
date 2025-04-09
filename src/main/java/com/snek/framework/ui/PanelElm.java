@@ -48,15 +48,15 @@ public class PanelElm extends Elm {
 
 
 
-    protected PanelElm(@NotNull ServerWorld _world, @NotNull CustomDisplay _entity, @NotNull ElmStyle _style) {
-        super(_world, _entity, _style);
-        color = Flagged.from(((PanelElmStyle)style).getColor());
+    protected PanelElm(@NotNull ServerWorld _world, @NotNull CustomDisplay _entity, @NotNull ElmStyle _defaultStyle) {
+        super(_world, _entity, _defaultStyle);
+        color = Flagged.from(((PanelElmStyle)defaultStyle).getColor());
         ((CustomTextDisplay)entity).setText(new Txt("").get());
         flushStyle();
     }
 
-    protected PanelElm(@NotNull ServerWorld _world, @NotNull ElmStyle _style) {
-        this(_world, new CustomTextDisplay(_world), _style);
+    protected PanelElm(@NotNull ServerWorld _world, @NotNull ElmStyle _defaultStyle) {
+        this(_world, new CustomTextDisplay(_world), _defaultStyle);
     }
 
     public PanelElm(@NotNull ServerWorld _world){
@@ -122,7 +122,7 @@ public class PanelElm extends Elm {
 
     @Override
     public void spawn(Vector3d pos) {
-        if(style.getDespawnAnimation() != null) applyAnimationNow(style.getDespawnAnimation());
+        if(defaultStyle.getDespawnAnimation() != null) applyAnimationNow(defaultStyle.getDespawnAnimation());
         super.spawn(pos);
     }
 

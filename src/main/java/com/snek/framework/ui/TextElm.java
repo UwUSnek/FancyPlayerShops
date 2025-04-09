@@ -51,16 +51,16 @@ public class TextElm extends Elm {
 
 
 
-    protected TextElm(@NotNull ServerWorld _world, @NotNull CustomDisplay _entity, @NotNull ElmStyle _style) {
-        super(_world, _entity, _style);
+    protected TextElm(@NotNull ServerWorld _world, @NotNull CustomDisplay _entity, @NotNull ElmStyle _defaultStyle) {
+        super(_world, _entity, _defaultStyle);
 
-        text        = Flagged.from(((TextElmStyle)style).getText());
-        textOpacity = Flagged.from(((TextElmStyle)style).getTextOpacity());
-        background  = Flagged.from(((TextElmStyle)style).getBackground());
+        text        = Flagged.from(((TextElmStyle)defaultStyle).getText());
+        textOpacity = Flagged.from(((TextElmStyle)defaultStyle).getTextOpacity());
+        background  = Flagged.from(((TextElmStyle)defaultStyle).getBackground());
     }
 
-    protected TextElm(@NotNull ServerWorld _world, @NotNull ElmStyle _style) {
-        this(_world, new CustomTextDisplay(_world), _style);
+    protected TextElm(@NotNull ServerWorld _world, @NotNull ElmStyle _defaultStyle) {
+        this(_world, new CustomTextDisplay(_world), _defaultStyle);
     }
 
     public TextElm(@NotNull ServerWorld _world){
@@ -132,7 +132,7 @@ public class TextElm extends Elm {
 
     @Override
     public void spawn(Vector3d pos) {
-        if(style.getDespawnAnimation() != null) applyAnimationNow(style.getDespawnAnimation());
+        if(defaultStyle.getDespawnAnimation() != null) applyAnimationNow(defaultStyle.getDespawnAnimation());
         super.spawn(pos);
     }
 

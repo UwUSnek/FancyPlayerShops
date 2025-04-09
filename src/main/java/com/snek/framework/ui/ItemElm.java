@@ -28,18 +28,18 @@ public class ItemElm extends Elm {
 
 
 
-    protected ItemElm(@NotNull ServerWorld _world, @NotNull CustomDisplay _entity, @NotNull ElmStyle _style) {
-        super(_world, _entity, _style);
+    protected ItemElm(@NotNull ServerWorld _world, @NotNull CustomDisplay _entity, @NotNull ElmStyle _defaultStyle) {
+        super(_world, _entity, _defaultStyle);
 
-        item = Flagged.from(((ItemElmStyle)style).getItem());
+        item = Flagged.from(((ItemElmStyle)defaultStyle).getItem());
     }
 
     public ItemElm(@NotNull ServerWorld _world){
         this(_world, new CustomTextDisplay(_world), new ItemElmStyle());
     }
 
-    protected ItemElm(@NotNull ServerWorld _world, @NotNull ElmStyle _style) {
-        this(_world, new CustomItemDisplay(_world), _style);
+    protected ItemElm(@NotNull ServerWorld _world, @NotNull ElmStyle _defaultStyle) {
+        this(_world, new CustomItemDisplay(_world), _defaultStyle);
     }
 
 

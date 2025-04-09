@@ -54,21 +54,21 @@ public abstract class Elm {
     // In-world data
     protected @NotNull ServerWorld   world;     // The world this Elm will be spawned in
     protected @NotNull CustomDisplay entity;    // The display entity held by this element
-    protected @NotNull ElmStyle      style;     // The style of the element
+    protected @NotNull ElmStyle      defaultStyle;     // The style of the element
     protected boolean isSpawned = false;        // Whether the element has been spawned into the world
     private   boolean isHovered = false;        // Whether the element is being hovered on by a player's crosshair. //! Only valid in Hoverable instances
 
 
 
 
-    protected Elm(@NotNull ServerWorld _world, CustomDisplay _entity, @NotNull ElmStyle _style) {
+    protected Elm(@NotNull ServerWorld _world, CustomDisplay _entity, @NotNull ElmStyle _defaultStyle) {
         world  = _world;
         entity = _entity;
-        style  = _style;
+        defaultStyle  = _defaultStyle;
 
-        transform     = Flagged.from(style.getTransform());
-        viewRange     = Flagged.from(style.getViewRange());
-        billboardMode = Flagged.from(style.getBillboardMode());
+        transform     = Flagged.from(defaultStyle.getTransform());
+        viewRange     = Flagged.from(defaultStyle.getViewRange());
+        billboardMode = Flagged.from(defaultStyle.getBillboardMode());
     }
 
 
@@ -252,7 +252,7 @@ public abstract class Elm {
         entity.spawn(world, pos);
 
         // Handle animations
-        Animation animation = style.getSpawnAnimation();
+        Animation animation = defaultStyle.getSpawnAnimation();
         if(animation != null) {
             applyAnimation(animation);
         }
@@ -268,7 +268,7 @@ public abstract class Elm {
         isSpawned = false;
 
         // Handle animations
-        Animation animation = style.getDespawnAnimation();
+        Animation animation = defaultStyle.getDespawnAnimation();
         if(animation != null) {
             applyAnimation(animation);
 
