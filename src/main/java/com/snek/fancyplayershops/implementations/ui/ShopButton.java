@@ -34,6 +34,8 @@ public class ShopButton extends TrackedTextElm implements Hoverable, Clickable {
 
     public ShopButton(@NotNull Shop _shop) {
         super(_shop.getWorld());
+        transform.edit().moveY(ShopTextElm.SHIFT_Y);
+        flushStyle();
         shop = _shop;
     }
 

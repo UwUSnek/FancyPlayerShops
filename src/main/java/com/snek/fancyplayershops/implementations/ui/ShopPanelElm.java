@@ -29,7 +29,7 @@ public class ShopPanelElm extends PanelElm {
     protected ShopPanelElm(@NotNull Shop _shop) {
         super(_shop.getWorld());
         shop = _shop;
-        transform.edit().moveZ(-0.5f + 0.0001f);
+        transform.edit().moveZ(-0.0001f);
         flushStyle();
     }
 

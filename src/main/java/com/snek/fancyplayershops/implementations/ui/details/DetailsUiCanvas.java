@@ -15,5 +15,6 @@ public class DetailsUiCanvas extends ShopCanvas {
     public DetailsUiCanvas(Shop shop){
         super();
         addChild(new DetailsUiDisplay(shop));
+        addChild(new DetailsUiBackground(shop));
     }
 }

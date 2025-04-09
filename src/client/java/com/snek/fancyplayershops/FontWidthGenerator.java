@@ -91,7 +91,7 @@ public abstract class FontWidthGenerator {
                      * This does NOT include the space between lines.
                      */
                     public static int getHeight() {
-                        return 8;
+                        return 6;
                     }
                 """
             );

@@ -285,6 +285,6 @@ public final class FontSize{
      * Returns the height a line would have when rendered.
      */
     public static int getHeight() {
-        return 8;
+        return 6;
     }
 }
