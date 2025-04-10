@@ -23,6 +23,7 @@ import com.snek.framework.utils.scheduler.Scheduler;
 import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.AffineTransformation;
 
 
 
@@ -40,9 +41,9 @@ import net.minecraft.server.world.ServerWorld;
 
 
 /**
- * An abstract class that represents a UI Element.
+ * An abstract class that represents a visible UI Element.
  */
-public abstract class Elm {
+public abstract class Elm extends Div {
 
     // Animation handling
     public    static final int TRANSITION_REFRESH_TIME = 2;                         // The time between transition updates. Measured in ticks
@@ -51,15 +52,10 @@ public abstract class Elm {
     private boolean isQueued = false;                                               // Whether this instance is queued for updates. Updated manually
 
 
-    // Tree data
-    private @Nullable Canvas parent = null;
-    public void setParent(@Nullable Canvas _parent) { parent = _parent; }
-
-
     // In-world data
     protected @NotNull ServerWorld   world;     // The world this Elm will be spawned in
     protected @NotNull CustomDisplay entity;    // The display entity held by this element
-    protected @NotNull ElmStyle      style;     // The style of the element
+    public    @NotNull ElmStyle      style;     // The style of the element
     protected boolean isSpawned = false;        // Whether the element has been spawned into the world
     private   boolean isHovered = false;        // Whether the element is being hovered on by a player's crosshair. //! Only valid in Hoverable instances
 
@@ -84,10 +80,44 @@ public abstract class Elm {
      * This does not start an interpolation.
      */
     public void flushStyle() {
-        { Flagged<Transform>     f = style.getFlaggedTransform();     if(f.isFlagged()) { entity.setTransformation(f.get().get()); f.unflag(); }}
-        { Flagged<Float>         f = style.getFlaggedViewRange();     if(f.isFlagged()) { entity.setViewRange     (f.get()      ); f.unflag(); }}
-        { Flagged<BillboardMode> f = style.getFlaggedBillboardMode(); if(f.isFlagged()) { entity.setBillboardMode (f.get()      ); f.unflag(); }}
+        //FIXME use flagged values for basic alignment, position and size
+        /**/{ Flagged<Transform>     f = style.getFlaggedTransform();     if(true         ) { entity.setTransformation(__calcTransform()); f.unflag(); }}
+        //  { Flagged<Transform>     f = style.getFlaggedTransform();     if(f.isFlagged()) { entity.setTransformation(__calcTransform()); f.unflag(); }}
+
+        { Flagged<Float>         f = style.getFlaggedViewRange();     if(f.isFlagged()) { entity.setViewRange     (f.get()          ); f.unflag(); }}
+        { Flagged<BillboardMode> f = style.getFlaggedBillboardMode(); if(f.isFlagged()) { entity.setBillboardMode (f.get()          ); f.unflag(); }}
     }
+
+
+    /**
+     * Calculates the final transform to apply to the entity.
+     * This takes into account the element's position, alignment options and visual transform.
+     * @return The transform.
+     */
+    private AffineTransformation __calcTransform() {
+        // Transform vt = style.getTransform();
+        // Transform t = new Transform();
+
+        // // Calculate left rotation
+        // t.rot(vt.getLrot());
+
+        // // Calculate translation
+        // t.moveX(getPos().x).moveY(getPos().y);
+        // t.move(vt.getPos());
+
+        // // Calculate scale
+        // t.scaleX(getSize().x).scaleY(getSize().y);
+        // t.scale(vt.getScale());
+
+        // // Calculate right rotation
+        // t.rot(vt.getRrot());
+
+        // // Return resulting transform
+        // return t.get();
+        return style.getTransform().clone().moveX(getPos().x).moveY(getPos().y).get();
+    }
+
+
 
 
 

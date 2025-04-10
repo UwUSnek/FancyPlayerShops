@@ -27,7 +27,6 @@ public class EditUiMaxStockButton extends ShopButton {
 
     public EditUiMaxStockButton(@NotNull Shop _shop) {
         super(_shop);
-        style.editTransform().moveY(0.05f);
         updateDisplay();
     }
 

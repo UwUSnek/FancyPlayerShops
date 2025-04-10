@@ -87,8 +87,8 @@ public class TextElmStyle extends ElmStyle {
     public          int           getTextOpacity  () { return textOpacity  .get(); }
 
 
-    public @NotNull Vector4i      editBackground    () { return background   .edit(); }
-    public @NotNull Text          editText          () { return text         .edit(); }
-    //!                           editTextAlignment Primitive types cannot be edited
-    //!                           editTextOpacity   Primitive types cannot be edited
+    public @NotNull Vector4i editBackground    () { return background   .edit(); }
+    public @NotNull Text     editText          () { return text         .edit(); }
+    //!                      editTextAlignment Primitive types cannot be edited
+    //!                      editTextOpacity   Primitive types cannot be edited
 }

@@ -38,7 +38,9 @@ import net.minecraft.server.world.ServerWorld;
 
 
 
-
+/**
+ * A simple UI element with a background color and animations.
+ */
 public class PanelElm extends Elm {
     private PanelElmStyle getStyle() { return (PanelElmStyle)style; }
 

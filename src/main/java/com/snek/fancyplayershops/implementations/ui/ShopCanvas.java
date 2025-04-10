@@ -9,7 +9,7 @@ import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.animations.Transform;
 import com.snek.framework.data_types.animations.transitions.AdditiveTransition;
 import com.snek.framework.data_types.animations.transitions.TextAdditiveTransition;
-import com.snek.framework.ui.Canvas;
+import com.snek.framework.ui.Div;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.utils.Easings;
 
@@ -19,7 +19,7 @@ import com.snek.framework.utils.Easings;
 
 
 
-public class ShopCanvas extends Canvas {
+public class ShopCanvas extends Div {
 
     // Animation data //! Calculate translation from rotation
     public static final float    ANIMATION_ROT_Y    = (float)Math.toRadians(5);

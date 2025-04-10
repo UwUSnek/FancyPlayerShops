@@ -23,8 +23,8 @@ import com.mojang.serialization.JsonOps;
 import com.snek.fancyplayershops.implementations.ui.InteractionBlocker;
 import com.snek.fancyplayershops.implementations.ui.ShopCanvas;
 import com.snek.fancyplayershops.implementations.ui.ShopItemDisplay;
-import com.snek.fancyplayershops.implementations.ui.details.DetailsUiCanvas;
-import com.snek.fancyplayershops.implementations.ui.edit.EditUiCanvas;
+import com.snek.fancyplayershops.implementations.ui.details.DetailsUi;
+import com.snek.fancyplayershops.implementations.ui.edit.EditUi;
 import com.snek.framework.utils.MinecraftUtils;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
@@ -311,7 +311,7 @@ public class Shop {
 
                 // Create details canvas
                 if(activeCanvas != null) activeCanvas.despawnNow();
-                activeCanvas = new DetailsUiCanvas(this);
+                activeCanvas = new DetailsUi(this);
                 activeCanvas.menuAnimationInitial = null;
                 activeCanvas.menuAnimationIn = null;
                 activeCanvas.spawn(calcDisplayPos());
@@ -505,7 +505,7 @@ public class Shop {
      * @param player The player.
      */
     public void openEditUi(PlayerEntity player) {
-        changeCanvas(new EditUiCanvas(this));
+        changeCanvas(new EditUi(this));
         findItemDisplayEntityIfNeeded().enterEditState();
     }
 

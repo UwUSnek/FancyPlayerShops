@@ -20,7 +20,6 @@ public class EditUiPriceButton extends ShopButton {
 
     public EditUiPriceButton(@NotNull Shop _shop) {
         super(_shop);
-        style.editTransform().moveY(calcHeight() * 1.6f * 1f + 0.05f);
         updateDisplay();
     }
 

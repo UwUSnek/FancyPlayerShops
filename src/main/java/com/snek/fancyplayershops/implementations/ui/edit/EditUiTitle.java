@@ -21,7 +21,6 @@ public class EditUiTitle extends ShopTextElm {
 
     public EditUiTitle(@NotNull Shop _shop) {
         super(_shop);
-        style.editTransform().moveY(calcHeight() * 1.6f * 2f + 0.05f);
         updateDisplay();
     }
 
