@@ -26,7 +26,7 @@ public class EditUiMaxStockButton extends ShopButton {
     private static Vector3i RGB_STOCK_COLOR = Utils.HSVtoRGB(DetailsUiDisplay.C_HSV_STOCK_HIGH);
 
     public EditUiMaxStockButton(@NotNull Shop _shop) {
-        super(_shop);
+        super(_shop, 0.5f, 0.1f);
         updateDisplay();
     }
 

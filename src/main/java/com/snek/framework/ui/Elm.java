@@ -70,13 +70,18 @@ public abstract class Elm extends Div {
     // @Override public void scaleX  (         float      x    ) { super.scaleX  (x    ); style.editTransform(); }
     // @Override public void scaleY  (         float      y    ) { super.scaleY  (y    ); style.editTransform(); }
 
-    @Override public void setPos  (@NotNull Vector2f   _pos ) { super.setPos  (_pos ); style.editTransform(); }
-    @Override public void setPosX (         float      x    ) { super.setPosX (x    ); style.editTransform(); }
-    @Override public void setPosY (         float      y    ) { super.setPosY (y    ); style.editTransform(); }
-    @Override public void move    (@NotNull Vector2f   _pos ) { super.move    (_pos ); style.editTransform(); }
-    @Override public void moveX   (         float      x    ) { super.moveX   (x    ); style.editTransform(); }
-    @Override public void moveY   (         float      y    ) { super.moveY   (y    ); style.editTransform(); }
+    // @Override public void setPos  (@NotNull Vector2f   _pos ) { super.setPos  (_pos ); style.editTransform(); }
+    // @Override public void setPosX (         float      x    ) { super.setPosX (x    ); style.editTransform(); }
+    // @Override public void setPosY (         float      y    ) { super.setPosY (y    ); style.editTransform(); }
+    // @Override public void move    (@NotNull Vector2f   _pos ) { super.move    (_pos ); style.editTransform(); }
+    // @Override public void moveX   (         float      x    ) { super.moveX   (x    ); style.editTransform(); }
+    // @Override public void moveY   (         float      y    ) { super.moveY   (y    ); style.editTransform(); }
 
+    @Override
+    protected void updateAbsPos() {
+        super.updateAbsPos();
+        style.editTransform();
+    }
 
 
 

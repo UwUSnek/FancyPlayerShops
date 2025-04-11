@@ -20,7 +20,7 @@ import net.minecraft.item.Items;
 public class EditUiTitle extends ShopTextElm {
 
     public EditUiTitle(@NotNull Shop _shop) {
-        super(_shop);
+        super(_shop, 0.5f, 0.1f);
         updateDisplay();
     }
 

@@ -550,7 +550,6 @@ public class Shop {
      * @return Whether the new value could be set.
      */
     public boolean setPrice(float newPrice) {
-        System.out.println("Setting price " + newPrice); //TODO REMOVE
         if(newPrice < 0) {
             if(user != null) user.sendMessage(new Txt("The price cannot be negative").red().get(), true);
             return false;
@@ -574,7 +573,6 @@ public class Shop {
      * @return Whether the new value could be set.
      */
     public boolean setStockLimit(float newStockLimit) {
-        System.out.println("Setting stock " + newStockLimit); //TODO REMOVE
         if(newStockLimit < 0.9999) {
             if(user != null) user.sendMessage(new Txt("The stock limit must be at least 1").red().get(), true);
             return false;

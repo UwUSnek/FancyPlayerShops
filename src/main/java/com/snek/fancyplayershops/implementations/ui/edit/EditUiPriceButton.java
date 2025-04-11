@@ -19,7 +19,7 @@ import net.minecraft.util.ClickType;
 public class EditUiPriceButton extends ShopButton {
 
     public EditUiPriceButton(@NotNull Shop _shop) {
-        super(_shop);
+        super(_shop, 0.5f, 0.1f);
         updateDisplay();
     }
 

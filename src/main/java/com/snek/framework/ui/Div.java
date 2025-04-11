@@ -217,45 +217,46 @@ public class Div {
 
 
 
-    // protected void updateAbsSize() {
-    //     // size.set(parent == null ? localSize : new Vector2f(localSize).mul(parent.getSize()));
-    //     //TODO check if an "absolute size" is needed. remove this function if not
-    // }
+    protected void updateAbsSize() {
+        absSize.set(localSize);
+        // size.set(parent == null ? localSize : new Vector2f(localSize).mul(parent.getSize()));
+        //TODO check if an "absolute size" is needed. remove this function if not
+    }
 
     public void setSize(@NotNull Vector2f _size) {
         localSize.set(_size);
-        for (Div c : children) c.setSize(_size);
-        // updateAbsSize();
+        // for (Div c : children) c.setSize(_size);
+        updateAbsSize();
     }
 
     public void setSizeX(float x) {
         localSize.x = x;
-        for (Div c : children) c.setSizeX(x);
-        // updateAbsSize();
+        // for (Div c : children) c.setSizeX(x);
+        updateAbsSize();
     }
 
     public void setSizeY(float y) {
         localSize.y = y;
-        for (Div c : children) c.setSizeY(y);
-        // updateAbsSize();
+        // for (Div c : children) c.setSizeY(y);
+        updateAbsSize();
     }
 
     public void scale(@NotNull Vector2f _size) {
         localSize.mul(_size);
-        for (Div c : children) c.scale(_size);
-        // updateAbsSize();
+        // for (Div c : children) c.scale(_size);
+        updateAbsSize();
     }
 
     public void scaleX(float x) {
         localSize.x *= x;
-        for (Div c : children) c.scaleX(x);
-        // updateAbsSize();
+        // for (Div c : children) c.scaleX(x);
+        updateAbsSize();
     }
 
     public void scaleY(float y) {
         localSize.y *= y;
-        for (Div c : children) c.scaleY(y);
-        // updateAbsSize();
+        // for (Div c : children) c.scaleY(y);
+        updateAbsSize();
     }
 
 

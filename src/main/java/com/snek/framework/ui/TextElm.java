@@ -222,6 +222,7 @@ public class TextElm extends Elm {
         //     calcWidth(),
         //     calcHeight()
         // );
+        System.out.println("Size: " + getAbsSize().toString());
 
 
         // Calculate corner X position relative to the origin using the entity's local coordinate system

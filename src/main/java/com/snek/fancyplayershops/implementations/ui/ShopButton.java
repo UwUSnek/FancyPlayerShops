@@ -4,6 +4,7 @@ import com.snek.framework.ui.interfaces.Clickable;
 import com.snek.framework.ui.interfaces.Hoverable;
 
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector2f;
 import org.joml.Vector4i;
 
 import com.snek.fancyplayershops.Shop;
@@ -32,9 +33,10 @@ public class ShopButton extends TrackedTextElm implements Hoverable, Clickable {
 
 
 
-    public ShopButton(@NotNull Shop _shop) {
+    public ShopButton(@NotNull Shop _shop, float w, float h) {
         super(_shop.getWorld());
         shop = _shop;
+        setSize(new Vector2f(w, h));
     }
 
 
