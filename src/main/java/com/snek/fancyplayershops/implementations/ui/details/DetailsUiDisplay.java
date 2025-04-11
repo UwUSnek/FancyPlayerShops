@@ -48,7 +48,7 @@ public class DetailsUiDisplay extends ShopTextElm {
         // Empty shop case
         final ItemStack _item = shop.getItem();
         if(_item.getItem() == Items.AIR) {
-            ((TextElmStyle)style).setText(new Txt(" ")
+            ((TextElmStyle)text.style).setText(new Txt(" ")
             .cat(Shop.EMPTY_SHOP_NAME).cat(" ")
             .cat(new Txt("\n Price: -")).cat(" ")
             .cat(new Txt("\n Stock: -")).cat(" ")
@@ -58,7 +58,7 @@ public class DetailsUiDisplay extends ShopTextElm {
         // Configured shop case
         else {
             double price = shop.getPrice();
-            ((TextElmStyle)style).setText(new Txt()
+            ((TextElmStyle)text.style).setText(new Txt()
                 .cat(new Txt(MinecraftUtils.getItemName(_item)).get()).cat(" ")
                 .cat(new Txt("\n Price: ")).cat(new Txt(price < 0.005 ? "Free" : Utils.formatPrice(price)).bold().color(C_RGB_PRICE)).cat(" ")
                 .cat(new Txt("\n Stock: ")).cat(new Txt(Utils.formatAmount(shop.getStock())).bold().color(col)).cat(" ")

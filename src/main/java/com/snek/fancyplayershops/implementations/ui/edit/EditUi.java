@@ -18,19 +18,19 @@ public class EditUi extends ShopCanvas {
 
     public EditUi(Shop _shop){
         super();
+
         Div bg;
         Div e;
 
         bg = addChild(new EditUiBackground(_shop));
 
         e = bg.addChild(new EditUiTitle(_shop));
-        e.moveY(0.6f + 0.05f + ((TextElm)e).calcHeight() * 1.6f * 2f);
+        e.moveY(0.6f + 0.05f + ((TextElm)e).text.calcHeight() * 1.6f * 2f);
         e.setAlignmentX(AlignmentX.CENTER);
 
         e = bg.addChild(new EditUiPriceButton(_shop));
-        e.moveY(0.6f + 0.05f + ((TextElm)e).calcHeight() * 1.6f * 1f);
+        e.moveY(0.6f + 0.05f + ((TextElm)e).text.calcHeight() * 1.6f * 1f);
         e.setAlignmentX(AlignmentX.LEFT);
-        System.out.println(e.getAbsPos());
 
         e = bg.addChild(new EditUiMaxStockButton(_shop));
         e.moveY(0.6f + 0.05f);

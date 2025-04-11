@@ -21,13 +21,15 @@ public class EditUiPriceButton extends ShopButton {
     public EditUiPriceButton(@NotNull Shop _shop) {
         super(_shop, 0.5f, 0.1f);
         updateDisplay();
+        // System.out.println("Scale after: " + __calcTransform().getScale().toString());
+        // System.out.println("Scale value: " + getAbsSize().toString());
     }
 
 
 
 
     public void updateDisplay() {
-        ((TextElmStyle)style).setText(new Txt()
+        ((TextElmStyle)text.style).setText(new Txt()
             .cat(new Txt(" 🖍 ").lightGray())
             .cat(new Txt(Utils.formatPrice(shop.getPrice())).color(DetailsUiDisplay.C_RGB_PRICE))
             .cat(" ")

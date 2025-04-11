@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2f;
 import org.joml.Vector3d;
+import org.joml.Vector3f;
 
 import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.animations.Transform;
@@ -19,10 +20,12 @@ import com.snek.framework.data_types.ui.AlignmentX;
 import com.snek.framework.data_types.ui.AlignmentY;
 import com.snek.framework.ui.interfaces.Hoverable;
 import com.snek.framework.ui.styles.ElmStyle;
+import com.snek.framework.utils.SpaceUtils;
 import com.snek.framework.utils.scheduler.Scheduler;
 
 import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.AffineTransformation;
 
@@ -83,6 +86,12 @@ public abstract class Elm extends Div {
         style.editTransform();
     }
 
+    @Override
+    protected void updateZIndex() {
+        super.updateZIndex();
+        style.editTransform();
+    }
+
 
 
 
@@ -120,7 +129,7 @@ public abstract class Elm extends Div {
         return style.getTransform().clone()
             .moveX(getAbsPos().x)
             .moveY(getAbsPos().y)
-            .moveZ(getZIndex() * -0.0001f)
+            .moveZ(getZIndex() * 0.001f)
         ;
     }
 
@@ -360,12 +369,12 @@ public abstract class Elm extends Div {
 
 
 
-    /**
-     * Helper method that checks if the player's view intersects with the hitbox of this element.
-     * @param player The player.
-     * @return True if the view intersets with the hitbox, false otherwise.
-     */
-    public abstract boolean checkIntersection(PlayerEntity player);
+    // /**
+    //  * Helper method that checks if the player's view intersects with the hitbox of this element.
+    //  * @param player The player.
+    //  * @return True if the view intersets with the hitbox, false otherwise.
+    //  */
+    // public abstract boolean checkIntersection(PlayerEntity player);
 
 
 
@@ -399,6 +408,52 @@ public abstract class Elm extends Div {
                 }
             }
         }
+    }
+
+
+
+
+
+
+
+
+    public boolean checkIntersection(PlayerEntity player) {
+        if(!isSpawned || style.getBillboardMode() != BillboardMode.FIXED) return false;
+        Transform t = __calcTransform();
+
+
+        // Calculate the world coordinates of the display's origin. //! Left rotation and scale are ignored as they doesn't affect this
+        Vector3f origin =
+            entity.getPosCopy()
+            .add   (t.getPos())
+            .rotate(t.getRrot())
+        ;
+
+
+        // // Calculate display size
+        // Vector2f size = new Vector2f(
+        //     calcWidth(),
+        //     calcHeight()
+        // );
+        // System.out.println("Size: " + getAbsSize().toString());
+
+
+        // Calculate corner X position relative to the origin using the entity's local coordinate system
+        Vector3f shiftX = new Vector3f(getAbsSize().x / 2, 0, 0);
+        shiftX.rotate(t.getLrot()).rotate(t.getRrot());
+
+
+        // Check view intersection with the display's box
+        Vector3f corner1 = new Vector3f(origin).sub(shiftX);
+        Vector3f corner2 = new Vector3f(origin).add(shiftX).add(0, getAbsSize().y, 0);
+        world.spawnParticles(ParticleTypes.BUBBLE_POP, corner1.x, corner1.y, corner1.z, 0, 0, 0, 0, 0);
+        world.spawnParticles(ParticleTypes.BUBBLE_POP, corner2.x, corner2.y, corner2.z, 0, 0, 0, 0, 0);
+        return SpaceUtils.checkLineRectangleIntersection(
+            player.getEyePos().toVector3f(),
+            player.getRotationVec(1f).toVector3f(),
+            corner1,
+            corner2
+        );
     }
 }
 

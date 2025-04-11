@@ -54,7 +54,6 @@ public class PanelElm extends Elm {
     protected PanelElm(@NotNull ServerWorld _world, @NotNull CustomDisplay _entity, @NotNull ElmStyle _style) {
         super(_world, _entity, _style);
         ((CustomTextDisplay)entity).setText(new Txt("").get());
-        flushStyle();
     }
 
     protected PanelElm(@NotNull ServerWorld _world, @NotNull ElmStyle _style) {
@@ -146,6 +145,23 @@ public class PanelElm extends Elm {
 
 
 
+
+
+    /**
+     * Calculates the final transform to apply to the entity.
+     * This takes into account the element's position, alignment options and visual transform.
+     * @return The transform.
+     */
+    @Override
+    protected Transform __calcTransform() {
+        return super.__calcTransform()
+            .scaleX(getAbsSize().x)
+            .scaleY(getAbsSize().y)
+        ;
+    }
+
+
+
     // /**
     //  * Calculates the height of this text element.
     //  * NOTICE: The height can be inaccurate as a lot of assumptions are made to calculate it.
@@ -200,9 +216,9 @@ public class PanelElm extends Elm {
 
 
 
-    @Override
-    public boolean checkIntersection(PlayerEntity player) {
-        return false;
+    // @Override
+    // public boolean checkIntersection(PlayerEntity player) {
+    //     return false;
         // if(!isSpawned || billboardMode.get() != BillboardMode.FIXED) return false;
 
 
@@ -235,5 +251,5 @@ public class PanelElm extends Elm {
         //     corner1,
         //     corner2
         // );
-    }
+    // }
 }

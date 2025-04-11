@@ -224,6 +224,7 @@ public class Div {
 
     protected void updateAbsSize() {
         absSize.set(localSize);
+        for (Div e : children) e.updateAbsSize();
         // size.set(parent == null ? localSize : new Vector2f(localSize).mul(parent.getSize()));
         //TODO check if an "absolute size" is needed. remove this function if not
     }
@@ -269,6 +270,7 @@ public class Div {
 
     protected void updateZIndex() {
         zIndex = parent == null ? 0 : parent.zIndex + 1;
+        for (Div c : children) c.updateZIndex();
     }
     public int getZIndex() {
         return zIndex;
@@ -298,45 +300,46 @@ public class Div {
             case NONE   -> p.y + localPos.y;
         };
 
-        // Update the value
+        // Update the value and run the function on all children
         absPos.set(x, y);
+        for (Div c : children) c.updateAbsPos();
     }
 
 
     public void setPos(@NotNull Vector2f _pos) {
         localPos.set(_pos);
         updateAbsPos();
-        for (Div c : children) c.setPos(_pos);
+        // for (Div c : children) c.setPos(_pos);
     }
 
     public void setPosX(float x) {
         localPos.x = x;
         updateAbsPos();
-        for (Div c : children) c.setPosX(x);
+        // for (Div c : children) c.setPosX(x);
     }
 
     public void setPosY(float y) {
         localPos.y = y;
         updateAbsPos();
-        for (Div c : children) c.setPosY(y);
+        // for (Div c : children) c.setPosY(y);
     }
 
     public void move(@NotNull Vector2f _pos) {
         localPos.add(_pos);
         updateAbsPos();
-        for (Div c : children) c.move(_pos);
+        // for (Div c : children) c.move(_pos);
     }
 
     public void moveX(float x) {
         localPos.x += x;
-        absPos.x += x;
-        for (Div c : children) c.moveX(x);
+        updateAbsPos();
+        // for (Div c : children) c.moveX(x);
     }
 
     public void moveY(float y) {
         localPos.y += y;
         updateAbsPos();
-        for (Div c : children) c.moveY(y);
+        // for (Div c : children) c.moveY(y);
     }
 
 

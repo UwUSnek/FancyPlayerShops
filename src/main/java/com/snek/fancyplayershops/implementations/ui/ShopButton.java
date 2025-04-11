@@ -16,6 +16,7 @@ import com.snek.framework.utils.Easings;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ClickType;
 
+import com.snek.framework.ui.styles.PanelElmStyle;
 import com.snek.framework.ui.styles.TextElmStyle;
 
 
@@ -36,6 +37,7 @@ public class ShopButton extends TrackedTextElm implements Hoverable, Clickable {
     public ShopButton(@NotNull Shop _shop, float w, float h) {
         super(_shop.getWorld());
         shop = _shop;
+        // System.out.println("Scale before: " + __calcTransform().getScale().toString());
         setSize(new Vector2f(w, h));
     }
 
@@ -48,7 +50,7 @@ public class ShopButton extends TrackedTextElm implements Hoverable, Clickable {
 
     @Override
     public void onHoverExit() {
-        applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 2, Easings.linear, ((TextElmStyle)style).getDefaultBackground(), 255)));
+        applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 2, Easings.linear, ((PanelElmStyle)style).getDefaultColor(), 255)));
     }
 
 

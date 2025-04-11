@@ -34,7 +34,7 @@ public class EditUiMaxStockButton extends ShopButton {
 
 
     public void updateDisplay() {
-        ((TextElmStyle)style).setText(new Txt()
+        ((TextElmStyle)text.style).setText(new Txt()
             .cat(new Txt(" 🖍 ").lightGray())
             .cat(new Txt(Utils.formatAmount(shop.getMaxStock(), true, true)).color(RGB_STOCK_COLOR))
             .cat(" ")

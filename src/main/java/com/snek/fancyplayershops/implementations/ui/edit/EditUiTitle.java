@@ -28,7 +28,7 @@ public class EditUiTitle extends ShopTextElm {
 
 
     public void updateDisplay() {
-        ((TextElmStyle)style).setText(new Txt()
+        ((TextElmStyle)text.style).setText(new Txt()
             .cat(new Txt(" Editing ").white())
             .cat(new Txt(shop.getItem().getItem() == Items.AIR ? new Txt("an empty shop").white().get() : MinecraftUtils.getItemName(shop.getItem())))
             .cat("... ")
