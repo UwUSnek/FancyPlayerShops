@@ -62,6 +62,8 @@ public class Div {
     private @NotNull AlignmentX alignmentX = AlignmentX.NONE;
     private @NotNull AlignmentY alignmentY = AlignmentY.NONE;
 
+    private int zIndex = 0;
+
 
 
 
@@ -82,6 +84,7 @@ public class Div {
     public Div addChild(Div elm) {
         elm.parent = this;
         elm.updateAbsPos();
+        elm.updateZIndex();
         children.add(elm);
         return elm;
     }
@@ -94,6 +97,7 @@ public class Div {
     public Div removeChild(Div elm) {
         elm.parent = null;
         elm.updateAbsPos();
+        elm.updateZIndex();
         children.remove(elm);
         return elm;
     }
@@ -105,6 +109,7 @@ public class Div {
         for(Div elm : children) {
             elm.parent = null;
             elm.updateAbsPos();
+            elm.updateZIndex();
         }
         children.clear();
     }
@@ -257,6 +262,16 @@ public class Div {
         localSize.y *= y;
         // for (Div c : children) c.scaleY(y);
         updateAbsSize();
+    }
+
+
+
+
+    protected void updateZIndex() {
+        zIndex = parent == null ? 0 : parent.zIndex + 1;
+    }
+    public int getZIndex() {
+        return zIndex;
     }
 
 

@@ -120,6 +120,7 @@ public abstract class Elm extends Div {
         return style.getTransform().clone()
             .moveX(getAbsPos().x)
             .moveY(getAbsPos().y)
+            .moveZ(getZIndex() * -0.0001f)
         ;
     }
 
@@ -133,7 +134,9 @@ public abstract class Elm extends Div {
      * ! Partial steps at the end of the animation are expanded to cover the entire step.
      * @param animation The animation to apply.
      */
+    @Override
     public void applyAnimation(@NotNull Animation animation) {
+        super.applyAnimation(animation);
 
         // Add element to the update queue and update the queued state
         if(!isQueued) {
@@ -155,7 +158,9 @@ public abstract class Elm extends Div {
      * Instantly applies an animation, ignoring transition times and easings. This does not wait for the tick cycle. Entities are updated instantly.
      * @param animation The animation to apply.
      */
+    @Override
     public void applyAnimationNow(@NotNull Animation animation) {
+        super.applyAnimationNow(animation);
 
         // Apply each transition one at a time
         for (Transition transition : animation.getTransitions()) {
@@ -266,6 +271,7 @@ public abstract class Elm extends Div {
      */
     @Override
     public void spawn(Vector3d pos) {
+        super.spawn(pos);
         isSpawned = true;
 
         // Flush previous changes to the entity to avoid bad interpolations and the entity into the world
@@ -287,6 +293,7 @@ public abstract class Elm extends Div {
      */
     @Override
     public void despawn() {
+        super.despawn();
         isSpawned = false;
 
         // Handle animations
@@ -310,6 +317,7 @@ public abstract class Elm extends Div {
      */
     @Override
     public void despawnNow() {
+        super.despawnNow();
         isSpawned = false;
         entity.despawn();
     }

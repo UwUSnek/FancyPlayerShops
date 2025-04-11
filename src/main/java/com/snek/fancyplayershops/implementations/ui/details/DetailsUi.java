@@ -2,6 +2,7 @@ package com.snek.fancyplayershops.implementations.ui.details;
 
 import com.snek.fancyplayershops.Shop;
 import com.snek.fancyplayershops.implementations.ui.ShopCanvas;
+import com.snek.fancyplayershops.implementations.ui.ShopPanelElm;
 import com.snek.framework.data_types.ui.AlignmentX;
 import com.snek.framework.ui.Div;
 
@@ -14,14 +15,16 @@ import com.snek.framework.ui.Div;
 
 public class DetailsUi extends ShopCanvas {
 
-    public DetailsUi(Shop shop){
+    public DetailsUi(Shop _shop){
         super();
+        Div bg;
         Div e;
 
-        e = addChild(new DetailsUiDisplay(shop));
+        bg = addChild(new DetailsUiBackground(_shop));
+
+        e = bg.addChild(new DetailsUiDisplay(_shop));
         e.moveY(0.6f);
         e.setAlignmentX(AlignmentX.CENTER);
 
-        addChild(new DetailsUiBackground(shop));
     }
 }

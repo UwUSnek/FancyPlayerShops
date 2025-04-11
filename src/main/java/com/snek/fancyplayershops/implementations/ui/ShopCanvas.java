@@ -5,6 +5,7 @@ import org.joml.Vector3d;
 import org.joml.Vector3f;
 import org.joml.Vector4i;
 
+import com.snek.fancyplayershops.Shop;
 import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.animations.Transform;
 import com.snek.framework.data_types.animations.transitions.AdditiveTransition;
@@ -36,6 +37,8 @@ public class ShopCanvas extends Div {
 
 
     public ShopCanvas() {
+        super();
+
         menuAnimationInitial = new Animation(new TextAdditiveTransition(
             new Transform().rotY(-ANIMATION_ROT_Y).move(new Vector3f(ANIMATION_MOVE_IN).negate()),
             0,
