@@ -53,33 +53,14 @@ public class Div {
 
 
     // UI data
-    private @NotNull Vector2f   size       = new Vector2f(1, 1);
-    private @NotNull Vector2f   pos        = new Vector2f(0, 0);
+    private @NotNull Vector2f   localSize  = new Vector2f(1, 1);
+    private @NotNull Vector2f   localPos   = new Vector2f(0, 0);
+
+    private @NotNull Vector2f   absSize    = new Vector2f(1, 1);
+    private @NotNull Vector2f   absPos     = new Vector2f(0, 0);
+
     private @NotNull AlignmentX alignmentX = AlignmentX.NONE;
     private @NotNull AlignmentY alignmentY = AlignmentY.NONE;
-
-    public void setSize      (@NotNull Vector2f   _size      ) { size.set(_size);          }
-    public void setSizeX     (         float      x          ) { size.x = x;               }
-    public void setSizeY     (         float      y          ) { size.y = y;               }
-    public void scale        (@NotNull Vector2f   _size      ) { size.mul(_size);          }
-    public void scaleX       (         float      x          ) { size.x *= x;              }
-    public void scaleY       (         float      y          ) { size.y *= y;              }
-
-    public void setPos       (@NotNull Vector2f   _pos       ) { pos.set(_pos);            }
-    public void setPosX      (         float      x          ) { pos.x = x;                }
-    public void setPosY      (         float      y          ) { pos.y = y;                }
-    public void move         (@NotNull Vector2f   _pos       ) { pos.add(_pos);            }
-    public void moveX        (         float      x          ) { pos.x += x;               }
-    public void moveY        (         float      y          ) { pos.y += y;               }
-
-    public void setAlignmentX(@NotNull AlignmentX _alignmentX) { alignmentX = _alignmentX; }
-    public void setAlignmentY(@NotNull AlignmentY _alignmentY) { alignmentY = _alignmentY; }
-
-
-    public @NotNull Vector2f   getSize      () { return size;       }
-    public @NotNull Vector2f   getPos       () { return pos;        }
-    public @NotNull AlignmentX getAlignmentX() { return alignmentX; }
-    public @NotNull AlignmentY getAlignmentY() { return alignmentY; }
 
 
 
@@ -93,18 +74,45 @@ public class Div {
 
 
 
-    public void addChild(Div elm) {
-        children.add(elm);
+    /**
+     * Adds a child to this Div.
+     * @param elm The new element.
+     * @return elm
+     */
+    public Div addChild(Div elm) {
         elm.parent = this;
+        elm.updateAbsPos();
+        children.add(elm);
+        return elm;
     }
-    public void removeChild(Div elm) {
-        children.remove(elm);
+
+    /**
+     * Removes a child from this Div.
+     * @param elm The removed element.
+     * @return elm
+     */
+    public Div removeChild(Div elm) {
         elm.parent = null;
+        elm.updateAbsPos();
+        children.remove(elm);
+        return elm;
     }
+
+    /**
+     * Removes all children from this Div.
+     */
     public void clearChildren() {
-        for(Div elm : children) elm.parent = null;
+        for(Div elm : children) {
+            elm.parent = null;
+            elm.updateAbsPos();
+        }
         children.clear();
     }
+
+    /**
+     * Returns the list of children.
+     * @return The list of children.
+     */
     public List<Div> getChildren() {
         return children;
     }
@@ -200,4 +208,143 @@ public class Div {
             elm.despawnNow();
         }
     }
+
+
+
+
+
+
+
+
+
+    // protected void updateAbsSize() {
+    //     // size.set(parent == null ? localSize : new Vector2f(localSize).mul(parent.getSize()));
+    //     //TODO check if an "absolute size" is needed. remove this function if not
+    // }
+
+    public void setSize(@NotNull Vector2f _size) {
+        localSize.set(_size);
+        for (Div c : children) c.setSize(_size);
+        // updateAbsSize();
+    }
+
+    public void setSizeX(float x) {
+        localSize.x = x;
+        for (Div c : children) c.setSizeX(x);
+        // updateAbsSize();
+    }
+
+    public void setSizeY(float y) {
+        localSize.y = y;
+        for (Div c : children) c.setSizeY(y);
+        // updateAbsSize();
+    }
+
+    public void scale(@NotNull Vector2f _size) {
+        localSize.mul(_size);
+        for (Div c : children) c.scale(_size);
+        // updateAbsSize();
+    }
+
+    public void scaleX(float x) {
+        localSize.x *= x;
+        for (Div c : children) c.scaleX(x);
+        // updateAbsSize();
+    }
+
+    public void scaleY(float y) {
+        localSize.y *= y;
+        for (Div c : children) c.scaleY(y);
+        // updateAbsSize();
+    }
+
+
+
+
+    protected void updateAbsPos() {
+        // Calculate unrestricted position
+        Vector2f p = parent == null ? new Vector2f(0, 0) : parent.getAbsPos();
+        Vector2f s = parent == null ? new Vector2f(1, 1) : parent.getAbsSize();
+
+        // Apply horizontal alignment
+        float x = switch(alignmentX) {
+            case LEFT   -> p.x - (s.x - localSize.x) / 2;
+            case RIGHT  -> p.x + (s.x - localSize.x) / 2;
+            case CENTER -> p.x;
+            case NONE   -> p.x + localPos.x;
+        };
+
+        // Apply vertical alignment
+        float y = switch(alignmentY) {
+            case TOP    -> p.y - (s.y - localSize.y) / 2;
+            case BOTTOM -> p.y + (s.y - localSize.y) / 2;
+            case CENTER -> p.y;
+            case NONE   -> p.y + localPos.y;
+        };
+
+        // Update the value
+        absPos.set(x, y);
+    }
+
+
+    public void setPos(@NotNull Vector2f _pos) {
+        localPos.set(_pos);
+        updateAbsPos();
+        for (Div c : children) c.setPos(_pos);
+    }
+
+    public void setPosX(float x) {
+        localPos.x = x;
+        updateAbsPos();
+        for (Div c : children) c.setPosX(x);
+    }
+
+    public void setPosY(float y) {
+        localPos.y = y;
+        updateAbsPos();
+        for (Div c : children) c.setPosY(y);
+    }
+
+    public void move(@NotNull Vector2f _pos) {
+        localPos.add(_pos);
+        updateAbsPos();
+        for (Div c : children) c.move(_pos);
+    }
+
+    public void moveX(float x) {
+        localPos.x += x;
+        absPos.x += x;
+        for (Div c : children) c.moveX(x);
+    }
+
+    public void moveY(float y) {
+        localPos.y += y;
+        updateAbsPos();
+        for (Div c : children) c.moveY(y);
+    }
+
+
+
+
+    public void setAlignmentX(@NotNull AlignmentX _alignmentX) {
+        alignmentX = _alignmentX;
+        updateAbsPos();
+    }
+
+    public void setAlignmentY(@NotNull AlignmentY _alignmentY) {
+        alignmentY = _alignmentY;
+        updateAbsPos();
+    }
+
+
+
+
+    public @NotNull Vector2f   getLocalSize () { return localSize;  }
+    public @NotNull Vector2f   getLocalPos  () { return localPos;   }
+
+    public @NotNull Vector2f   getAbsSize   () { return absSize;  }
+    public @NotNull Vector2f   getAbsPos    () { return absPos;   }
+
+    public @NotNull AlignmentX getAlignmentX() { return alignmentX; }
+    public @NotNull AlignmentY getAlignmentY() { return alignmentY; }
 }

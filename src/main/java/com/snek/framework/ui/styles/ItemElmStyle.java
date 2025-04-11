@@ -31,7 +31,8 @@ public class ItemElmStyle extends ElmStyle {
 
 
 
-    public void resetItem() { item = Flagged.from(Items.AIR.getDefaultStack()); }
+    public @NotNull ItemStack getDefaultItem() { return Items.AIR.getDefaultStack(); }
+    public void resetItem() { item = Flagged.from(getDefaultItem()); }
     public void setItem(@NotNull ItemStack _item) { item.set(_item); }
     public @NotNull Flagged<ItemStack> getFlaggedItem() { return item; }
     public @NotNull ItemStack getItem() { return item.get(); }

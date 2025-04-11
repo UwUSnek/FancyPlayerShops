@@ -25,6 +25,7 @@ import com.snek.framework.utils.Utils;
 
 import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 
@@ -205,31 +206,34 @@ public class TextElm extends Elm {
     @Override
     public boolean checkIntersection(PlayerEntity player) {
         if(!isSpawned || style.getBillboardMode() != BillboardMode.FIXED) return false;
+        Transform t = __calcTransform();
 
 
         // Calculate the world coordinates of the display's origin. //! Left rotation and scale are ignored as they doesn't affect this
         Vector3f origin =
             entity.getPosCopy()
-            .add   (style.getTransform().getPos())
-            .rotate(style.getTransform().getRrot())
+            .add   (t.getPos())
+            .rotate(t.getRrot())
         ;
 
 
-        // Calculate display size
-        Vector2f size = new Vector2f(
-            calcWidth(),
-            calcHeight()
-        );
+        // // Calculate display size
+        // Vector2f size = new Vector2f(
+        //     calcWidth(),
+        //     calcHeight()
+        // );
 
 
         // Calculate corner X position relative to the origin using the entity's local coordinate system
-        Vector3f shiftX = new Vector3f(size.x / 2, 0,0 );
-        shiftX.rotate(style.getTransform().getLrot()).rotate(style.getTransform().getRrot());
+        Vector3f shiftX = new Vector3f(getAbsSize().x / 2, 0, 0);
+        shiftX.rotate(t.getLrot()).rotate(t.getRrot());
 
 
         // Check view intersection with the display's box
         Vector3f corner1 = new Vector3f(origin).sub(shiftX);
-        Vector3f corner2 = new Vector3f(origin).add(shiftX).add(0, size.y, 0);
+        Vector3f corner2 = new Vector3f(origin).add(shiftX).add(0, getAbsSize().y, 0);
+        world.spawnParticles(ParticleTypes.BUBBLE_POP, corner1.x, corner1.y, corner1.z, 0, 0, 0, 0, 0);
+        world.spawnParticles(ParticleTypes.BUBBLE_POP, corner2.x, corner2.y, corner2.z, 0, 0, 0, 0, 0);
         return SpaceUtils.checkLineRectangleIntersection(
             player.getEyePos().toVector3f(),
             player.getRotationVec(1f).toVector3f(),

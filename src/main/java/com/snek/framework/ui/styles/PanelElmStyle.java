@@ -64,7 +64,8 @@ public class PanelElmStyle extends ElmStyle {
 
 
 
-    public void resetColor () { color = Flagged.from(new Vector4i(130, 2, 20, 20)); }
+    public @NotNull Vector4i getDefaultColor () { return new Vector4i(130, 2, 20, 20); }
+    public void resetColor () { color = Flagged.from(getDefaultColor()); }
     public void setColor (@NotNull Vector4i _color ) { color.set(_color); }
     public @NotNull Flagged<Vector4i> getFlaggedColor () { return color; }
     public @NotNull Vector4i getColor () { return color.get(); }

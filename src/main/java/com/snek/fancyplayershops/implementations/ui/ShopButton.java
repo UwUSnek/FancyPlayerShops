@@ -46,7 +46,7 @@ public class ShopButton extends TrackedTextElm implements Hoverable, Clickable {
 
     @Override
     public void onHoverExit() {
-        applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 2, Easings.linear, ((TextElmStyle)style).getBackground(), 255)));
+        applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 2, Easings.linear, ((TextElmStyle)style).getDefaultBackground(), 255)));
     }
 
 

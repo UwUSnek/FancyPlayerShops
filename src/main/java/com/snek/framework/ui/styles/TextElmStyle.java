@@ -63,10 +63,16 @@ public class TextElmStyle extends ElmStyle {
 
 
 
-    public void resetBackground   () { background    = Flagged.from(new Vector4i(230, 37, 40, 40)); }
-    public void resetText         () { text          = Flagged.from(new Txt("").get()            ); }
-    public void resetTextAlignment() { textAlignment = Flagged.from(TextAlignment.CENTER         ); }
-    public void resetTextOpacity  () { textOpacity   = Flagged.from(255                          ); }
+    public @NotNull Vector4i      getDefaultBackground   () { return new Vector4i(230, 37, 40, 40); }
+    public @NotNull Text          getDefaultText         () { return new Txt("").get()            ; }
+    public @NotNull TextAlignment getDefaultTextAlignment() { return TextAlignment.CENTER         ; }
+    public          int           getDefaultTextOpacity  () { return 255                          ; }
+
+
+    public void resetBackground   () { background    = Flagged.from(getDefaultBackground()   ); }
+    public void resetText         () { text          = Flagged.from(getDefaultText()         ); }
+    public void resetTextAlignment() { textAlignment = Flagged.from(getDefaultTextAlignment()); }
+    public void resetTextOpacity  () { textOpacity   = Flagged.from(getDefaultTextOpacity()  ); }
 
 
     public void setBackground   (@NotNull Vector4i      _background   ) { background   .set(_background   ); }

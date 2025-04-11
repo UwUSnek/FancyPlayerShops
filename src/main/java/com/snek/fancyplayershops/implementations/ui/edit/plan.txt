@@ -1,0 +1,23 @@
+
+Editing <item name>...
+$100,000.20
+x54
+
+      [_item_]
+[⬅️]  [_item_]  [➡️]
+      [_item_]
+
+[⬆️] [ℹ️] [🔃] [🗑️]
+
+
+
+
+
+
+
+⬆️ Pick up
+ℹ️ Open internal storage
+🔃 Toggle auto restocking
+🗑️ Remove
+
+

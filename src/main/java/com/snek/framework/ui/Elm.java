@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector2f;
 import org.joml.Vector3d;
 
 import com.snek.framework.data_types.animations.Animation;
@@ -62,6 +63,23 @@ public abstract class Elm extends Div {
 
 
 
+    // @Override public void setSize (@NotNull Vector2f   _size) { super.setSize (_size); style.editTransform(); }
+    // @Override public void setSizeX(         float      x    ) { super.setSizeX(x    ); style.editTransform(); }
+    // @Override public void setSizeY(         float      y    ) { super.setSizeY(y    ); style.editTransform(); }
+    // @Override public void scale   (@NotNull Vector2f   _size) { super.scale   (_size); style.editTransform(); }
+    // @Override public void scaleX  (         float      x    ) { super.scaleX  (x    ); style.editTransform(); }
+    // @Override public void scaleY  (         float      y    ) { super.scaleY  (y    ); style.editTransform(); }
+
+    @Override public void setPos  (@NotNull Vector2f   _pos ) { super.setPos  (_pos ); style.editTransform(); }
+    @Override public void setPosX (         float      x    ) { super.setPosX (x    ); style.editTransform(); }
+    @Override public void setPosY (         float      y    ) { super.setPosY (y    ); style.editTransform(); }
+    @Override public void move    (@NotNull Vector2f   _pos ) { super.move    (_pos ); style.editTransform(); }
+    @Override public void moveX   (         float      x    ) { super.moveX   (x    ); style.editTransform(); }
+    @Override public void moveY   (         float      y    ) { super.moveY   (y    ); style.editTransform(); }
+
+
+
+
 
 
 
@@ -80,12 +98,11 @@ public abstract class Elm extends Div {
      * This does not start an interpolation.
      */
     public void flushStyle() {
-        //FIXME use flagged values for basic alignment, position and size
-        /**/{ Flagged<Transform>     f = style.getFlaggedTransform();     if(true         ) { entity.setTransformation(__calcTransform()); f.unflag(); }}
-        //  { Flagged<Transform>     f = style.getFlaggedTransform();     if(f.isFlagged()) { entity.setTransformation(__calcTransform()); f.unflag(); }}
-
-        { Flagged<Float>         f = style.getFlaggedViewRange();     if(f.isFlagged()) { entity.setViewRange     (f.get()          ); f.unflag(); }}
-        { Flagged<BillboardMode> f = style.getFlaggedBillboardMode(); if(f.isFlagged()) { entity.setBillboardMode (f.get()          ); f.unflag(); }}
+        // //FIXME use flagged values for basic alignment, position and size
+        // /**/{ Flagged<Transform>     f = style.getFlaggedTransform();     if(true         ) { entity.setTransformation(__calcTransform()); f.unflag(); }}
+        { Flagged<Transform>     f = style.getFlaggedTransform();     if(f.isFlagged()) { entity.setTransformation(__calcTransform().get()); f.unflag(); }}
+        { Flagged<Float>         f = style.getFlaggedViewRange();     if(f.isFlagged()) { entity.setViewRange     (f.get()                ); f.unflag(); }}
+        { Flagged<BillboardMode> f = style.getFlaggedBillboardMode(); if(f.isFlagged()) { entity.setBillboardMode (f.get()                ); f.unflag(); }}
     }
 
 
@@ -94,27 +111,11 @@ public abstract class Elm extends Div {
      * This takes into account the element's position, alignment options and visual transform.
      * @return The transform.
      */
-    private AffineTransformation __calcTransform() {
-        // Transform vt = style.getTransform();
-        // Transform t = new Transform();
-
-        // // Calculate left rotation
-        // t.rot(vt.getLrot());
-
-        // // Calculate translation
-        // t.moveX(getPos().x).moveY(getPos().y);
-        // t.move(vt.getPos());
-
-        // // Calculate scale
-        // t.scaleX(getSize().x).scaleY(getSize().y);
-        // t.scale(vt.getScale());
-
-        // // Calculate right rotation
-        // t.rot(vt.getRrot());
-
-        // // Return resulting transform
-        // return t.get();
-        return style.getTransform().clone().moveX(getPos().x).moveY(getPos().y).get();
+    protected Transform __calcTransform() {
+        return style.getTransform().clone()
+            .moveX(getAbsPos().x)
+            .moveY(getAbsPos().y)
+        ;
     }
 
 
@@ -255,30 +256,10 @@ public abstract class Elm extends Div {
 
 
 
-    // /**
-    //  * Adds a child to this Elm, then sets it's parent to this.
-    //  * @param child The new child.
-    //  */
-    // public void addChild(Elm child) {
-    //     children.add(child);
-    //     child.parent = this;
-    // }
-
-
-    // /**
-    //  * Returns the list of children of this Elm.
-    //  * @return The list of children.
-    //  */
-    // public List<Elm> getChildren() {
-    //     return children;
-    // }
-
-
-
-
     /**
      * Spawns the element and its associated entities into the world.
      */
+    @Override
     public void spawn(Vector3d pos) {
         isSpawned = true;
 
@@ -299,6 +280,7 @@ public abstract class Elm extends Div {
     /**
      * Removes the element and its associated entities from the world.
      */
+    @Override
     public void despawn() {
         isSpawned = false;
 
@@ -321,6 +303,7 @@ public abstract class Elm extends Div {
     /**
      * Instantly removes the entities associated with this element from the world.
      */
+    @Override
     public void despawnNow() {
         isSpawned = false;
         entity.despawn();
