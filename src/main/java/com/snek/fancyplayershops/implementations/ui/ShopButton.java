@@ -8,6 +8,7 @@ import org.joml.Vector2f;
 import org.joml.Vector4i;
 
 import com.snek.fancyplayershops.Shop;
+import com.snek.fancyplayershops.implementations.ui.styles.ShopButtonStyle;
 import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.animations.transitions.TextAdditiveTransition;
 import com.snek.framework.data_types.animations.Transform;
@@ -37,6 +38,8 @@ public class ShopButton extends TrackedTextElm implements Hoverable, Clickable {
     public ShopButton(@NotNull Shop _shop, float w, float h) {
         super(_shop.getWorld());
         shop = _shop;
+        style = new ShopButtonStyle();
+        flushStyle();
         // System.out.println("Scale before: " + __calcTransform().getScale().toString());
         setSize(new Vector2f(w, h));
     }

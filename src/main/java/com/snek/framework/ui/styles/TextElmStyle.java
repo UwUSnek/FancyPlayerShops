@@ -26,6 +26,11 @@ public class TextElmStyle extends ElmStyle {
     private Flagged<TextAlignment> textAlignment = null;
     private Flagged<Integer>       textOpacity   = null;
 
+    @Override
+    public @NotNull Transform getDefaultTransform () {
+        return new Transform().scale(0.35f);
+    }
+
 
 
 

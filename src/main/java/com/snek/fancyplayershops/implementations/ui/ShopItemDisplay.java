@@ -2,6 +2,7 @@ package com.snek.fancyplayershops.implementations.ui;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 import com.snek.fancyplayershops.Shop;
@@ -64,7 +65,6 @@ public class ShopItemDisplay extends ItemElm {
     public ShopItemDisplay(@NotNull Shop _targetShop, @NotNull CustomItemDisplay _display) {
         super(_targetShop.getWorld(), _display, new ItemElmStyle());
         targetShop = _targetShop;
-        style.editTransform().moveY(0.3f);
         entity.setCustomNameVisible(true);
         updateDisplay();
 
@@ -176,5 +176,12 @@ public class ShopItemDisplay extends ItemElm {
     public void leaveEditState(){
         // Empty
         //! leaveEditAnimation not needed as the unfocus animation uses a target transform
+    }
+
+
+
+    @Override
+    public void spawn(Vector3d pos) {
+        super.spawn(new Vector3d(pos).add(0, 0.3f, 0));
     }
 }

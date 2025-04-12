@@ -127,9 +127,7 @@ public abstract class Elm extends Div {
      */
     protected Transform __calcTransform() {
         return style.getTransform().clone()
-            .moveX(getAbsPos().x)
-            .moveY(getAbsPos().y)
-            .moveZ(getZIndex() * 0.001f)
+            .move(getAbsPos().x, getAbsPos().y, getZIndex() * 0.001f)
         ;
     }
 
