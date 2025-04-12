@@ -35,11 +35,15 @@ public class ElmStyle {
 
 
 
-
     /**
      * Creates a new default ElmStyle.
      */
     public ElmStyle() {
+        // Empty
+    }
+
+
+    public void resetAll(){
         resetTransform();
         resetViewRange();
         resetBillboardMode();

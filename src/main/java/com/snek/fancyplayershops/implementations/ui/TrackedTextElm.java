@@ -5,6 +5,7 @@ import org.joml.Vector3d;
 
 import com.snek.fancyplayershops.FancyPlayerShops;
 import com.snek.framework.ui.TextElm;
+import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.utils.Txt;
 
 import net.minecraft.entity.Entity;
@@ -23,6 +24,10 @@ import net.minecraft.world.World;
 public class TrackedTextElm extends TextElm {
     private static final String ENTITY_CUSTOM_NAME = FancyPlayerShops.MOD_ID + ".ui.displayentity";
 
+
+    protected TrackedTextElm(@NotNull ServerWorld _world, @NotNull ElmStyle _style) {
+        super(_world, _style);
+    }
 
     protected TrackedTextElm(@NotNull ServerWorld _world) {
         super(_world);

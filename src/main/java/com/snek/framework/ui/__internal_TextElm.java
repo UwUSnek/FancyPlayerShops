@@ -20,7 +20,7 @@ import com.snek.framework.data_types.displays.CustomTextDisplay;
 import com.snek.framework.generated.FontSize;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.ui.styles.PanelElmStyle;
-import com.snek.framework.ui.styles.TextElmStyle;
+import com.snek.framework.ui.styles.__internal_TextElmStyle;
 import com.snek.framework.utils.SpaceUtils;
 import com.snek.framework.utils.Utils;
 
@@ -39,7 +39,7 @@ import net.minecraft.text.Text;
 
 public class __internal_TextElm extends Elm {
     // private PanelElm bg;
-    private TextElmStyle getStyle() { return (TextElmStyle)style; }
+    private __internal_TextElmStyle getStyle() { return (__internal_TextElmStyle)style; }
 
     // This value identifies the amount of rendered text pixels that fit in a minecraft block
     public static final int TEXT_PIXEL_BLOCK_RATIO = 40;
@@ -68,7 +68,7 @@ public class __internal_TextElm extends Elm {
     }
 
     public __internal_TextElm(@NotNull ServerWorld _world){
-        this(_world, new CustomTextDisplay(_world), new TextElmStyle());
+        this(_world, new CustomTextDisplay(_world), new __internal_TextElmStyle());
     }
 
 

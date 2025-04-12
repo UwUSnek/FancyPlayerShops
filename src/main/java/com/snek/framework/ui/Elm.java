@@ -99,9 +99,11 @@ public abstract class Elm extends Div {
 
 
     protected Elm(@NotNull ServerWorld _world, CustomDisplay _entity, @NotNull ElmStyle _style) {
+        super();
         world  = _world;
         entity = _entity;
         style  = _style;
+        style.resetAll();
     }
 
 

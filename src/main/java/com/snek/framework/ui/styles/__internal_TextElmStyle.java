@@ -20,7 +20,7 @@ import net.minecraft.text.Text;
 
 
 
-public class TextElmStyle extends ElmStyle {
+public class __internal_TextElmStyle extends ElmStyle {
     private Flagged<Vector4i>      background    = null;
     private Flagged<Text>          text          = null;
     private Flagged<TextAlignment> textAlignment = null;
@@ -37,38 +37,49 @@ public class TextElmStyle extends ElmStyle {
     /**
      * Creates a new default TextElmStyle.
      */
-    public TextElmStyle() {
-
-        // Set values
+    public __internal_TextElmStyle() {
         super();
+    }
+
+
+    @Override
+    public void resetAll(){
         resetBackground();
         resetText();
         resetTextAlignment();
         resetTextOpacity();
-
-
-        // Set default spawning animation
-        setSpawnAnimation(new Animation(new TextAdditiveTransition(new Transform(),
-            ElmStyle.S_TIME,
-            Easings.sineOut,
-            background.get(),
-            255
-        )));
-
-
-        // Set default despawning animation
-        setDespawnAnimation(new Animation(new TextAdditiveTransition(new Transform(),
-            ElmStyle.D_TIME,
-            Easings.sineOut,
-            new Vector4i(0),
-            0
-        )));
+        super.resetAll();
     }
 
 
 
 
-    public @NotNull Vector4i      getDefaultBackground   () { return new Vector4i(230, 37, 40, 40); }
+    @Override
+    public Animation getDefaultSpawnAnimation() {
+        return new Animation(new TextAdditiveTransition(new Transform(),
+            ElmStyle.S_TIME,
+            Easings.sineOut,
+            background.get(),
+            255
+        ));
+    }
+
+
+    @Override
+    public Animation getDefaultDespawnAnimation() {
+        return new Animation(new TextAdditiveTransition(new Transform(),
+            ElmStyle.D_TIME,
+            Easings.sineOut,
+            new Vector4i(0),
+            0
+        ));
+    }
+
+
+
+
+    // public @NotNull Vector4i      getDefaultBackground   () { return new Vector4i(230, 37, 40, 40); }
+    public @NotNull Vector4i      getDefaultBackground   () { return new Vector4i(0, 0, 0, 0); }
     public @NotNull Text          getDefaultText         () { return new Txt("").get()            ; }
     public @NotNull TextAlignment getDefaultTextAlignment() { return TextAlignment.CENTER         ; }
     public          int           getDefaultTextOpacity  () { return 255                          ; }

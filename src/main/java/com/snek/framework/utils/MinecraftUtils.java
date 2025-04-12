@@ -44,5 +44,4 @@ public abstract class MinecraftUtils {
         int z = pos.z < 0 ? (int)(Math.floor(pos.z) - 0.1) : (int) pos.z;
         return new Vec3i(x, y, z);
     }
-
 }

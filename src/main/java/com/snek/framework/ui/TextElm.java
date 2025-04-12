@@ -7,7 +7,6 @@ import com.snek.framework.data_types.displays.CustomDisplay;
 import com.snek.framework.data_types.displays.CustomTextDisplay;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.ui.styles.PanelElmStyle;
-import com.snek.framework.ui.styles.TextElmStyle;
 
 import net.minecraft.server.world.ServerWorld;
 
@@ -43,10 +42,10 @@ public class TextElm extends PanelElm {
 
 
 
-    @Override
-    public void flushStyle(){
-        ((TextElmStyle)text.style).setBackground(new Vector4i(0, 0, 0, 0));
-        text.flushStyle();
-        super.flushStyle();
-    }
+    // @Override
+    // public void flushStyle(){
+        // ((TextElmStyle)text.style).setBackground(new Vector4i(0, 0, 0, 0));
+        // text.flushStyle();
+        // super.flushStyle();
+    // }
 }

@@ -10,15 +10,17 @@ import org.joml.Vector4i;
 import com.snek.fancyplayershops.Shop;
 import com.snek.fancyplayershops.implementations.ui.styles.ShopButtonStyle;
 import com.snek.framework.data_types.animations.Animation;
+import com.snek.framework.data_types.animations.transitions.AdditiveTransition;
 import com.snek.framework.data_types.animations.transitions.TextAdditiveTransition;
+import com.snek.framework.data_types.displays.CustomTextDisplay;
 import com.snek.framework.data_types.animations.Transform;
 import com.snek.framework.utils.Easings;
+import com.snek.framework.utils.scheduler.Scheduler;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ClickType;
 
 import com.snek.framework.ui.styles.PanelElmStyle;
-import com.snek.framework.ui.styles.TextElmStyle;
 
 
 
@@ -36,11 +38,13 @@ public class ShopButton extends TrackedTextElm implements Hoverable, Clickable {
 
 
     public ShopButton(@NotNull Shop _shop, float w, float h) {
-        super(_shop.getWorld());
+        super(_shop.getWorld(), new ShopButtonStyle());
         shop = _shop;
-        style = new ShopButtonStyle();
-        flushStyle();
-        // System.out.println("Scale before: " + __calcTransform().getScale().toString());
+
+        // // Change default color
+        // style = ;
+
+        // ((ShopButtonStyle)style).setColor(((ShopButtonStyle)style).getDefaultColor());
         setSize(new Vector2f(w, h));
     }
 
@@ -53,7 +57,8 @@ public class ShopButton extends TrackedTextElm implements Hoverable, Clickable {
 
     @Override
     public void onHoverExit() {
-        applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 2, Easings.linear, ((PanelElmStyle)style).getDefaultColor(), 255)));
+        applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 2, Easings.linear, ((ShopButtonStyle)style).getDefaultColor(), 255)));
+        // System.out.println("current color 2: " + ((CustomTextDisplay)entity).getBackground().toString()); //TODO REMOVE
     }
 
 

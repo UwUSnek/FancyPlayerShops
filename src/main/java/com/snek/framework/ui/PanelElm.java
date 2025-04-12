@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 import org.joml.Vector4i;
 
+import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.animations.Transform;
 import com.snek.framework.data_types.animations.steps.AnimationStep;
 import com.snek.framework.data_types.animations.steps.TextAnimationStep;
@@ -16,7 +17,6 @@ import com.snek.framework.data_types.displays.CustomDisplay;
 import com.snek.framework.data_types.displays.CustomTextDisplay;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.ui.styles.PanelElmStyle;
-import com.snek.framework.ui.styles.TextElmStyle;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
 
@@ -123,7 +123,10 @@ public class PanelElm extends Elm {
 
     @Override
     public void spawn(Vector3d pos) {
-        if(style.getDespawnAnimation() != null) applyAnimationNow(style.getDespawnAnimation());
+        Animation animation = style.getDespawnAnimation();
+        if(animation != null) {
+            applyAnimationNow(animation);
+        }
         super.spawn(pos);
     }
 
@@ -136,6 +139,7 @@ public class PanelElm extends Elm {
 
     @Override
     public boolean tick(){
+        //TODO remove print
         if(!colorQueue.isEmpty()) getStyle().setColor(colorQueue.removeFirst());
         //! Update queue not checked as it depends exclusively on transform changes.
 

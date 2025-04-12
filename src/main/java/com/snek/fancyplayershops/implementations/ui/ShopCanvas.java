@@ -65,15 +65,15 @@ public class ShopCanvas extends Div {
 
     @Override
     public void spawn(Vector3d pos){
-        if(menuAnimationInitial != null) applyAnimationNow(menuAnimationInitial);
+        if(menuAnimationInitial != null) applyAnimationNowRecursive(menuAnimationInitial);
         super.spawn(pos);
-        if(menuAnimationIn != null) applyAnimation(menuAnimationIn);
+        if(menuAnimationIn != null) applyAnimationRecursive(menuAnimationIn);
     }
 
 
     @Override
     public void despawn(){
-        if(menuAnimationOut != null) applyAnimation(menuAnimationOut);
+        if(menuAnimationOut != null) applyAnimationRecursive(menuAnimationOut);
         super.despawn();
     }
 }

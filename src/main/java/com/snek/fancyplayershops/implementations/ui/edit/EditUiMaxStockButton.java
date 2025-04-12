@@ -8,7 +8,7 @@ import com.snek.fancyplayershops.Shop;
 import com.snek.fancyplayershops.implementations.ui.ShopButton;
 import com.snek.fancyplayershops.implementations.ui.ShopTextElm;
 import com.snek.fancyplayershops.implementations.ui.details.DetailsUiDisplay;
-import com.snek.framework.ui.styles.TextElmStyle;
+import com.snek.framework.ui.styles.__internal_TextElmStyle;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
 
@@ -34,7 +34,7 @@ public class EditUiMaxStockButton extends ShopButton {
 
 
     public void updateDisplay() {
-        ((TextElmStyle)text.style).setText(new Txt()
+        ((__internal_TextElmStyle)text.style).setText(new Txt()
             .cat(new Txt(" 🖍 ").lightGray())
             .cat(new Txt(Utils.formatAmount(shop.getMaxStock(), true, true)).color(RGB_STOCK_COLOR))
             .cat(" ")
@@ -47,12 +47,12 @@ public class EditUiMaxStockButton extends ShopButton {
 
     @Override
     public boolean onClick(@NotNull PlayerEntity player, @NotNull ClickType click) {
-        if(super.onClick(player, click)) {
+        boolean r = super.onClick(player, click);
+        if(r) {
             player.sendMessage(new Txt("Send the new stock limit in chat!").green().get(), true);
             ChatInput.setCallback(player, this::messageCallback);
-            return true;
         }
-        return false;
+        return r;
     }
 
 

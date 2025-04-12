@@ -33,32 +33,53 @@ public class PanelElmStyle extends ElmStyle {
      * Creates a new default PanelElmStyle.
      */
     public PanelElmStyle() {
-
-        // Set values
         super();
+    }
+
+
+    @Override
+    public void resetAll(){
         resetColor();
-        setTransform(new Transform().scaleX(ENTITY_BLOCK_RATIO_X).scaleY(ENTITY_BLOCK_RATIO_Y).moveX(-0.5f));
+        super.resetAll();
+    }
 
 
-        //TODO make additive and target interfaces
-        // Set default spawning animation
-        setSpawnAnimation(new Animation(new TextAdditiveTransition(
+
+
+    @Override
+    public Transform getDefaultTransform(){
+        return new Transform()
+            .scaleX(ENTITY_BLOCK_RATIO_X)
+            .scaleY(ENTITY_BLOCK_RATIO_Y)
+            .moveX(-0.5f)
+        ;
+    }
+
+
+    @Override
+    public Animation getDefaultSpawnAnimation() {
+        // System.out.println("Chosen color: " +  getDefaultColor().toString());
+        return new Animation(new TextAdditiveTransition(
             new Transform(), //TODO dont include in text transitions
             ElmStyle.S_TIME,
             Easings.sineOut,
-            color.get(),
+            // color.get(),
+            getDefaultColor(),
             255
-        )));
+        ));
+    }
 
 
-        // Set default despawning animation
-        setDespawnAnimation(new Animation(new TextAdditiveTransition(
+    @Override
+    public Animation getDefaultDespawnAnimation() {
+        return new Animation(new TextAdditiveTransition(
             new Transform(), //TODO dont include in text transitions
             ElmStyle.D_TIME,
             Easings.sineOut,
-            new Vector4i(0),
+            // new Vector4i(0),
+            new Vector4i(getDefaultColor().mul(new Vector4i(0, 1, 1, 1))),
             0
-        )));
+        ));
     }
 
 

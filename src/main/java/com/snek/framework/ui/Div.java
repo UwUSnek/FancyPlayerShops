@@ -70,7 +70,9 @@ public class Div {
 
 
 
-    public Div() {}
+    public Div() {
+        // Empty
+    }
 
 
 
@@ -126,14 +128,42 @@ public class Div {
 
 
     /**
-     * Applies an animation to all the elements of this canvas.
-     * Use right rotations to rotate around the center of the canvas.
+     * Applies an animation to this element.
      * ! Partial steps at the end of the animation are expanded to cover the entire step.
      * @param animation The animation to apply.
      */
     public void applyAnimation(@NotNull Animation animation) {
+        // for (Div elm : children) {
+        //     elm.applyAnimation(animation);
+        // }
+    }
+
+
+
+
+    /**
+     * Instantly applies an animation to this element, ignoring transition times and easings.
+     * ! Partial steps at the end of the animation are expanded to cover the entire step.
+     * @param animation The animation to apply.
+     */
+    public void applyAnimationNow(@NotNull Animation animation) {
+        // for (Div elm : children) {
+        //     elm.applyAnimationNow(animation);
+        // }
+    }
+
+
+
+
+    /**
+     * Applies an animation to this element and all of its children.
+     * ! Partial steps at the end of the animation are expanded to cover the entire step.
+     * @param animation The animation to apply.
+     */
+    public void applyAnimationRecursive(@NotNull Animation animation) {
         for (Div elm : children) {
             elm.applyAnimation(animation);
+            elm.applyAnimationRecursive(animation);
         }
     }
 
@@ -141,14 +171,14 @@ public class Div {
 
 
     /**
-     * Instantly applies an animation to all the elements of this canvas, ignoring transition times and easings.
-     * Use right rotations to rotate around the center of the canvas.
+     * Instantly applies an animation to this element and all of its children, ignoring transition times and easings.
      * ! Partial steps at the end of the animation are expanded to cover the entire step.
      * @param animation The animation to apply.
      */
-    public void applyAnimationNow(@NotNull Animation animation) {
+    public void applyAnimationNowRecursive(@NotNull Animation animation) {
         for (Div elm : children) {
             elm.applyAnimationNow(animation);
+            elm.applyAnimationNowRecursive(animation);
         }
     }
 

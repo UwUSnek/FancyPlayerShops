@@ -25,7 +25,13 @@ public class ItemElmStyle extends ElmStyle {
      */
     public ItemElmStyle() {
         super();
+    }
+
+
+    @Override
+    public void resetAll(){
         resetItem();
+        super.resetAll();
     }
 
 
