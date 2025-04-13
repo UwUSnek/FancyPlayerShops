@@ -21,6 +21,11 @@ import net.minecraft.world.World;
 
 
 
+//FIXME unify entity purging and move the methods to Elm
+//FIXME unify entity purging and move the methods to Elm
+//FIXME unify entity purging and move the methods to Elm
+//FIXME unify entity purging and move the methods to Elm
+
 public class ShopPanelElm extends PanelElm {
     private static final String ENTITY_CUSTOM_NAME = FancyPlayerShops.MOD_ID + ".ui.panel";
     protected final @NotNull Shop shop;

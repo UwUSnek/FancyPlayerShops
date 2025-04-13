@@ -66,7 +66,7 @@ public class ItemElm extends Elm {
         Vector3f origin =
             entity.getPosCopy()
             .add   (style.getTransform().getPos())
-            .rotate(style.getTransform().getRrot())
+            .rotate(style.getTransform().getGlobalRot())
         ;
 
 

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
@@ -115,10 +116,9 @@ public abstract class Elm extends Div {
      */
     public void flushStyle() {
         // //FIXME use flagged values for basic alignment, position and size
-        // /**/{ Flagged<Transform>     f = style.getFlaggedTransform();     if(true         ) { entity.setTransformation(__calcTransform()); f.unflag(); }}
-        { Flagged<Transform>     f = style.getFlaggedTransform();     if(f.isFlagged()) { entity.setTransformation(__calcTransform().get()); f.unflag(); }}
-        { Flagged<Float>         f = style.getFlaggedViewRange();     if(f.isFlagged()) { entity.setViewRange     (f.get()                ); f.unflag(); }}
-        { Flagged<BillboardMode> f = style.getFlaggedBillboardMode(); if(f.isFlagged()) { entity.setBillboardMode (f.get()                ); f.unflag(); }}
+        { Flagged<Transform>     f = style.getFlaggedTransform();     if(f.isFlagged()) { entity.setTransformation(__calcTransform().toMinecraftTransform()); f.unflag();}}
+        { Flagged<Float>         f = style.getFlaggedViewRange();     if(f.isFlagged()) { entity.setViewRange     (f.get()                                ); f.unflag(); }}
+        { Flagged<BillboardMode> f = style.getFlaggedBillboardMode(); if(f.isFlagged()) { entity.setBillboardMode (f.get()                                ); f.unflag(); }}
     }
 
 
@@ -201,32 +201,34 @@ public abstract class Elm extends Div {
         List<AnimationStep> animationSteps = new ArrayList<>();
         Transform totTransform = new Transform();       // The sum of all the changes applied by the current and previous steps of the animation
         int time = transition.getDuration();            // The duration of this transition
-        for(int i = TRANSITION_REFRESH_TIME; i < time; i = Math.min(i + TRANSITION_REFRESH_TIME, time)) {
+        int i = TRANSITION_REFRESH_TIME;
+        for(; i < time + TRANSITION_REFRESH_TIME; i += TRANSITION_REFRESH_TIME) {
 
             // Calculate interpolation factor and add the new animation step to the list
-            float factor = (float)transition.getEasing().compute((double)i / (double)time);
+            // float factor = (float)transition.getEasing().compute(Math.min(1d, (double)i / (double)time));
+            float factor = (float)transition.getEasing().compute(Math.min(1d, (double)i / (double)time));
             animationSteps.add(transition.createStep(totTransform, factor));
         }
 
-        // Add padding step //! This makes the actual duration match the duration specified in the transition (or be greater than it, which is not an issue)
-        animationSteps.add(transition.createStep(totTransform, 1));
+        // // Add padding step //! This makes the actual duration match the duration specified in the transition (or be greater than it, which is not an issue)
+        // animationSteps.add(transition.createStep(totTransform, 1));
 
 
         // Update existing future transforms
-        int i = 0;
+        int j = 0;
         if(!transformQueue.isEmpty()) {
             AnimationStep step = null;
 
             // Update existing future transforms
-            for(; i + shift < transformQueue.size() && i < animationSteps.size(); ++i) {
-                step = animationSteps.get(i);
-                __applyTransitionStep(i + shift, step);
+            for(; j + shift < transformQueue.size() && j < animationSteps.size(); ++j) {
+                step = animationSteps.get(j);
+                __applyTransitionStep(j + shift, step);
             }
 
             // If the amount of future transforms is larger than the amount of steps, apply the last step to the remaining transforms
-            if(i >= animationSteps.size()) {
-                for(; i + shift < transformQueue.size(); ++i) {
-                    __applyTransitionStep(i + shift, step);
+            if(j >= animationSteps.size()) {
+                for(; j + shift < transformQueue.size(); ++j) {
+                    __applyTransitionStep(j + shift, step);
                 }
             }
         }
@@ -234,10 +236,10 @@ public abstract class Elm extends Div {
 
         // Add remaining future transforms
         Transform lastTransform = transformQueue.isEmpty() ? style.getTransform() : transformQueue.getLast();
-        for(; i < animationSteps.size(); ++i) {
+        for(; j < animationSteps.size(); ++j) {
             transformQueue.add(lastTransform.clone());
-            var step = animationSteps.get(i);
-            __applyTransitionStep(i + shift, step);
+            var step = animationSteps.get(j);
+            __applyTransitionStep(j + shift, step);
         }
 
 
@@ -426,7 +428,7 @@ public abstract class Elm extends Div {
         Vector3f origin =
             entity.getPosCopy()
             .add   (t.getPos())
-            .rotate(t.getRrot())
+            .rotate(t.getGlobalRot())
         ;
 
 
@@ -440,7 +442,7 @@ public abstract class Elm extends Div {
 
         // Calculate corner X position relative to the origin using the entity's local coordinate system
         Vector3f shiftX = new Vector3f(getAbsSize().x / 2, 0, 0);
-        shiftX.rotate(t.getLrot()).rotate(t.getRrot());
+        shiftX.rotate(t.getRot()).rotate(t.getGlobalRot());
 
 
         // Check view intersection with the display's box

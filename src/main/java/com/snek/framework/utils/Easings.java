@@ -5,19 +5,20 @@ package com.snek.framework.utils;
 
 
 public final class Easings {
+    private Easings(){}
 
-    public static Easing linear       = new Easing(Easings::_linear      );
-    public static Easing sineIn       = new Easing(Easings::_sineIn      );
-    public static Easing sineOut      = new Easing(Easings::_sineOut     );
-    public static Easing sineInOut    = new Easing(Easings::_sineInOut   );
-    public static Easing cubicIn      = new Easing(Easings::_cubicIn     );
-    public static Easing cubicOut     = new Easing(Easings::_cubicOut    );
-    public static Easing cubicInOut   = new Easing(Easings::_cubicInOut  );
-    public static Easing bounceIn     = new Easing(Easings::_bounceIn    );
-    public static Easing bounceInOut  = new Easing(Easings::_bounceInOut );
-    public static Easing elasticIn    = new Easing(Easings::_elasticIn   );
-    public static Easing elasticOut   = new Easing(Easings::_elasticOut  );
-    public static Easing elasticInOut = new Easing(Easings::_elasticInOut);
+    public static final Easing linear       = new Easing(Easings::_linear      );
+    public static final Easing sineIn       = new Easing(Easings::_sineIn      );
+    public static final Easing sineOut      = new Easing(Easings::_sineOut     );
+    public static final Easing sineInOut    = new Easing(Easings::_sineInOut   );
+    public static final Easing cubicIn      = new Easing(Easings::_cubicIn     );
+    public static final Easing cubicOut     = new Easing(Easings::_cubicOut    );
+    public static final Easing cubicInOut   = new Easing(Easings::_cubicInOut  );
+    public static final Easing bounceIn     = new Easing(Easings::_bounceIn    );
+    public static final Easing bounceInOut  = new Easing(Easings::_bounceInOut );
+    public static final Easing elasticIn    = new Easing(Easings::_elasticIn   );
+    public static final Easing elasticOut   = new Easing(Easings::_elasticOut  );
+    public static final Easing elasticInOut = new Easing(Easings::_elasticInOut);
 
 
 
