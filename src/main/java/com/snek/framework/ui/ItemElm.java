@@ -57,20 +57,20 @@ public class ItemElm extends Elm {
 
 
 
-    @Override
-    public boolean checkIntersection(PlayerEntity player) {
-        if(!isSpawned) return false;
+    // @Override
+    // public boolean checkIntersection(PlayerEntity player) {
+    //     if(!isSpawned) return false;
 
 
-        // Calculate the world coordinates of the display's origin. //! Left rotation and scale are ignored as they doesn't affect this
-        Vector3f origin =
-            entity.getPosCopy()
-            .add   (style.getTransform().getPos())
-            .rotate(style.getTransform().getGlobalRot())
-        ;
+    //     // Calculate the world coordinates of the display's origin. //! Left rotation and scale are ignored as they doesn't affect this
+    //     Vector3f origin =
+    //         entity.getPosCopy()
+    //         .add   (style.getTransform().getPos())
+    //         .rotate(style.getTransform().getGlobalRot())
+    //     ;
 
 
-        //TODO
-        return false;
-    }
+    //     //TODO
+    //     return false;
+    // }
 }

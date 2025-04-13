@@ -84,6 +84,7 @@ public class InteractionBlocker {
 
 
 
+
     public void spawn(Vector3d pos) {
         shop.getWorld().spawnEntity(entity);
         entity.setPos(pos.x, pos.y, pos.z);
@@ -100,25 +101,28 @@ public class InteractionBlocker {
         //!  │                        unable to detect player clicks until their nbt data is modified.                        │
         //!  │                                                                                                                │
         //!  │                                                                                                                │
+        /*!  │  */MinecraftServer server = entity.getServer();                                                           //!  │
+        /*!  │  */ServerWorld world = (ServerWorld)entity.getWorld();                                                    //!  │
+        /*!  │  */ServerCommandSource source = new ServerCommandSource(                                                  //!  │
+        /*!  │  */    CommandOutput.DUMMY, Vec3d.ZERO, Vec2f.ZERO, world,                                                //!  │
+        /*!  │  */    4, COMMAND_SOURCE_NAME, new Txt(COMMAND_SOURCE_NAME).get(), server, (Entity)null                   //!  │
+        /*!  │  */);                                                                                                     //!  │
         /*!  │  */try {                                                                                                  //!  │
-        /*!  │  */    MinecraftServer server = entity.getServer();                                                       //!  │
-        /*!  │  */    ServerWorld world = (ServerWorld)entity.getWorld();                                                //!  │
-        /*!  │  */    ServerCommandSource source = new ServerCommandSource(                                              //!  │
-        /*!  │  */        CommandOutput.DUMMY, Vec3d.ZERO, Vec2f.ZERO, world,                                            //!  │
-        /*!  │  */        4, COMMAND_SOURCE_NAME, new Txt(COMMAND_SOURCE_NAME).get(), server, (Entity)null               //!  │
-        /*!  │  */    );                                                                                                 //!  │
         /*!  │  */    server.getCommandManager().getDispatcher().execute(                                                //!  │
         /*!  │  */        "execute as @e[type=minecraft:interaction,name=" + ENTITY_CUSTOM_NAME_UNINITIALIZED + "] " +   //!  │
         /*!  │  */        "run data modify entity @s Air set value 1000",                                                //!  │
         /*!  │  */        source                                                                                         //!  │
         /*!  │  */    );                                                                                                 //!  │
-        /*!  │  */    entity.setCustomName(new Txt(ENTITY_CUSTOM_NAME).get());                                           //!  │
         /*!  │  */} catch (CommandSyntaxException e) {                                                                   //!  │
         /*!  │  */    e.printStackTrace();                                                                               //!  │
         /*!  │  */}                                                                                                      //!  │
         //!  │                                                                                                                │
         //!  ╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+
+        entity.setCustomName(new Txt(ENTITY_CUSTOM_NAME).get());
     }
+
 
 
 

@@ -10,6 +10,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
+import com.snek.fancyplayershops.FancyPlayerShops;
 import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.animations.Transform;
 import com.snek.framework.data_types.animations.steps.AnimationStep;
@@ -22,13 +23,18 @@ import com.snek.framework.data_types.ui.AlignmentY;
 import com.snek.framework.ui.interfaces.Hoverable;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.utils.SpaceUtils;
+import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.scheduler.Scheduler;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
+import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.AffineTransformation;
+import net.minecraft.world.World;
 
 
 
@@ -49,6 +55,8 @@ import net.minecraft.util.math.AffineTransformation;
  * An abstract class that represents a visible UI Element.
  */
 public abstract class Elm extends Div {
+    private static final String ENTITY_CUSTOM_NAME = FancyPlayerShops.MOD_ID + ".ui.displayentity";
+
 
     // Animation handling
     public    static final int TRANSITION_REFRESH_TIME = 2;                         // The time between transition updates. Measured in ticks
@@ -294,6 +302,10 @@ public abstract class Elm extends Div {
         if(animation != null) {
             applyAnimation(animation);
         }
+
+        // Set tracking custom name
+        entity.setCustomNameVisible(false);
+        entity.setCustomName(new Txt(ENTITY_CUSTOM_NAME).get());
     }
 
 
@@ -337,11 +349,10 @@ public abstract class Elm extends Div {
 
 
     /**
-     * Processes transitions and other tick features of this Elm and all of its children, recursively.
-     * Must be called at the end of the tick every TRANSITION_REFRESH_TIME ticks.
+     * Processes transitions and other tick features of this Elm.
      * @return true if no action is necessary. false if the element has been removed from the update queue.
      */
-    public boolean tick() {
+    protected boolean tick() {
         style.setTransform(transformQueue.removeFirst());
         flushStyle();
         entity.setInterpolationDuration(TRANSITION_REFRESH_TIME);
@@ -360,6 +371,7 @@ public abstract class Elm extends Div {
 
     /**
      * Processes a single tick of all the queued elements
+     * Must be called at the end of the tick every TRANSITION_REFRESH_TIME ticks.
      */
     public static void processUpdateQueueTick(){
 
@@ -456,6 +468,27 @@ public abstract class Elm extends Div {
             corner1,
             corner2
         );
+    }
+
+
+
+
+    /**
+     * Checks for stray tracked displays and purges them.
+     * Must be called on entity load event.
+     * @param entity The entity.
+     */
+    public static void onEntityLoad(@NotNull Entity entity) {
+        if (entity instanceof TextDisplayEntity) {
+            World world = entity.getWorld();
+            if(
+                world != null &&
+                entity.getCustomName() != null &&
+                entity.getCustomName().getString().equals(ENTITY_CUSTOM_NAME)
+            ) {
+                entity.remove(RemovalReason.KILLED);
+            }
+        }
     }
 }
 

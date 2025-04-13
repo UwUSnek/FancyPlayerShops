@@ -4,11 +4,12 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2f;
 
 import com.snek.fancyplayershops.Shop;
+import com.snek.framework.ui.TextElm;
 
 
 
 
-public class ShopTextElm extends TrackedTextElm {
+public class ShopTextElm extends TextElm {
     public static final float LINE_H = 0.1f;
 
     protected final @NotNull Shop shop;

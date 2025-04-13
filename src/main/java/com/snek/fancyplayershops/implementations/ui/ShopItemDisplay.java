@@ -16,6 +16,7 @@ import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.ui.styles.ItemElmStyle;
 import com.snek.framework.utils.Easings;
 import com.snek.framework.utils.MinecraftUtils;
+import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.scheduler.Scheduler;
 import com.snek.framework.utils.scheduler.TaskHandler;
 
@@ -65,7 +66,6 @@ public class ShopItemDisplay extends ItemElm {
     public ShopItemDisplay(@NotNull Shop _targetShop, @NotNull CustomItemDisplay _display) {
         super(_targetShop.getWorld(), _display, new ItemElmStyle());
         targetShop = _targetShop;
-        entity.setCustomNameVisible(true);
         updateDisplay();
 
 
@@ -131,6 +131,7 @@ public class ShopItemDisplay extends ItemElm {
             ((ItemElmStyle)style).setItem(_item);
             entity.setCustomName(MinecraftUtils.getItemName(((ItemElmStyle)style).getItem()));
         }
+        entity.setCustomNameVisible(true);
 
         flushStyle();
     }
@@ -183,5 +184,9 @@ public class ShopItemDisplay extends ItemElm {
     @Override
     public void spawn(Vector3d pos) {
         super.spawn(new Vector3d(pos).add(0, 0.3f, 0));
+
+
+        // Force display update to remove tracking custom name
+        updateDisplay();
     }
 }
