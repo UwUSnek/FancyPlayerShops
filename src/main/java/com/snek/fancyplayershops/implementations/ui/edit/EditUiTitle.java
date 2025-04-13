@@ -3,6 +3,7 @@ package com.snek.fancyplayershops.implementations.ui.edit;
 import org.jetbrains.annotations.NotNull;
 
 import com.snek.fancyplayershops.Shop;
+import com.snek.fancyplayershops.implementations.ui.ShopButton;
 import com.snek.fancyplayershops.implementations.ui.ShopTextElm;
 import com.snek.framework.ui.styles.__internal_TextElmStyle;
 import com.snek.framework.utils.MinecraftUtils;
@@ -20,7 +21,7 @@ import net.minecraft.item.Items;
 public class EditUiTitle extends ShopTextElm {
 
     public EditUiTitle(@NotNull Shop _shop) {
-        super(_shop, 0.5f, 0.1f);
+        super(_shop, 0.5f, ShopTextElm.LINE_H);
         updateDisplay();
     }
 

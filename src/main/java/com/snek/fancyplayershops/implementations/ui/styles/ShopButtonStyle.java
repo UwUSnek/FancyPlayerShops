@@ -22,6 +22,6 @@ public class ShopButtonStyle extends PanelElmStyle {
 
     @Override
     public @NotNull Vector4i getDefaultColor () {
-        return new Vector4i(255, 150, 200, 180);
+        return new Vector4i(255, 130, 180, 160);
     }
 }

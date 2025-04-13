@@ -30,7 +30,7 @@ public class DetailsUiDisplay extends ShopTextElm {
 
 
     public DetailsUiDisplay(@NotNull Shop _shop){
-        super(_shop, 0.5f, 0.1f);
+        super(_shop, 0.5f, ShopTextElm.LINE_H);
         updateDisplay();
     }
 

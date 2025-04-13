@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import com.snek.fancyplayershops.ChatInput;
 import com.snek.fancyplayershops.Shop;
 import com.snek.fancyplayershops.implementations.ui.ShopButton;
+import com.snek.fancyplayershops.implementations.ui.ShopTextElm;
 import com.snek.fancyplayershops.implementations.ui.details.DetailsUiDisplay;
 import com.snek.framework.ui.styles.__internal_TextElmStyle;
 import com.snek.framework.utils.Txt;
@@ -19,7 +20,7 @@ import net.minecraft.util.ClickType;
 public class EditUiPriceButton extends ShopButton {
 
     public EditUiPriceButton(@NotNull Shop _shop) {
-        super(_shop, 0.5f, 0.1f);
+        super(_shop, 0.5f, ShopTextElm.LINE_H);
         updateDisplay();
         // System.out.println("Scale after: " + __calcTransform().getScale().toString());
         // System.out.println("Scale value: " + getAbsSize().toString());

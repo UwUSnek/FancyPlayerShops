@@ -9,7 +9,7 @@ import com.snek.fancyplayershops.Shop;
 
 
 public class ShopTextElm extends TrackedTextElm {
-    // public static final float SHIFT_Y = 0.6f;
+    public static final float LINE_H = 0.1f;
 
     protected final @NotNull Shop shop;
 
