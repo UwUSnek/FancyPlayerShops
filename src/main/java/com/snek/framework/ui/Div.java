@@ -301,11 +301,18 @@ public class Div {
 
 
     protected void updateZIndex() {
-        zIndex = parent == null ? 0 : parent.zIndex + 1;
+        zIndex = parent == null ? 0 : parent.zIndex + parent.getLayerCount();
         for (Div c : children) c.updateZIndex();
     }
     public int getZIndex() {
         return zIndex;
+    }
+    /**
+     * Returns the amount of Z-Layers occupied by this element.
+     * @return The amount of Z-Layers.
+     */
+    public int getLayerCount() {
+        return 0;
     }
 
 

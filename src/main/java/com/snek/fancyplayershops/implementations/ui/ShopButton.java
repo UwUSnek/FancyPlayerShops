@@ -1,6 +1,6 @@
 package com.snek.fancyplayershops.implementations.ui;
 
-import com.snek.framework.ui.TextElm;
+import com.snek.framework.ui.FancyTextElm;
 import com.snek.framework.ui.interfaces.Clickable;
 import com.snek.framework.ui.interfaces.Hoverable;
 
@@ -30,7 +30,7 @@ import com.snek.framework.ui.styles.PanelElmStyle;
 
 
 
-public class ShopButton extends TextElm implements Hoverable, Clickable {
+public class ShopButton extends FancyTextElm implements Hoverable, Clickable {
     public static final Vector4i BG_HOVER = new Vector4i(240, 95, 100, 100);
 
     protected final @NotNull Shop shop;

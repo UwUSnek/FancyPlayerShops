@@ -7,7 +7,7 @@ import com.snek.fancyplayershops.implementations.ui.ShopPanelElm;
 import com.snek.fancyplayershops.implementations.ui.ShopTextElm;
 import com.snek.framework.data_types.ui.AlignmentX;
 import com.snek.framework.ui.Div;
-import com.snek.framework.ui.TextElm;
+import com.snek.framework.ui.FancyTextElm;
 
 
 
