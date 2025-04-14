@@ -22,6 +22,9 @@ public class PanelElmStyle extends ElmStyle {
     public static final float ENTITY_BLOCK_RATIO_X = 40f;
     public static final float ENTITY_BLOCK_RATIO_Y = 40f;
 
+    // The translation on the X axis needed to align the panel entity with the element's bounding box
+    public static final float ENTITY_SHIFT_X = -0.5f;
+
 
     private Flagged<Vector4i> color = null;
 
@@ -51,7 +54,7 @@ public class PanelElmStyle extends ElmStyle {
         return new Transform()
             .scaleX(ENTITY_BLOCK_RATIO_X)
             .scaleY(ENTITY_BLOCK_RATIO_Y)
-            .moveX(-0.5f)
+            .moveX(ENTITY_SHIFT_X)
         ;
     }
 

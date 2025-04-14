@@ -119,11 +119,13 @@ public abstract class Elm extends Div {
         { Flagged<BillboardMode> f = style.getFlaggedBillboardMode(); if(f.isFlagged()) { entity.setBillboardMode (f.get()                                ); f.unflag(); }}
     }
 
+
     @Override
     protected void updateAbsPos() {
         super.updateAbsPos();
         style.editTransform();
     }
+
 
     @Override
     protected void updateZIndex() {
@@ -131,10 +133,12 @@ public abstract class Elm extends Div {
         style.editTransform();
     }
 
+
     @Override
     public int getLayerCount() {
         return 1;
     }
+
 
     /**
      * Calculates the final transform to apply to the entity.
@@ -286,8 +290,12 @@ public abstract class Elm extends Div {
     @Override
     public void spawn(Vector3d pos) {
 
-        // Flush previous changes to the entity to avoid bad interpolations and the entity into the world
+        // Flush previous changes to the entity to avoid bad interpolations and spawn the entity into the world
         flushStyle();
+        Animation resetAnimation = style.getDespawnAnimation();
+        if(resetAnimation != null) {
+            applyAnimationNow(resetAnimation);
+        }
         entity.spawn(world, pos);
 
 
@@ -297,10 +305,6 @@ public abstract class Elm extends Div {
 
 
         // Handle animations
-        Animation resetAnimation = style.getDespawnAnimation();
-        if(resetAnimation != null) {
-            applyAnimationNow(resetAnimation);
-        }
         Animation animation = style.getSpawnAnimation();
         if(animation != null) {
             applyAnimation(animation);

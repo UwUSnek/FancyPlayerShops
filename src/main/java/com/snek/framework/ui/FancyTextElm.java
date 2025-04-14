@@ -20,6 +20,7 @@ import com.snek.framework.data_types.displays.CustomTextDisplay;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.ui.styles.FancyTextElmStyle;
 import com.snek.framework.ui.styles.PanelElmStyle;
+import com.snek.framework.ui.styles.TextElmStyle;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
 
@@ -39,19 +40,15 @@ import net.minecraft.text.Text;
  */
 public class FancyTextElm extends Elm {
 
-    // This value identifies the amount of rendered text pixels that fit in a minecraft block
-    public static final int TEXT_PIXEL_BLOCK_RATIO = 40;
-
-
     // Animations
     protected final @NotNull IndexedArrayDeque<Vector4i> backgroundQueue = new IndexedArrayDeque<>(); // The list of backgrounds to apply to this instance in the next ticks. 1 for each update tick
     protected final @NotNull IndexedArrayDeque<Integer>  alphaQueue      = new IndexedArrayDeque<>(); // The list of opacities   to apply to this instance in the next ticks. 1 for each update tick
 
 
     // In-world data
-    protected @NotNull CustomDisplay text;
-    public CustomTextDisplay getBgEntity() { return (CustomTextDisplay)getEntity(); }
+    private @NotNull CustomDisplay text;
     public CustomTextDisplay getFgEntity() { return (CustomTextDisplay)text; }
+    public CustomTextDisplay getBgEntity() { return (CustomTextDisplay)getEntity(); }
     // private TextElmStyle getStyle() { return (TextElmStyle)style; }
 
 
@@ -101,14 +98,26 @@ public class FancyTextElm extends Elm {
     @Override
     public void flushStyle() {
         //! super.flushStyle() not called as it unflags style data but only applies it to the background element.
+        //! The transform also needs to be applied differently because of the Z-Layer size of fancy text elements.
 
         CustomTextDisplay fg = getFgEntity();
         CustomTextDisplay bg = getBgEntity();
 
         {Flagged<Transform> f = style.getFlaggedTransform();
         if(f.isFlagged()) {
-            fg.setTransformation(__calcTransform().clone().moveZ((getZIndex() + 1) * 0.001f).toMinecraftTransform()); //TODO move Z layer spacing to config file
-            bg.setTransformation(__calcTransform()                                          .toMinecraftTransform());
+            fg.setTransformation(
+                __calcTransform()
+                .moveZ((getZIndex() + 1) * 0.001f) //TODO move Z layer spacing to config file
+                .scale(TextElmStyle.DEFAULT_TEXT_SCALE)
+                .toMinecraftTransform()
+            );
+            bg.setTransformation(
+                __calcTransform()
+                .scaleX(PanelElmStyle.ENTITY_BLOCK_RATIO_X * getAbsSize().x)
+                .scaleY(PanelElmStyle.ENTITY_BLOCK_RATIO_Y * getAbsSize().y)
+                .moveX(PanelElmStyle.ENTITY_SHIFT_X)
+                .toMinecraftTransform()
+            );
             f.unflag();
         }}
         {Flagged<Float> f = style.getFlaggedViewRange();
@@ -128,6 +137,13 @@ public class FancyTextElm extends Elm {
         { Flagged<Integer>  f = getStyle().getFlaggedTextOpacity(); if(f.isFlagged()) { fg.setTextOpacity(f.get()); f.unflag(); }}
         { Flagged<Vector4i> f = getStyle().getFlaggedBackground();  if(f.isFlagged()) { bg.setBackground (f.get()); f.unflag(); }}
     }
+
+
+    @Override
+    protected void updateAbsPos() {
+        super.updateAbsPos();
+    }
+
 
     @Override
     public int getLayerCount() {

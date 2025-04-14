@@ -42,8 +42,11 @@ import net.minecraft.server.world.ServerWorld;
  * A simple UI element with a background color and animations.
  */
 public class PanelElm extends Elm {
+
+
     private PanelElmStyle getStyle() { return (PanelElmStyle)style; }
     public CustomTextDisplay getPanelEntity() { return (CustomTextDisplay)entity; }
+
 
     // Animations
     protected final @NotNull IndexedArrayDeque<Vector4i> colorQueue = new IndexedArrayDeque<>(); // The list of backgrounds to apply to this instance in the next ticks. 1 for each update tick

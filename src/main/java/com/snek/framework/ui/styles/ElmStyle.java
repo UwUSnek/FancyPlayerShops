@@ -21,8 +21,8 @@ import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 public class ElmStyle {
     public static final float S_SCALE  = 1.02f;                 // The scale applied by the spawning animation
     public static final float S_HEIGHT = 0.05f;                 // The Y translation applied by the spawning animation
-    public static final int   S_TIME   = 4;                     // Spawn   time. Measured in ticks
-    public static final int   D_TIME   = 8;                     // Despawn time. Measured in ticks
+    public static final int   S_TIME   = 40;                     // Spawn   time. Measured in ticks
+    public static final int   D_TIME   = 40;                     // Despawn time. Measured in ticks
 
 
     private Flagged<Transform>     transform        = null;     // The current transformation

@@ -28,6 +28,35 @@ public class FancyTextElmStyle extends TextElmStyle {
     }
 
 
+    //TODO split animation between normal and fancy text styles, use new animation type
+    @Override
+    public Animation getDefaultSpawnAnimation() {
+        return new Animation(new TextAdditiveTransition(new Transform(),
+            ElmStyle.S_TIME,
+            Easings.sineOut,
+            background.get(),
+            255
+        ));
+    }
+
+
+    @Override
+    public Animation getDefaultDespawnAnimation() {
+        return new Animation(new TextAdditiveTransition(new Transform(),
+            ElmStyle.D_TIME,
+            Easings.sineOut,
+            new Vector4i(0),
+            0
+        ));
+    }
+
+
+    @Override
+    public @NotNull Transform getDefaultTransform () {
+        return new Transform();
+    }
+
+
     @Override
     public void resetAll(){
         resetBackground();

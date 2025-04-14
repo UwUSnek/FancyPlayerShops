@@ -21,13 +21,18 @@ import net.minecraft.text.Text;
 
 
 public class TextElmStyle extends ElmStyle {
+    public static final float DEFAULT_TEXT_SCALE = 0.35f;
+
     private Flagged<Text>          text          = null;
     private Flagged<TextAlignment> textAlignment = null;
     private Flagged<Integer>       textOpacity   = null;
 
+
+
+
     @Override
     public @NotNull Transform getDefaultTransform () {
-        return new Transform().scale(0.35f);
+        return new Transform().scale(DEFAULT_TEXT_SCALE);
     }
 
 
