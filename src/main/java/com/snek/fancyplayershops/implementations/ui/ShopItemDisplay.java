@@ -11,7 +11,7 @@ import com.snek.framework.data_types.animations.Transform;
 import com.snek.framework.data_types.animations.transitions.AdditiveTransition;
 import com.snek.framework.data_types.animations.transitions.TargetTransition;
 import com.snek.framework.data_types.displays.CustomItemDisplay;
-import com.snek.framework.ui.ItemElm;
+import com.snek.framework.ui.elements.ItemElm;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.ui.styles.ItemElmStyle;
 import com.snek.framework.utils.Easings;

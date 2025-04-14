@@ -1,4 +1,4 @@
-package com.snek.framework.ui;
+package com.snek.framework.ui.elements;
 
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
@@ -42,7 +42,11 @@ import net.minecraft.server.world.ServerWorld;
  * A simple UI element with a background color and animations.
  */
 public class PanelElm extends Elm {
+
+
     private PanelElmStyle getStyle() { return (PanelElmStyle)style; }
+    public CustomTextDisplay getPanelEntity() { return (CustomTextDisplay)entity; }
+
 
     // Animations
     protected final @NotNull IndexedArrayDeque<Vector4i> colorQueue = new IndexedArrayDeque<>(); // The list of backgrounds to apply to this instance in the next ticks. 1 for each update tick
@@ -53,7 +57,7 @@ public class PanelElm extends Elm {
 
     protected PanelElm(@NotNull ServerWorld _world, @NotNull CustomDisplay _entity, @NotNull ElmStyle _style) {
         super(_world, _entity, _style);
-        ((CustomTextDisplay)entity).setText(new Txt("").get());
+        getPanelEntity().setText(new Txt("").get());
     }
 
     protected PanelElm(@NotNull ServerWorld _world, @NotNull ElmStyle _style) {
@@ -74,8 +78,8 @@ public class PanelElm extends Elm {
     @Override
     public void flushStyle() {
         super.flushStyle();
-        CustomTextDisplay e2 = (CustomTextDisplay)entity;
-        { Flagged<Vector4i> f = getStyle().getFlaggedColor(); if(f.isFlagged()) { e2.setBackground(f.get()); f.unflag(); }}
+        CustomTextDisplay e = getPanelEntity();
+        { Flagged<Vector4i> f = getStyle().getFlaggedColor(); if(f.isFlagged()) { e.setBackground(f.get()); f.unflag(); }}
     }
 
 
@@ -119,22 +123,6 @@ public class PanelElm extends Elm {
     }
 
 
-
-
-    @Override
-    public void spawn(Vector3d pos) {
-        Animation animation = style.getDespawnAnimation();
-        if(animation != null) {
-            applyAnimationNow(animation);
-        }
-        super.spawn(pos);
-    }
-
-
-    @Override
-    public void despawn() {
-        super.despawn();
-    }
 
 
     @Override

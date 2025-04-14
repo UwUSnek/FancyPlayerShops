@@ -1,4 +1,4 @@
-package com.snek.framework.ui;
+package com.snek.framework.ui.elements;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +20,7 @@ import com.snek.framework.data_types.containers.IndexedArrayDeque;
 import com.snek.framework.data_types.displays.CustomDisplay;
 import com.snek.framework.data_types.ui.AlignmentX;
 import com.snek.framework.data_types.ui.AlignmentY;
+import com.snek.framework.ui.Div;
 import com.snek.framework.ui.interfaces.Hoverable;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.utils.SpaceUtils;
@@ -55,7 +56,7 @@ import net.minecraft.world.World;
  * An abstract class that represents a visible UI Element.
  */
 public abstract class Elm extends Div {
-    private static final String ENTITY_CUSTOM_NAME = FancyPlayerShops.MOD_ID + ".ui.displayentity";
+    public static final String ENTITY_CUSTOM_NAME = FancyPlayerShops.MOD_ID + ".ui.displayentity";
 
 
     // Animation handling
@@ -71,6 +72,7 @@ public abstract class Elm extends Div {
     public    @NotNull ElmStyle      style;     // The style of the element
     protected boolean isSpawned = false;        // Whether the element has been spawned into the world
     private   boolean isHovered = false;        // Whether the element is being hovered on by a player's crosshair. //! Only valid in Hoverable instances
+    public CustomDisplay getEntity() { return entity; }
 
 
 
@@ -89,17 +91,6 @@ public abstract class Elm extends Div {
     // @Override public void moveX   (         float      x    ) { super.moveX   (x    ); style.editTransform(); }
     // @Override public void moveY   (         float      y    ) { super.moveY   (y    ); style.editTransform(); }
 
-    @Override
-    protected void updateAbsPos() {
-        super.updateAbsPos();
-        style.editTransform();
-    }
-
-    @Override
-    protected void updateZIndex() {
-        super.updateZIndex();
-        style.editTransform();
-    }
 
 
 
@@ -130,6 +121,26 @@ public abstract class Elm extends Div {
     }
 
 
+    @Override
+    protected void updateAbsPos() {
+        super.updateAbsPos();
+        style.editTransform();
+    }
+
+
+    @Override
+    protected void updateZIndex() {
+        super.updateZIndex();
+        style.editTransform();
+    }
+
+
+    @Override
+    public int getLayerCount() {
+        return 1;
+    }
+
+
     /**
      * Calculates the final transform to apply to the entity.
      * This takes into account the element's position, alignment options and visual transform.
@@ -137,7 +148,7 @@ public abstract class Elm extends Div {
      */
     protected Transform __calcTransform() {
         return style.getTransform().clone()
-            .move(getAbsPos().x, getAbsPos().y, getZIndex() * 0.001f)
+            .move(getAbsPos().x, getAbsPos().y, getZIndex() * 0.001f) //TODO move Z layer spacing to config file
         ;
     }
 
@@ -275,27 +286,24 @@ public abstract class Elm extends Div {
 
 
     /**
-     * Retrieves the custom display entity held by this element.
-     * @return The entity.
-     */
-    public CustomDisplay getEntity() {
-        return entity;
-    }
-
-
-
-
-    /**
      * Spawns the element and its associated entities into the world.
      */
     @Override
     public void spawn(Vector3d pos) {
-        super.spawn(pos);
-        isSpawned = true;
 
-        // Flush previous changes to the entity to avoid bad interpolations and the entity into the world
+        // Flush previous changes to the entity to avoid bad interpolations and spawn the entity into the world
         flushStyle();
+        Animation primerAnimation = style.getPrimerAnimation();
+        if(primerAnimation != null) {
+            applyAnimationNow(primerAnimation);
+        }
         entity.spawn(world, pos);
+
+
+        // Set tracking custom name
+        entity.setCustomNameVisible(false);
+        entity.setCustomName(new Txt(ENTITY_CUSTOM_NAME).get());
+
 
         // Handle animations
         Animation animation = style.getSpawnAnimation();
@@ -303,9 +311,10 @@ public abstract class Elm extends Div {
             applyAnimation(animation);
         }
 
-        // Set tracking custom name
-        entity.setCustomNameVisible(false);
-        entity.setCustomName(new Txt(ENTITY_CUSTOM_NAME).get());
+
+        // Call superclass spawn and set spawned flag to true
+        super.spawn(pos);
+        isSpawned = true;
     }
 
 
@@ -325,10 +334,10 @@ public abstract class Elm extends Div {
             applyAnimation(animation);
 
             // Remove entity from the world after a delay
-            Scheduler.schedule(animation.getTotalDuration(), entity::despawn );
+            Scheduler.schedule(animation.getTotalDuration(), this::despawnNow);
         }
         else {
-            entity.despawn();
+            despawnNow();
         }
     }
 

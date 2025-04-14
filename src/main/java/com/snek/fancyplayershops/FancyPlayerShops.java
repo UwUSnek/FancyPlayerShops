@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import com.snek.fancyplayershops.implementations.ui.InteractionBlocker;
 import com.snek.fancyplayershops.implementations.ui.ShopPanelElm;
-import com.snek.framework.ui.Elm;
+import com.snek.framework.ui.elements.Elm;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.scheduler.Scheduler;
 

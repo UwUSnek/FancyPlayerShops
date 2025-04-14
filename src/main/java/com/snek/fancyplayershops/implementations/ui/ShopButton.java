@@ -1,6 +1,6 @@
 package com.snek.fancyplayershops.implementations.ui;
 
-import com.snek.framework.ui.TextElm;
+import com.snek.framework.ui.elements.FancyTextElm;
 import com.snek.framework.ui.interfaces.Clickable;
 import com.snek.framework.ui.interfaces.Hoverable;
 
@@ -30,7 +30,7 @@ import com.snek.framework.ui.styles.PanelElmStyle;
 
 
 
-public class ShopButton extends TextElm implements Hoverable, Clickable {
+public class ShopButton extends FancyTextElm implements Hoverable, Clickable {
     public static final Vector4i BG_HOVER = new Vector4i(240, 95, 100, 100);
 
     protected final @NotNull Shop shop;
@@ -58,7 +58,7 @@ public class ShopButton extends TextElm implements Hoverable, Clickable {
 
     @Override
     public void onHoverExit() {
-        applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 2, Easings.linear, ((ShopButtonStyle)style).getDefaultColor(), 255)));
+        applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 2, Easings.linear, ((ShopButtonStyle)style).getDefaultBackground(), 255)));
         // System.out.println("current color 2: " + ((CustomTextDisplay)entity).getBackground().toString()); //TODO REMOVE
     }
 
