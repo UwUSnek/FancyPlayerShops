@@ -237,7 +237,10 @@ public class FancyTextElm extends Elm {
         if(     !alphaQueue.isEmpty()) getStyle().setTextOpacity(     alphaQueue.removeFirst());
         //! Update queue not checked as it depends exclusively on transform changes.
 
-        return super.tick();
+        boolean r = super.tick();
+        getFgEntity().setInterpolationDuration(TRANSITION_REFRESH_TIME);
+        getFgEntity().setStartInterpolation();
+        return r;
     }
 
 

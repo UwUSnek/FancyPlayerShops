@@ -58,7 +58,7 @@ public class ShopButton extends FancyTextElm implements Hoverable, Clickable {
 
     @Override
     public void onHoverExit() {
-        applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 2, Easings.linear, ((ShopButtonStyle)style).getDefaultColor(), 255)));
+        applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 2, Easings.linear, ((ShopButtonStyle)style).getDefaultBackground(), 255)));
         // System.out.println("current color 2: " + ((CustomTextDisplay)entity).getBackground().toString()); //TODO REMOVE
     }
 

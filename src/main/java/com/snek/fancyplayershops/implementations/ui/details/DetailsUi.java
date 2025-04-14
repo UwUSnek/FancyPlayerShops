@@ -25,6 +25,5 @@ public class DetailsUi extends ShopCanvas {
         e = bg.addChild(new DetailsUiDisplay(_shop));
         e.moveY(0.6f);
         e.setAlignmentX(AlignmentX.CENTER);
-
     }
 }

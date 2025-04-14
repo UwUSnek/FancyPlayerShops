@@ -6,6 +6,8 @@ import org.joml.Vector3i;
 
 import com.snek.fancyplayershops.Shop;
 import com.snek.fancyplayershops.implementations.ui.ShopTextElm;
+import com.snek.fancyplayershops.implementations.ui.styles.ShopButtonStyle;
+import com.snek.framework.ui.styles.FancyTextElmStyle;
 import com.snek.framework.ui.styles.TextElmStyle;
 import com.snek.framework.utils.MinecraftUtils;
 import com.snek.framework.utils.Txt;
@@ -48,7 +50,7 @@ public class DetailsUiDisplay extends ShopTextElm {
         // Empty shop case
         final ItemStack _item = shop.getItem();
         if(_item.getItem() == Items.AIR) {
-            ((TextElmStyle)text.style).setText(new Txt(" ")
+            ((FancyTextElmStyle)style).setText(new Txt(" ")
             .cat(Shop.EMPTY_SHOP_NAME).cat(" ")
             .cat(new Txt("\n Price: -")).cat(" ")
             .cat(new Txt("\n Stock: -")).cat(" ")
@@ -58,7 +60,7 @@ public class DetailsUiDisplay extends ShopTextElm {
         // Configured shop case
         else {
             double price = shop.getPrice();
-            ((TextElmStyle)text.style).setText(new Txt()
+            ((FancyTextElmStyle)style).setText(new Txt()
                 .cat(new Txt(MinecraftUtils.getItemName(_item)).get()).cat(" ")
                 .cat(new Txt("\n Price: ")).cat(new Txt(price < 0.005 ? "Free" : Utils.formatPrice(price)).bold().color(C_RGB_PRICE)).cat(" ")
                 .cat(new Txt("\n Stock: ")).cat(new Txt(Utils.formatAmount(shop.getStock())).bold().color(col)).cat(" ")

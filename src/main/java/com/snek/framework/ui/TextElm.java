@@ -125,7 +125,7 @@ public class TextElm extends Elm {
             int       a =      alphaQueue.getOrAdd(index, () ->              getStyle().getTextOpacity());
 
             // Interpolate background and alpha
-            bg.set(Utils.interpolateARGB(bg, s.background, step.factor));
+            // bg.set(Utils.interpolateARGB(bg, s.background, step.factor));
             alphaQueue.set(index, Utils.interpolateI(a, s.alpha, step.factor));
         }
 
