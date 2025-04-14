@@ -30,6 +30,18 @@ public class FancyTextElmStyle extends TextElmStyle {
 
     //TODO split animation between normal and fancy text styles, use new animation type
     @Override
+    public Animation getDefaultPrimerAnimation() {
+        return new Animation(new TextAdditiveTransition(new Transform(),
+            ElmStyle.D_TIME,
+            Easings.sineOut,
+            new Vector4i(0),
+            0
+        ));
+    }
+
+
+    //TODO split animation between normal and fancy text styles, use new animation type
+    @Override
     public Animation getDefaultSpawnAnimation() {
         return new Animation(new TextAdditiveTransition(new Transform(),
             ElmStyle.S_TIME,

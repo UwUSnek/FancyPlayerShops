@@ -21,14 +21,15 @@ import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 public class ElmStyle {
     public static final float S_SCALE  = 1.02f;                 // The scale applied by the spawning animation
     public static final float S_HEIGHT = 0.05f;                 // The Y translation applied by the spawning animation
-    public static final int   S_TIME   = 40;                     // Spawn   time. Measured in ticks
-    public static final int   D_TIME   = 40;                     // Despawn time. Measured in ticks
+    public static final int   S_TIME   = 4;                     // Spawn   time. Measured in ticks
+    public static final int   D_TIME   = 8;                     // Despawn time. Measured in ticks
 
 
     private Flagged<Transform>     transform        = null;     // The current transformation
     private Flagged<Float>         viewRange        = null;     // The view range. 1.0f = 64 blocks
     private Flagged<BillboardMode> billboardMode    = null;     // The billboard mode. Defines how the rendered entity is rotated relatively to the player's camera
 
+    private Flagged<Animation>     primerAnimation  = null;     // The animation used to prepare the element to receive the spawning animation. Applied instantly.
     private Flagged<Animation>     spawnAnimation   = null;     // The spawning animation. Played when the entity is spawned into the world
     private Flagged<Animation>     despawnAnimation = null;     // The despawning animation. Played before the entity is removed from the world
 
@@ -47,6 +48,7 @@ public class ElmStyle {
         resetTransform();
         resetViewRange();
         resetBillboardMode();
+        resetPrimerAnimation();
         resetSpawnAnimation();
         resetDespawnAnimation();
     }
@@ -58,12 +60,14 @@ public class ElmStyle {
     public @NotNull  Transform     getDefaultTransform       () { return new Transform().scale(0.5f); }
     public           float         getDefaultViewRange       () { return 0.3f; }
     public @NotNull  BillboardMode getDefaultBillboardMode   () { return BillboardMode.FIXED; }
+    public @Nullable Animation     getDefaultPrimerAnimation () { return null; }
     public @Nullable Animation     getDefaultSpawnAnimation  () { return null; }
     public @Nullable Animation     getDefaultDespawnAnimation() { return null; }
 
     public void resetTransform       () { transform        = Flagged.from(getDefaultTransform()       ); }
     public void resetViewRange       () { viewRange        = Flagged.from(getDefaultViewRange()       ); }
     public void resetBillboardMode   () { billboardMode    = Flagged.from(getDefaultBillboardMode()   ); }
+    public void resetPrimerAnimation () { primerAnimation  = Flagged.from(getDefaultPrimerAnimation() ); }
     public void resetSpawnAnimation  () { spawnAnimation   = Flagged.from(getDefaultSpawnAnimation()  ); }
     public void resetDespawnAnimation() { despawnAnimation = Flagged.from(getDefaultDespawnAnimation()); }
 
@@ -71,6 +75,7 @@ public class ElmStyle {
     public void setTransform       (@NotNull  Transform     _transform    ) { transform       .set(_transform    ); }
     public void setViewRange       (          float         _viewRange    ) { viewRange       .set(_viewRange    ); }
     public void setBillboardMode   (@NotNull  BillboardMode _billboardMode) { billboardMode   .set(_billboardMode); }
+    public void setPrimerAnimation (@Nullable Animation     _animation    ) { primerAnimation  .set(_animation   ); }
     public void setSpawnAnimation  (@Nullable Animation     _animation    ) { spawnAnimation  .set(_animation    ); }
     public void setDespawnAnimation(@Nullable Animation     _animation    ) { despawnAnimation.set(_animation    ); }
 
@@ -78,12 +83,14 @@ public class ElmStyle {
     public @NotNull  Transform     getTransform       () { return transform       .get(); }
     public           float         getViewRange       () { return viewRange       .get(); }
     public @NotNull  BillboardMode getBillboardMode   () { return billboardMode   .get(); }
+    public @Nullable Animation     getPrimerAnimation () { return primerAnimation .get(); }
     public @Nullable Animation     getSpawnAnimation  () { return spawnAnimation  .get(); }
     public @Nullable Animation     getDespawnAnimation() { return despawnAnimation.get(); }
 
     public @NotNull  Flagged<Transform>     getFlaggedTransform       () { return transform;        }
     public           Flagged<Float>         getFlaggedViewRange       () { return viewRange;        }
     public @NotNull  Flagged<BillboardMode> getFlaggedBillboardMode   () { return billboardMode;    }
+    public @Nullable Flagged<Animation>     getFlaggedPrimerAnimation () { return primerAnimation;  }
     public @Nullable Flagged<Animation>     getFlaggedSpawnAnimation  () { return spawnAnimation;   }
     public @Nullable Flagged<Animation>     getFlaggedDespawnAnimation() { return despawnAnimation; }
 
@@ -91,6 +98,7 @@ public class ElmStyle {
     public @NotNull  Transform     editTransform       () { return transform       .edit(); }
     //!                            editViewRange       Primitive types cannot be edited
     //!                            editBillboardMode   Primitive types cannot be edited
+    public @Nullable Animation     editPrimerAnimation () { return primerAnimation .edit(); }
     public @Nullable Animation     editSpawnAnimation  () { return spawnAnimation  .edit(); }
     public @Nullable Animation     editDespawnAnimation() { return despawnAnimation.edit(); }
 }

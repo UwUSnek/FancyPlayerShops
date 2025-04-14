@@ -1,4 +1,4 @@
-package com.snek.framework.ui;
+package com.snek.framework.ui.elements;
 
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;

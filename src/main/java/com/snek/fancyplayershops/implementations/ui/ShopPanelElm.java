@@ -5,8 +5,8 @@ import org.joml.Vector3d;
 
 import com.snek.fancyplayershops.FancyPlayerShops;
 import com.snek.fancyplayershops.Shop;
-import com.snek.framework.ui.PanelElm;
-import com.snek.framework.ui.FancyTextElm;
+import com.snek.framework.ui.elements.FancyTextElm;
+import com.snek.framework.ui.elements.PanelElm;
 import com.snek.framework.utils.Txt;
 
 import net.minecraft.entity.Entity;

@@ -1,6 +1,6 @@
 package com.snek.fancyplayershops.implementations.ui;
 
-import com.snek.framework.ui.FancyTextElm;
+import com.snek.framework.ui.elements.FancyTextElm;
 import com.snek.framework.ui.interfaces.Clickable;
 import com.snek.framework.ui.interfaces.Hoverable;
 

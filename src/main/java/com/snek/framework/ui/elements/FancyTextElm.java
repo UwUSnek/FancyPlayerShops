@@ -1,6 +1,6 @@
-package com.snek.framework.ui;
+package com.snek.framework.ui.elements;
 
-import static com.snek.framework.ui.Elm.ENTITY_CUSTOM_NAME;
+import static com.snek.framework.ui.elements.Elm.ENTITY_CUSTOM_NAME;
 
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
@@ -157,15 +157,8 @@ public class FancyTextElm extends Elm {
     public void applyAnimationNow(@NotNull Animation animation) {
         super.applyAnimationNow(animation);
 
-        // Apply each transition one at a time
-        for (Transition transition : animation.getTransitions()) {
-            __applyAnimationTransitionNow(transition);
-        }
-        flushStyle();
         getFgEntity().setInterpolationDuration(0);
         getFgEntity().setStartInterpolation();
-        getBgEntity().setInterpolationDuration(0);
-        getBgEntity().setStartInterpolation();
     }
 
 

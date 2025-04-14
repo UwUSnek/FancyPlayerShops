@@ -1,4 +1,4 @@
-package com.snek.framework.ui;
+package com.snek.framework.ui.elements;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +20,7 @@ import com.snek.framework.data_types.containers.IndexedArrayDeque;
 import com.snek.framework.data_types.displays.CustomDisplay;
 import com.snek.framework.data_types.ui.AlignmentX;
 import com.snek.framework.data_types.ui.AlignmentY;
+import com.snek.framework.ui.Div;
 import com.snek.framework.ui.interfaces.Hoverable;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.utils.SpaceUtils;
@@ -292,9 +293,9 @@ public abstract class Elm extends Div {
 
         // Flush previous changes to the entity to avoid bad interpolations and spawn the entity into the world
         flushStyle();
-        Animation resetAnimation = style.getDespawnAnimation();
-        if(resetAnimation != null) {
-            applyAnimationNow(resetAnimation);
+        Animation primerAnimation = style.getPrimerAnimation();
+        if(primerAnimation != null) {
+            applyAnimationNow(primerAnimation);
         }
         entity.spawn(world, pos);
 

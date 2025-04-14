@@ -60,6 +60,20 @@ public class PanelElmStyle extends ElmStyle {
 
 
     @Override
+    public Animation getDefaultPrimerAnimation() {
+        // System.out.println("Chosen color: " +  getDefaultColor().toString());
+        return new Animation(new TextAdditiveTransition(
+            new Transform(), //TODO dont include in text transitions
+            ElmStyle.S_TIME,
+            Easings.sineOut,
+            // color.get(),
+            new Vector4i(getDefaultColor().mul(new Vector4i(0, 1, 1, 1))),
+            0
+        ));
+    }
+
+
+    @Override
     public Animation getDefaultSpawnAnimation() {
         // System.out.println("Chosen color: " +  getDefaultColor().toString());
         return new Animation(new TextAdditiveTransition(
