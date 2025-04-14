@@ -11,10 +11,9 @@ import org.joml.Vector4i;
 import com.snek.fancyplayershops.Shop;
 import com.snek.fancyplayershops.implementations.ui.styles.ShopButtonStyle;
 import com.snek.framework.data_types.animations.Animation;
-import com.snek.framework.data_types.animations.transitions.AdditiveTransition;
-import com.snek.framework.data_types.animations.transitions.TextAdditiveTransition;
 import com.snek.framework.data_types.displays.CustomTextDisplay;
 import com.snek.framework.data_types.animations.Transform;
+import com.snek.framework.data_types.animations.transitions.Transition;
 import com.snek.framework.utils.Easings;
 import com.snek.framework.utils.scheduler.Scheduler;
 
@@ -52,13 +51,21 @@ public class ShopButton extends FancyTextElm implements Hoverable, Clickable {
 
     @Override
     public void onHoverEnter() {
-        applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 2, Easings.linear, BG_HOVER, 255)));
+        applyAnimation(new Animation(
+            new Transition(2, Easings.linear)
+            .targetBackground(BG_HOVER)
+            .targetOpacity(255)
+        ));
     }
 
 
     @Override
     public void onHoverExit() {
-        applyAnimation(new Animation(new TextAdditiveTransition(new Transform(), 2, Easings.linear, ((ShopButtonStyle)style).getDefaultBackground(), 255)));
+        applyAnimation(new Animation(
+            new Transition(2, Easings.linear)
+            .targetBackground(((ShopButtonStyle)style).getDefaultBackground())
+            .targetOpacity(255)
+        ));
         // System.out.println("current color 2: " + ((CustomTextDisplay)entity).getBackground().toString()); //TODO REMOVE
     }
 

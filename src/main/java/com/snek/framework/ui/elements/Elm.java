@@ -12,6 +12,7 @@ import org.joml.Vector3f;
 
 import com.snek.fancyplayershops.FancyPlayerShops;
 import com.snek.framework.data_types.animations.Animation;
+import com.snek.framework.data_types.animations.InterpolatedData;
 import com.snek.framework.data_types.animations.Transform;
 import com.snek.framework.data_types.animations.steps.AnimationStep;
 import com.snek.framework.data_types.animations.transitions.Transition;
@@ -61,8 +62,8 @@ public abstract class Elm extends Div {
 
     // Animation handling
     public    static final int TRANSITION_REFRESH_TIME = 2;                         // The time between transition updates. Measured in ticks
-    private   static final @NotNull List<Elm> elmUpdateQueue = new ArrayList<>();   // The list of instances with pending transform updates
-    protected        final @NotNull IndexedArrayDeque<Transform> transformQueue = new IndexedArrayDeque<>(); // The list of transforms to apply to this instance in the next ticks. 1 for each update tick
+    private   static final @NotNull List<Elm> elmUpdateQueue = new ArrayList<>();   // The list of instances with pending transition steps
+    protected        final @NotNull IndexedArrayDeque<InterpolatedData> transitionStepQueue = new IndexedArrayDeque<>(); // The list of transition steps to apply to this instance in the next ticks. 1 for each update tick
     private boolean isQueued = false;                                               // Whether this instance is queued for updates. Updated manually
 
 
@@ -200,8 +201,11 @@ public abstract class Elm extends Div {
     }
 
 
-    protected void __applyAnimationTransitionNow(@NotNull Transition transition) {
-        style.editTransform().set(transition.compute(style.getTransform()));
+    protected void __applyAnimationTransitionNow(@NotNull Transition t) {
+        if(t.d.hasTransform()) {
+            if(t.isAdditive()) style.editTransform().apply(t.d.getTransform());
+            else               style.editTransform().set  (t.d.getTransform());
+        }
     }
 
 
@@ -216,9 +220,9 @@ public abstract class Elm extends Div {
     private int __applyAnimationTransition(@NotNull Transition transition, int shift) {
 
 
-        // Calculate animation steps as a list of transforms
+        // Calculate animation steps as a list of steps
         List<AnimationStep> animationSteps = new ArrayList<>();
-        Transform totTransform = new Transform();       // The sum of all the changes applied by the current and previous steps of the animation
+        // Transform totTransform = new Transform();       // The sum of all the changes applied by the current and previous steps of the animation
         int time = transition.getDuration();            // The duration of this transition
         int i = TRANSITION_REFRESH_TIME;
         for(; i < time + TRANSITION_REFRESH_TIME; i += TRANSITION_REFRESH_TIME) {
@@ -226,40 +230,42 @@ public abstract class Elm extends Div {
             // Calculate interpolation factor and add the new animation step to the list
             // float factor = (float)transition.getEasing().compute(Math.min(1d, (double)i / (double)time));
             float factor = (float)transition.getEasing().compute(Math.min(1d, (double)i / (double)time));
-            animationSteps.add(transition.createStep(totTransform, factor));
+            animationSteps.add(transition.createStep(factor));
         }
 
         // // Add padding step //! This makes the actual duration match the duration specified in the transition (or be greater than it, which is not an issue)
         // animationSteps.add(transition.createStep(totTransform, 1));
 
 
-        // Update existing future transforms
+        // Update existing future steps
         int j = 0;
-        if(!transformQueue.isEmpty()) {
+        if(!transitionStepQueue.isEmpty()) {
             AnimationStep step = null;
 
-            // Update existing future transforms
-            for(; j + shift < transformQueue.size() && j < animationSteps.size(); ++j) {
+            // Update existing future steps
+            for(; j + shift < transitionStepQueue.size() && j < animationSteps.size(); ++j) {
                 step = animationSteps.get(j);
-                __applyTransitionStep(j + shift, step);
+                transitionStepQueue.getOrAdd(j + shift, () -> new InterpolatedData(null, null, null)).apply(step);
             }
 
-            // If the amount of future transforms is larger than the amount of steps, apply the last step to the remaining transforms
+            // If the amount of future steps is larger than the amount of steps, apply the last step to the remaining steps
             if(j >= animationSteps.size()) {
-                for(; j + shift < transformQueue.size(); ++j) {
-                    __applyTransitionStep(j + shift, step);
+                for(; j + shift < transitionStepQueue.size(); ++j) {
+                    transitionStepQueue.get(j + shift).apply(step);
                 }
             }
         }
 
 
-        // Add remaining future transforms
-        Transform lastTransform = transformQueue.isEmpty() ? style.getTransform() : transformQueue.getLast();
-        for(; j < animationSteps.size(); ++j) {
-            transformQueue.add(lastTransform.clone());
-            var step = animationSteps.get(j);
-            __applyTransitionStep(j + shift, step);
-        }
+        // // Add remaining future steps
+        // // Transform lastTransform = transitionStepQueue.isEmpty() ? style.getTransform() : transitionStepQueue.getLast();
+        // // InterpolatedData lastData = transitionStepQueue.isEmpty() ? new InterpolatedData(null, null, null) : transitionStepQueue.getLast();
+        // for(; j < animationSteps.size(); ++j) {
+        //     // transitionStepQueue.add(new InterpolatedData(lastData.getTransform(), lastData.getBackground(), lastData.getOpacity()));
+        //     transitionStepQueue.add(new InterpolatedData(null, null, null));
+        //     var step = animationSteps.get(j);
+        //     transitionStepQueue(j + shift).apply(step);
+        // }
 
 
         // Return transition width
@@ -269,17 +275,30 @@ public abstract class Elm extends Div {
 
 
 
+    // /**
+    //  * Applies a single animation step.
+    //  * @param index The index of the future transform to apply the step to.
+    //  * @param step The animation step.
+    //  * @return The modified transform.
+    //  */
+    // protected @NotNull Transform applyTransitionStep(int index, @NotNull AnimationStep step){
+    //     Transform ft = transitionStepQueue.get(index);
+    //     if(step.isAdditive) ft.interpolate(ft.clone().apply(step.transform), step.factor);
+    //     else                ft.interpolate(step.transform,                   step.factor);
+    //     return ft;
+    // }
+
     /**
      * Applies a single animation step.
-     * @param index The index of the future transform to apply the step to.
      * @param step The animation step.
      * @return The modified transform.
      */
-    protected @NotNull Transform __applyTransitionStep(int index, @NotNull AnimationStep step){
-        Transform ft = transformQueue.get(index);
-        if(step.isAdditive) ft.interpolate(ft.clone().apply(step.transform), step.factor);
-        else                ft.interpolate(step.transform,                   step.factor);
-        return ft;
+    protected void __applyTransitionStep(@NotNull InterpolatedData d){
+        if(d.hasTransform()) style.setTransform(d.getTransform());
+        // Transform ft = transitionStepQueue.get(index);
+        // if(step.isAdditive) ft.interpolate(ft.clone().apply(step.transform), step.factor);
+        // else                ft.interpolate(step.transform,                   step.factor);
+        // return ft;
     }
 
 
@@ -362,12 +381,13 @@ public abstract class Elm extends Div {
      * @return true if no action is necessary. false if the element has been removed from the update queue.
      */
     protected boolean tick() {
-        style.setTransform(transformQueue.removeFirst());
+        // style.setTransform(transitionStepQueue.removeFirst());
+        __applyTransitionStep(transitionStepQueue.removeFirst());
         flushStyle();
         entity.setInterpolationDuration(TRANSITION_REFRESH_TIME);
         entity.setStartInterpolation();
 
-        if(transformQueue.isEmpty()) {
+        if(transitionStepQueue.isEmpty()) {
             elmUpdateQueue.remove(this);
             isQueued = false;
             return false;

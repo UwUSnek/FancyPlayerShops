@@ -5,7 +5,6 @@ import org.joml.Vector4i;
 
 import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.animations.Transform;
-import com.snek.framework.data_types.animations.transitions.TextAdditiveTransition;
 import com.snek.framework.data_types.animations.transitions.Transition;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.ui.styles.FancyTextElmStyle;

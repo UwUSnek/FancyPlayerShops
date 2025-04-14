@@ -5,7 +5,7 @@ import org.joml.Vector4i;
 
 import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.animations.Transform;
-import com.snek.framework.data_types.animations.transitions.TextAdditiveTransition;
+import com.snek.framework.data_types.animations.transitions.Transition;
 import com.snek.framework.data_types.containers.Flagged;
 import com.snek.framework.utils.Easings;
 import com.snek.framework.utils.Txt;
@@ -58,26 +58,22 @@ public class TextElmStyle extends ElmStyle {
 
 
     //TODO split animation between normal and fancy text styles, use new animation type
-    // @Override
-    // public Animation getDefaultSpawnAnimation() {
-    //     return new Animation(new TextAdditiveTransition(new Transform(),
-    //         ElmStyle.S_TIME,
-    //         Easings.sineOut,
-    //         background.get(),
-    //         255
-    //     ));
-    // }
+    @Override
+    public Animation getDefaultSpawnAnimation() {
+        return new Animation(
+            new Transition(ElmStyle.S_TIME, Easings.sineOut)
+            .targetOpacity(255)
+        );
+    }
 
 
-    // @Override
-    // public Animation getDefaultDespawnAnimation() {
-    //     return new Animation(new TextAdditiveTransition(new Transform(),
-    //         ElmStyle.D_TIME,
-    //         Easings.sineOut,
-    //         new Vector4i(0),
-    //         0
-    //     ));
-    // }
+    @Override
+    public Animation getDefaultDespawnAnimation() {
+        return new Animation(
+            new Transition(ElmStyle.D_TIME, Easings.sineOut)
+            .targetOpacity(0)
+        );
+    }
 
 
 

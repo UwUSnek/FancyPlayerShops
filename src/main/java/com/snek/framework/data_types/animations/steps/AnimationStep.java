@@ -1,18 +1,29 @@
 package com.snek.framework.data_types.animations.steps;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Vector4i;
+
+import com.snek.framework.data_types.animations.InterpolatedData;
 import com.snek.framework.data_types.animations.Transform;
+import com.snek.framework.utils.Easing;
 
 
 
 
 public class AnimationStep {
-    public final Transform transform;
-    public final float factor;
-    public final boolean isAdditive;
+    private final float factor;
+    private final boolean additive;
+    public final InterpolatedData d;
 
-    public AnimationStep(Transform _transform, float _factor, boolean _isAdditive) {
-        transform  = _transform;
+
+    public AnimationStep(float _factor, boolean _additive, @NotNull InterpolatedData _d) {
         factor     = _factor;
-        isAdditive = _isAdditive;
+        additive = _additive;
+        d = _d;
     }
+
+
+    public float   getFactor () { return factor; }
+    public boolean isAdditive() { return additive; }
 }

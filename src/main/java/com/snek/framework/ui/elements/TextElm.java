@@ -6,11 +6,9 @@ import org.joml.Vector3d;
 import org.joml.Vector3f;
 import org.joml.Vector4i;
 
+import com.snek.framework.data_types.animations.InterpolatedData;
 import com.snek.framework.data_types.animations.Transform;
 import com.snek.framework.data_types.animations.steps.AnimationStep;
-import com.snek.framework.data_types.animations.steps.TextAnimationStep;
-import com.snek.framework.data_types.animations.transitions.TextAdditiveTransition;
-import com.snek.framework.data_types.animations.transitions.TextTargetTransition;
 import com.snek.framework.data_types.animations.transitions.Transition;
 import com.snek.framework.data_types.containers.Flagged;
 import com.snek.framework.data_types.containers.IndexedArrayDeque;
@@ -94,45 +92,51 @@ public class TextElm extends Elm {
 
 
     @Override
-    protected void __applyAnimationTransitionNow(@NotNull Transition transition) {
-        if(transition instanceof TextAdditiveTransition t) {
-            // getStyle().setBackground(t.getBackground());
-            getStyle().setTextOpacity(t.getAlpha());
-        }
-        if(transition instanceof TextTargetTransition t) {
-            // getStyle().setBackground(t.getBackground());
-            getStyle().setTextOpacity(t.getAlpha());
-        }
-        super.__applyAnimationTransitionNow(transition);
+    protected void __applyAnimationTransitionNow(@NotNull Transition t) {
+        if(t.d.hasOpacity()) getStyle().setTextOpacity(t.d.getOpacity());
+        // if(transition instanceof TextTargetTransition t) {
+            // // getStyle().setBackground(t.getBackground());
+            // getStyle().setTextOpacity(t.getOpacity());
+        // }
+        super.__applyAnimationTransitionNow(t);
     }
 
 
 
 
-    /**
-     * Applies a single animation step.
-     * @param index The index of the future background and alpha to apply the step to.
-     * @param step The animation step.
-     * @return The modified transform.
-     */
     @Override
-    protected @NotNull Transform __applyTransitionStep(int index, @NotNull AnimationStep step){
-
-
-        if(step instanceof TextAnimationStep s) {
-            // Calculate subclass step and get queued data
-            // Vector4i bg = backgroundQueue.getOrAdd(index, () -> new Vector4i(getStyle().getBackground()));
-            int       a =      alphaQueue.getOrAdd(index, () ->              getStyle().getTextOpacity());
-
-            // Interpolate background and alpha
-            // bg.set(Utils.interpolateARGB(bg, s.background, step.factor));
-            alphaQueue.set(index, Utils.interpolateI(a, s.alpha, step.factor));
-        }
-
-
-        // Call superclass function
-        return super.__applyTransitionStep(index, step);
+    protected void __applyTransitionStep(@NotNull InterpolatedData d){
+        super.__applyTransitionStep(d);
+        if(d.hasOpacity()) getStyle().setTextOpacity(d.getOpacity());
     }
+
+
+
+
+    // /**
+    //  * Applies a single animation step.
+    //  * @param index The index of the future background and alpha to apply the step to.
+    //  * @param step The animation step.
+    //  * @return The modified transform.
+    //  */
+    // @Override
+    // protected @NotNull Transform applyTransitionStep(int index, @NotNull AnimationStep step){
+
+
+    //     if(step instanceof TextAnimationStep s) {
+    //         // Calculate subclass step and get queued data
+    //         // Vector4i bg = backgroundQueue.getOrAdd(index, () -> new Vector4i(getStyle().getBackground()));
+    //         int       a =      alphaQueue.getOrAdd(index, () ->              getStyle().getTextOpacity());
+
+    //         // Interpolate background and alpha
+    //         // bg.set(Utils.interpolateARGB(bg, s.background, step.factor));
+    //         alphaQueue.set(index, Utils.interpolateI(a, s.alpha, step.factor));
+    //     }
+
+
+    //     // Call superclass function
+    //     return super.applyTransitionStep(index, step);
+    // }
 
 
 

@@ -8,8 +8,7 @@ import org.joml.Vector3f;
 import com.snek.fancyplayershops.Shop;
 import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.animations.Transform;
-import com.snek.framework.data_types.animations.transitions.AdditiveTransition;
-import com.snek.framework.data_types.animations.transitions.TargetTransition;
+import com.snek.framework.data_types.animations.transitions.Transition;
 import com.snek.framework.data_types.displays.CustomItemDisplay;
 import com.snek.framework.ui.elements.ItemElm;
 import com.snek.framework.ui.styles.ElmStyle;
@@ -70,36 +69,34 @@ public class ShopItemDisplay extends ItemElm {
 
 
         // Setup spawn and despawn animations animation
-        focusAnimation = new Animation(new AdditiveTransition(
-            new Transform().moveY(ElmStyle.S_HEIGHT).scale(ElmStyle.S_SCALE).rotY(LOOP_ROT / 2),
-            ElmStyle.S_TIME,
-            Easings.sineOut
-        ));
-        unfocusAnimation = new Animation(new TargetTransition(
-            style.getTransform(),
-            ElmStyle.D_TIME,
-            Easings.sineOut
-        ));
+        focusAnimation = new Animation(
+            new Transition(ElmStyle.S_TIME, Easings.sineOut)
+            .additiveTransform(
+                new Transform()
+                .moveY(ElmStyle.S_HEIGHT)
+                .scale(ElmStyle.S_SCALE)
+                .rotY(LOOP_ROT / 2)
+            )
+        );
+        unfocusAnimation = new Animation(
+            new Transition(ElmStyle.D_TIME, Easings.sineOut)
+            .targetTransform(style.getTransform())
+        );
 
 
         // Setup loop animation
         loopAnimation = new Animation(
-            new AdditiveTransition(new Transform().rotY(LOOP_ROT), LOOP_TIME, Easings.linear)
+            new Transition(LOOP_TIME, Easings.linear)
+            .additiveTransform(new Transform().rotY(LOOP_ROT))
         );
 
 
         // Setup edit animiations
         enterEditAnimation = new Animation(
-            new AdditiveTransition(
-                new Transform().scale(EDIT_SCALE).move(EDIT_MOVE).rotY(LOOP_ROT / 2),
-                Shop.CANVAS_ANIMATION_DELAY,
-                Easings.sineOut
-            ),
-            new AdditiveTransition(
-                new Transform().move(EDIT_MOVE_2),
-                ElmStyle.S_TIME,
-                Easings.sineOut
-            )
+            new Transition(Shop.CANVAS_ANIMATION_DELAY, Easings.sineOut)
+            .additiveTransform(new Transform().scale(EDIT_SCALE).move(EDIT_MOVE).rotY(LOOP_ROT / 2)),
+            new Transition(ElmStyle.S_TIME, Easings.sineOut)
+            .additiveTransform(new Transform().move(EDIT_MOVE_2))
         );
     }
 
@@ -157,7 +154,7 @@ public class ShopItemDisplay extends ItemElm {
 
         // Stop loop animation and start unfocus animation
         loopHandler.cancel();
-        transformQueue.clear();
+        transitionStepQueue.clear();
         applyAnimation(unfocusAnimation);
 
         // Show custom name after animations end

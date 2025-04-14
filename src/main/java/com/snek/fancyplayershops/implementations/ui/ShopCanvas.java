@@ -8,8 +8,7 @@ import org.joml.Vector4i;
 import com.snek.fancyplayershops.Shop;
 import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.animations.Transform;
-import com.snek.framework.data_types.animations.transitions.AdditiveTransition;
-import com.snek.framework.data_types.animations.transitions.TextAdditiveTransition;
+import com.snek.framework.data_types.animations.transitions.Transition;
 import com.snek.framework.ui.Div;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.utils.Easings;
@@ -43,25 +42,32 @@ public class ShopCanvas extends Div {
     public ShopCanvas() {
         super();
 
-        menuAnimationInitial = new Animation(new AdditiveTransition(
-            new Transform().rotGlobalY(-ANIMATION_ROT_Y).move(new Vector3f(ANIMATION_MOVE_IN).negate()),
-            0,
-            Easings.linear//,
-            // new Vector4i(0, 0, 0, 0),
-            // 0
-        ));
+        menuAnimationInitial = new Animation(
+            new Transition(0, Easings.linear)
+            .additiveTransform(
+                new Transform()
+                .move(new Vector3f(ANIMATION_MOVE_IN).negate())
+                .rotGlobalY(-ANIMATION_ROT_Y)
+            )
+        );
 
-        menuAnimationIn = new Animation(new AdditiveTransition(
-            new Transform().rotGlobalY(ANIMATION_ROT_Y).move(ANIMATION_MOVE_IN),
-            ElmStyle.S_TIME,
-            Easings.sineOut
-        ));
+        menuAnimationIn = new Animation(
+            new Transition(ElmStyle.S_TIME, Easings.sineOut)
+            .additiveTransform(
+                new Transform()
+                .move(ANIMATION_MOVE_IN)
+                .rotGlobalY(ANIMATION_ROT_Y)
+            )
+        );
 
-        menuAnimationOut = new Animation(new AdditiveTransition(
-            new Transform().rotGlobalY(ANIMATION_ROT_Y).move(ANIMATION_MOVE_OUT),
-            ElmStyle.D_TIME,
-            Easings.sineOut
-        ));
+        menuAnimationOut = new Animation(
+            new Transition(ElmStyle.D_TIME, Easings.sineOut)
+            .additiveTransform(
+                new Transform()
+                .move(ANIMATION_MOVE_OUT)
+                .rotGlobalY(ANIMATION_ROT_Y)
+            )
+        );
     }
 
 

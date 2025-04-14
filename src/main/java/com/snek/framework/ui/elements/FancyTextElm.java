@@ -7,11 +7,9 @@ import org.joml.Vector3d;
 import org.joml.Vector4i;
 
 import com.snek.framework.data_types.animations.Animation;
+import com.snek.framework.data_types.animations.InterpolatedData;
 import com.snek.framework.data_types.animations.Transform;
 import com.snek.framework.data_types.animations.steps.AnimationStep;
-import com.snek.framework.data_types.animations.steps.TextAnimationStep;
-import com.snek.framework.data_types.animations.transitions.TextAdditiveTransition;
-import com.snek.framework.data_types.animations.transitions.TextTargetTransition;
 import com.snek.framework.data_types.animations.transitions.Transition;
 import com.snek.framework.data_types.containers.Flagged;
 import com.snek.framework.data_types.containers.IndexedArrayDeque;
@@ -40,9 +38,9 @@ import net.minecraft.text.Text;
  */
 public class FancyTextElm extends Elm {
 
-    // Animations
-    protected final @NotNull IndexedArrayDeque<Vector4i> backgroundQueue = new IndexedArrayDeque<>(); // The list of backgrounds to apply to this instance in the next ticks. 1 for each update tick
-    protected final @NotNull IndexedArrayDeque<Integer>  alphaQueue      = new IndexedArrayDeque<>(); // The list of opacities   to apply to this instance in the next ticks. 1 for each update tick
+    // // Animations
+    // protected final @NotNull IndexedArrayDeque<Vector4i> backgroundQueue = new IndexedArrayDeque<>(); // The list of backgrounds to apply to this instance in the next ticks. 1 for each update tick
+    // protected final @NotNull IndexedArrayDeque<Integer>  alphaQueue      = new IndexedArrayDeque<>(); // The list of opacities   to apply to this instance in the next ticks. 1 for each update tick
 
 
     // In-world data
@@ -165,45 +163,46 @@ public class FancyTextElm extends Elm {
 
 
     @Override
-    protected void __applyAnimationTransitionNow(@NotNull Transition transition) {
-        if(transition instanceof TextAdditiveTransition t) {
-            getStyle().setBackground(t.getBackground());
-            getStyle().setTextOpacity(t.getAlpha());
-        }
-        if(transition instanceof TextTargetTransition t) {
-            getStyle().setBackground(t.getBackground());
-            getStyle().setTextOpacity(t.getAlpha());
-        }
-        super.__applyAnimationTransitionNow(transition);
+    protected void __applyAnimationTransitionNow(@NotNull Transition t) {
+        if(t.d.hasOpacity   ()) getStyle().setTextOpacity(t.d.getOpacity());
+        if(t.d.hasBackground()) getStyle().setBackground(t.d.getBackground());
+        super.__applyAnimationTransitionNow(t);
     }
 
 
 
 
-    /**
-     * Applies a single animation step.
-     * @param index The index of the future background and alpha to apply the step to.
-     * @param step The animation step.
-     * @return The modified transform.
-     */
     @Override
-    protected @NotNull Transform __applyTransitionStep(int index, @NotNull AnimationStep step){
-
-
-        if(step instanceof TextAnimationStep s) {
-            // Calculate subclass step and get queued data
-            Vector4i bg = backgroundQueue.getOrAdd(index, () -> new Vector4i(getStyle().getBackground()));
-            int       a =      alphaQueue.getOrAdd(index, () ->              getStyle().getTextOpacity());
-
-            // Interpolate background and alpha
-            bg.set(Utils.interpolateARGB(bg, s.background, step.factor));
-            alphaQueue.set(index, Utils.interpolateI(a, s.alpha, step.factor));
-        }
-
-
-        // Call superclass function
-        return super.__applyTransitionStep(index, step);
+    protected void __applyTransitionStep(@NotNull InterpolatedData d){
+        super.__applyTransitionStep(d);
+        if(d.hasBackground()) getStyle().setBackground (d.getBackground());
+        if(d.hasOpacity   ()) getStyle().setTextOpacity(d.getOpacity   ());
+        // Transform ft = transitionStepQueue.get(
     }
+    // /**
+    //  * Applies a single animation step.
+    //  * @param index The index of the future background and alpha to apply the step to.
+    //  * @param step The animation step.
+    //  * @return The modified transform.
+    //  */
+    // @Override
+    // protected @NotNull Transform applyTransitionStep(int index, @NotNull AnimationStep step){
+
+
+    //     if(step) {
+    //         // Calculate subclass step and get queued data
+    //         Vector4i bg = backgroundQueue.getOrAdd(index, () -> new Vector4i(getStyle().getBackground()));
+    //         int       a =      alphaQueue.getOrAdd(index, () ->              getStyle().getTextOpacity());
+
+    //         // Interpolate background and alpha
+    //         bg.set(Utils.interpolateARGB(bg, s.background, step.factor));
+    //         alphaQueue.set(index, Utils.interpolateI(a, s.alpha, step.factor));
+    //     }
+
+
+    //     // Call superclass function
+    //     return super.applyTransitionStep(index, step);
+    // }
 
 
 
@@ -242,9 +241,9 @@ public class FancyTextElm extends Elm {
 
     @Override
     public boolean tick(){
-        if(!backgroundQueue.isEmpty()) getStyle().setBackground (backgroundQueue.removeFirst());
-        if(     !alphaQueue.isEmpty()) getStyle().setTextOpacity(     alphaQueue.removeFirst());
-        //! Update queue not checked as it depends exclusively on transform changes.
+        // if(!backgroundQueue.isEmpty()) getStyle().setBackground (backgroundQueue.removeFirst());
+        // if(     !alphaQueue.isEmpty()) getStyle().setTextOpacity(     alphaQueue.removeFirst());
+        // //! Update queue not checked as it depends exclusively on transform changes.
 
         boolean r = super.tick();
         getFgEntity().setInterpolationDuration(TRANSITION_REFRESH_TIME);

@@ -5,11 +5,9 @@ import org.joml.Vector3d;
 import org.joml.Vector4i;
 
 import com.snek.framework.data_types.animations.Animation;
+import com.snek.framework.data_types.animations.InterpolatedData;
 import com.snek.framework.data_types.animations.Transform;
 import com.snek.framework.data_types.animations.steps.AnimationStep;
-import com.snek.framework.data_types.animations.steps.TextAnimationStep;
-import com.snek.framework.data_types.animations.transitions.TextAdditiveTransition;
-import com.snek.framework.data_types.animations.transitions.TextTargetTransition;
 import com.snek.framework.data_types.animations.transitions.Transition;
 import com.snek.framework.data_types.containers.Flagged;
 import com.snek.framework.data_types.containers.IndexedArrayDeque;
@@ -86,50 +84,54 @@ public class PanelElm extends Elm {
 
 
     @Override
-    protected void __applyAnimationTransitionNow(@NotNull Transition transition) {
-        if(transition instanceof TextAdditiveTransition t) {
-            getStyle().setColor(t.getBackground());
-        }
-        if(transition instanceof TextTargetTransition t) {
-            getStyle().setColor(t.getBackground());
-        }
-        super.__applyAnimationTransitionNow(transition);
+    protected void __applyAnimationTransitionNow(@NotNull Transition t) {
+        if(t.d.hasBackground()) getStyle().setColor(t.d.getBackground());
+        super.__applyAnimationTransitionNow(t);
     }
 
 
 
 
-    /**
-     * Applies a single animation step.
-     * @param index The index of the future background and alpha to apply the step to.
-     * @param step The animation step.
-     * @return The modified transform.
-     */
     @Override
-    protected @NotNull Transform __applyTransitionStep(int index, @NotNull AnimationStep step){
-
-
-        if(step instanceof TextAnimationStep s) {
-            // Calculate subclass step and get queued data
-            Vector4i bg = colorQueue.getOrAdd(index, () -> new Vector4i(getStyle().getColor()));
-
-            // Interpolate background and alpha
-            bg.set(Utils.interpolateARGB(bg, s.background, step.factor));
-        }
-
-
-        // Call superclass function
-        return super.__applyTransitionStep(index, step);
+    protected void __applyTransitionStep(@NotNull InterpolatedData d){
+        super.__applyTransitionStep(d);
+        if(d.hasBackground()) getStyle().setColor(d.getBackground());
     }
+
+
+
+
+    // /**
+    //  * Applies a single animation step.
+    //  * @param index The index of the future background and alpha to apply the step to.
+    //  * @param step The animation step.
+    //  * @return The modified transform.
+    //  */
+    // @Override
+    // protected @NotNull Transform applyTransitionStep(int index, @NotNull AnimationStep step){
+
+
+    //     if(step instanceof TextAnimationStep s) {
+    //         // Calculate subclass step and get queued data
+    //         Vector4i bg = colorQueue.getOrAdd(index, () -> new Vector4i(getStyle().getColor()));
+
+    //         // Interpolate background and alpha
+    //         bg.set(Utils.interpolateARGB(bg, s.background, step.factor));
+    //     }
+
+
+    //     // Call superclass function
+    //     return super.applyTransitionStep(index, step);
+    // }
 
 
 
 
     @Override
     public boolean tick(){
-        //TODO remove print
-        if(!colorQueue.isEmpty()) getStyle().setColor(colorQueue.removeFirst());
-        //! Update queue not checked as it depends exclusively on transform changes.
+        // //TODO remove print
+        // if(!colorQueue.isEmpty()) getStyle().setColor(colorQueue.removeFirst());
+        // //! Update queue not checked as it depends exclusively on transform changes.
 
         return super.tick();
     }
