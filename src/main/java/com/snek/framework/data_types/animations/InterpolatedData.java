@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector4i;
 
-import com.snek.framework.data_types.animations.steps.AnimationStep;
+import com.snek.framework.data_types.animations.TransitionStep;
 import com.snek.framework.utils.Utils;
 
 
@@ -30,7 +30,7 @@ public class InterpolatedData {
     }
 
 
-    public void apply(@NotNull AnimationStep s) {
+    public void apply(@NotNull TransitionStep s) {
         if(s.d.hasTransform()) {
             if(s.isAdditive()) transform.interpolate(transform.clone().apply(s.d.getTransform()), s.getFactor());
             else               transform.interpolate(                        s.d.getTransform(),  s.getFactor());

@@ -1,4 +1,4 @@
-package com.snek.framework.data_types.animations.steps;
+package com.snek.framework.data_types.animations;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,13 +11,13 @@ import com.snek.framework.utils.Easing;
 
 
 
-public class AnimationStep {
+public class TransitionStep {
     private final float factor;
     private final boolean additive;
     public final InterpolatedData d;
 
 
-    public AnimationStep(float _factor, boolean _additive, @NotNull InterpolatedData _d) {
+    public TransitionStep(float _factor, boolean _additive, @NotNull InterpolatedData _d) {
         factor     = _factor;
         additive = _additive;
         d = _d;

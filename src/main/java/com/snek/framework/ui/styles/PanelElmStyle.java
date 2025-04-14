@@ -5,7 +5,7 @@ import org.joml.Vector4i;
 
 import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.animations.Transform;
-import com.snek.framework.data_types.animations.transitions.Transition;
+import com.snek.framework.data_types.animations.Transition;
 import com.snek.framework.data_types.containers.Flagged;
 import com.snek.framework.utils.Easings;
 

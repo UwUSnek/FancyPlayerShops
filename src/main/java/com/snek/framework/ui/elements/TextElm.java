@@ -8,8 +8,8 @@ import org.joml.Vector4i;
 
 import com.snek.framework.data_types.animations.InterpolatedData;
 import com.snek.framework.data_types.animations.Transform;
-import com.snek.framework.data_types.animations.steps.AnimationStep;
-import com.snek.framework.data_types.animations.transitions.Transition;
+import com.snek.framework.data_types.animations.TransitionStep;
+import com.snek.framework.data_types.animations.Transition;
 import com.snek.framework.data_types.containers.Flagged;
 import com.snek.framework.data_types.containers.IndexedArrayDeque;
 import com.snek.framework.data_types.containers.Pair;
@@ -45,9 +45,9 @@ public class TextElm extends Elm {
     // This value identifies the amount of rendered text pixels that fit in a minecraft block
     public static final int TEXT_PIXEL_BLOCK_RATIO = 40;
 
-    // Animations
-    protected final @NotNull IndexedArrayDeque<Vector4i> backgroundQueue = new IndexedArrayDeque<>(); // The list of backgrounds to apply to this instance in the next ticks. 1 for each update tick
-    protected final @NotNull IndexedArrayDeque<Integer>  alphaQueue      = new IndexedArrayDeque<>(); // The list of alpha values to set to this instance's text in the next ticks. 1 for each update tick
+    // // Animations
+    // protected final @NotNull IndexedArrayDeque<Vector4i> backgroundQueue = new IndexedArrayDeque<>(); // The list of backgrounds to apply to this instance in the next ticks. 1 for each update tick
+    // protected final @NotNull IndexedArrayDeque<Integer>  alphaQueue      = new IndexedArrayDeque<>(); // The list of alpha values to set to this instance's text in the next ticks. 1 for each update tick
 
 
 
@@ -93,12 +93,12 @@ public class TextElm extends Elm {
 
     @Override
     protected void __applyAnimationTransitionNow(@NotNull Transition t) {
+        super.__applyAnimationTransitionNow(t);
         if(t.d.hasOpacity()) getStyle().setTextOpacity(t.d.getOpacity());
         // if(transition instanceof TextTargetTransition t) {
             // // getStyle().setBackground(t.getBackground());
             // getStyle().setTextOpacity(t.getOpacity());
         // }
-        super.__applyAnimationTransitionNow(t);
     }
 
 
@@ -120,7 +120,7 @@ public class TextElm extends Elm {
     //  * @return The modified transform.
     //  */
     // @Override
-    // protected @NotNull Transform applyTransitionStep(int index, @NotNull AnimationStep step){
+    // protected @NotNull Transform applyTransitionStep(int index, @NotNull TransitionStep step){
 
 
     //     if(step instanceof TextAnimationStep s) {
@@ -156,9 +156,9 @@ public class TextElm extends Elm {
 
     @Override
     public boolean tick(){
-        // if(!backgroundQueue.isEmpty()) getStyle().setBackground (backgroundQueue.removeFirst());
-        if(     !alphaQueue.isEmpty()) getStyle().setTextOpacity(     alphaQueue.removeFirst());
-        //! Update queue not checked as it depends exclusively on transform changes.
+        // // if(!backgroundQueue.isEmpty()) getStyle().setBackground (backgroundQueue.removeFirst());
+        // if(!alphaQueue.isEmpty()) getStyle().setTextOpacity(     alphaQueue.removeFirst());
+        // //! Update queue not checked as it depends exclusively on transform changes.
 
         return super.tick();
     }

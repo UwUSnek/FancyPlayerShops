@@ -14,8 +14,8 @@ import com.snek.fancyplayershops.FancyPlayerShops;
 import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.animations.InterpolatedData;
 import com.snek.framework.data_types.animations.Transform;
-import com.snek.framework.data_types.animations.steps.AnimationStep;
-import com.snek.framework.data_types.animations.transitions.Transition;
+import com.snek.framework.data_types.animations.TransitionStep;
+import com.snek.framework.data_types.animations.Transition;
 import com.snek.framework.data_types.containers.Flagged;
 import com.snek.framework.data_types.containers.IndexedArrayDeque;
 import com.snek.framework.data_types.displays.CustomDisplay;
@@ -221,7 +221,7 @@ public abstract class Elm extends Div {
 
 
         // Calculate animation steps as a list of steps
-        List<AnimationStep> animationSteps = new ArrayList<>();
+        List<TransitionStep> animationSteps = new ArrayList<>();
         // Transform totTransform = new Transform();       // The sum of all the changes applied by the current and previous steps of the animation
         int time = transition.getDuration();            // The duration of this transition
         int i = TRANSITION_REFRESH_TIME;
@@ -239,22 +239,23 @@ public abstract class Elm extends Div {
 
         // Update existing future steps
         int j = 0;
-        if(!transitionStepQueue.isEmpty()) {
-            AnimationStep step = null;
+        // if(!transitionStepQueue.isEmpty()) {
+        TransitionStep step = null;
 
-            // Update existing future steps
-            for(; j + shift < transitionStepQueue.size() && j < animationSteps.size(); ++j) {
-                step = animationSteps.get(j);
-                transitionStepQueue.getOrAdd(j + shift, () -> new InterpolatedData(null, null, null)).apply(step);
-            }
+        // Update existing future steps
+        // for(; j + shift < transitionStepQueue.size() && j < animationSteps.size(); ++j) {
+            for(; j < animationSteps.size(); ++j) {
+            step = animationSteps.get(j);
+            transitionStepQueue.getOrAdd(j + shift, () -> new InterpolatedData(null, null, null)).apply(step);
+        }
 
-            // If the amount of future steps is larger than the amount of steps, apply the last step to the remaining steps
-            if(j >= animationSteps.size()) {
-                for(; j + shift < transitionStepQueue.size(); ++j) {
-                    transitionStepQueue.get(j + shift).apply(step);
-                }
+        // If the amount of future steps is larger than the amount of steps, apply the last step to the remaining steps
+        if(j >= animationSteps.size()) {
+            for(; j + shift < transitionStepQueue.size(); ++j) {
+                transitionStepQueue.get(j + shift).apply(step);
             }
         }
+        // }
 
 
         // // Add remaining future steps
@@ -281,7 +282,7 @@ public abstract class Elm extends Div {
     //  * @param step The animation step.
     //  * @return The modified transform.
     //  */
-    // protected @NotNull Transform applyTransitionStep(int index, @NotNull AnimationStep step){
+    // protected @NotNull Transform applyTransitionStep(int index, @NotNull TransitionStep step){
     //     Transform ft = transitionStepQueue.get(index);
     //     if(step.isAdditive) ft.interpolate(ft.clone().apply(step.transform), step.factor);
     //     else                ft.interpolate(step.transform,                   step.factor);
@@ -382,6 +383,7 @@ public abstract class Elm extends Div {
      */
     protected boolean tick() {
         // style.setTransform(transitionStepQueue.removeFirst());
+        System.out.println("Size: " + transitionStepQueue.size());
         __applyTransitionStep(transitionStepQueue.removeFirst());
         flushStyle();
         entity.setInterpolationDuration(TRANSITION_REFRESH_TIME);

@@ -9,8 +9,8 @@ import org.joml.Vector4i;
 import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.animations.InterpolatedData;
 import com.snek.framework.data_types.animations.Transform;
-import com.snek.framework.data_types.animations.steps.AnimationStep;
-import com.snek.framework.data_types.animations.transitions.Transition;
+import com.snek.framework.data_types.animations.TransitionStep;
+import com.snek.framework.data_types.animations.Transition;
 import com.snek.framework.data_types.containers.Flagged;
 import com.snek.framework.data_types.containers.IndexedArrayDeque;
 import com.snek.framework.data_types.displays.CustomDisplay;
@@ -164,9 +164,9 @@ public class FancyTextElm extends Elm {
 
     @Override
     protected void __applyAnimationTransitionNow(@NotNull Transition t) {
+        super.__applyAnimationTransitionNow(t);
         if(t.d.hasOpacity   ()) getStyle().setTextOpacity(t.d.getOpacity());
         if(t.d.hasBackground()) getStyle().setBackground(t.d.getBackground());
-        super.__applyAnimationTransitionNow(t);
     }
 
 
@@ -175,8 +175,8 @@ public class FancyTextElm extends Elm {
     @Override
     protected void __applyTransitionStep(@NotNull InterpolatedData d){
         super.__applyTransitionStep(d);
-        if(d.hasBackground()) getStyle().setBackground (d.getBackground());
         if(d.hasOpacity   ()) getStyle().setTextOpacity(d.getOpacity   ());
+        if(d.hasBackground()) getStyle().setBackground (d.getBackground());
         // Transform ft = transitionStepQueue.get(
     }
     // /**
@@ -186,7 +186,7 @@ public class FancyTextElm extends Elm {
     //  * @return The modified transform.
     //  */
     // @Override
-    // protected @NotNull Transform applyTransitionStep(int index, @NotNull AnimationStep step){
+    // protected @NotNull Transform applyTransitionStep(int index, @NotNull TransitionStep step){
 
 
     //     if(step) {

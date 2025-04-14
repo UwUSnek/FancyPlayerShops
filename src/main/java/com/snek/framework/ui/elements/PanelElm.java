@@ -7,8 +7,8 @@ import org.joml.Vector4i;
 import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.animations.InterpolatedData;
 import com.snek.framework.data_types.animations.Transform;
-import com.snek.framework.data_types.animations.steps.AnimationStep;
-import com.snek.framework.data_types.animations.transitions.Transition;
+import com.snek.framework.data_types.animations.TransitionStep;
+import com.snek.framework.data_types.animations.Transition;
 import com.snek.framework.data_types.containers.Flagged;
 import com.snek.framework.data_types.containers.IndexedArrayDeque;
 import com.snek.framework.data_types.displays.CustomDisplay;
@@ -47,7 +47,7 @@ public class PanelElm extends Elm {
 
 
     // Animations
-    protected final @NotNull IndexedArrayDeque<Vector4i> colorQueue = new IndexedArrayDeque<>(); // The list of backgrounds to apply to this instance in the next ticks. 1 for each update tick
+    // protected final @NotNull IndexedArrayDeque<Vector4i> colorQueue = new IndexedArrayDeque<>(); // The list of backgrounds to apply to this instance in the next ticks. 1 for each update tick
 
 
 
@@ -85,8 +85,8 @@ public class PanelElm extends Elm {
 
     @Override
     protected void __applyAnimationTransitionNow(@NotNull Transition t) {
-        if(t.d.hasBackground()) getStyle().setColor(t.d.getBackground());
         super.__applyAnimationTransitionNow(t);
+        if(t.d.hasBackground()) getStyle().setColor(t.d.getBackground());
     }
 
 
@@ -108,7 +108,7 @@ public class PanelElm extends Elm {
     //  * @return The modified transform.
     //  */
     // @Override
-    // protected @NotNull Transform applyTransitionStep(int index, @NotNull AnimationStep step){
+    // protected @NotNull Transform applyTransitionStep(int index, @NotNull TransitionStep step){
 
 
     //     if(step instanceof TextAnimationStep s) {

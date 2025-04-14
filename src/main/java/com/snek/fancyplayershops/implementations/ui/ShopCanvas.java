@@ -8,7 +8,7 @@ import org.joml.Vector4i;
 import com.snek.fancyplayershops.Shop;
 import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.animations.Transform;
-import com.snek.framework.data_types.animations.transitions.Transition;
+import com.snek.framework.data_types.animations.Transition;
 import com.snek.framework.ui.Div;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.utils.Easings;

@@ -13,7 +13,7 @@ import com.snek.fancyplayershops.implementations.ui.styles.ShopButtonStyle;
 import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.displays.CustomTextDisplay;
 import com.snek.framework.data_types.animations.Transform;
-import com.snek.framework.data_types.animations.transitions.Transition;
+import com.snek.framework.data_types.animations.Transition;
 import com.snek.framework.utils.Easings;
 import com.snek.framework.utils.scheduler.Scheduler;
 

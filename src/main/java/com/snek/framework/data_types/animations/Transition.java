@@ -1,4 +1,4 @@
-package com.snek.framework.data_types.animations.transitions;
+package com.snek.framework.data_types.animations;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -6,7 +6,7 @@ import org.joml.Vector4i;
 
 import com.snek.framework.data_types.animations.InterpolatedData;
 import com.snek.framework.data_types.animations.Transform;
-import com.snek.framework.data_types.animations.steps.AnimationStep;
+import com.snek.framework.data_types.animations.TransitionStep;
 import com.snek.framework.utils.Easing;
 
 
@@ -27,7 +27,6 @@ public class Transition {
 
     // Optional data
     private boolean additive;
-    @SuppressWarnings("unused")
     public final InterpolatedData d;
 
 
@@ -78,9 +77,9 @@ public class Transition {
      * @param factor The interpolation factor.
      * @return The animation step.
      */
-    public AnimationStep createStep(float factor) {
-        // return new AnimationStep(factor, additive, d.getTransform(), d.getBackground(), d.getOpacity());
-        return new AnimationStep(factor, additive, d);
+    public TransitionStep createStep(float factor) {
+        // return new TransitionStep(factor, additive, d.getTransform(), d.getBackground(), d.getOpacity());
+        return new TransitionStep(factor, additive, d);
     }
 
 
