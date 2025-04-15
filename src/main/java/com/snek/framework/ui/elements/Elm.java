@@ -9,6 +9,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
+import org.joml.Vector4i;
 
 import com.snek.fancyplayershops.FancyPlayerShops;
 import com.snek.framework.data_types.animations.Animation;
@@ -246,7 +247,11 @@ public abstract class Elm extends Div {
         // for(; j + shift < transitionStepQueue.size() && j < animationSteps.size(); ++j) {
             for(; j < animationSteps.size(); ++j) {
             step = animationSteps.get(j);
-            transitionStepQueue.getOrAdd(j + shift, () -> new InterpolatedData(null, null, null)).apply(step);
+            int k = j + shift;
+            transitionStepQueue.getOrAdd(k, () -> k == 0 ?
+                __generateInterpolatedData() :
+                __generateInterpolatedData(k - 1)
+            ).apply(step);
         }
 
         // If the amount of future steps is larger than the amount of steps, apply the last step to the remaining steps
@@ -300,6 +305,22 @@ public abstract class Elm extends Div {
         // if(step.isAdditive) ft.interpolate(ft.clone().apply(step.transform), step.factor);
         // else                ft.interpolate(step.transform,                   step.factor);
         // return ft;
+    }
+
+
+    protected InterpolatedData __generateInterpolatedData(){
+        return new InterpolatedData(
+            style.getTransform().clone(),
+            null,
+            null
+        );
+    }
+    protected InterpolatedData __generateInterpolatedData(int index){
+        return new InterpolatedData(
+            transitionStepQueue.get(index).getTransform().clone(),
+            null,
+            null
+        );
     }
 
 

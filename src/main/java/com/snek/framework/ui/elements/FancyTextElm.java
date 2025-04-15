@@ -179,6 +179,26 @@ public class FancyTextElm extends Elm {
         if(d.hasBackground()) getStyle().setBackground (d.getBackground());
         // Transform ft = transitionStepQueue.get(
     }
+
+
+
+
+    @Override
+    protected InterpolatedData __generateInterpolatedData(){
+        return new InterpolatedData(
+            getStyle().getTransform().clone(),
+            new Vector4i(getStyle().getBackground()),
+            getStyle().getTextOpacity()
+        );
+    }
+    @Override
+    protected InterpolatedData __generateInterpolatedData(int index){
+        return new InterpolatedData(
+            transitionStepQueue.get(index).getTransform().clone(),
+            new Vector4i(transitionStepQueue.get(index).getBackground()),
+            transitionStepQueue.get(index).getOpacity()
+        );
+    }
     // /**
     //  * Applies a single animation step.
     //  * @param index The index of the future background and alpha to apply the step to.

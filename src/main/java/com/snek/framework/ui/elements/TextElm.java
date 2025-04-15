@@ -113,6 +113,26 @@ public class TextElm extends Elm {
 
 
 
+    @Override
+    protected InterpolatedData __generateInterpolatedData(){
+        return new InterpolatedData(
+            getStyle().getTransform().clone(),
+            null,
+            getStyle().getTextOpacity()
+        );
+    }
+    @Override
+    protected InterpolatedData __generateInterpolatedData(int index){
+        return new InterpolatedData(
+            transitionStepQueue.get(index).getTransform().clone(),
+            null,
+            transitionStepQueue.get(index).getOpacity()
+        );
+    }
+
+
+
+
     // /**
     //  * Applies a single animation step.
     //  * @param index The index of the future background and alpha to apply the step to.

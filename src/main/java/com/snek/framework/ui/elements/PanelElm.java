@@ -101,6 +101,26 @@ public class PanelElm extends Elm {
 
 
 
+    @Override
+    protected InterpolatedData __generateInterpolatedData(){
+        return new InterpolatedData(
+            getStyle().getTransform().clone(),
+            new Vector4i(getStyle().getColor()),
+            null
+        );
+    }
+    @Override
+    protected InterpolatedData __generateInterpolatedData(int index){
+        return new InterpolatedData(
+            transitionStepQueue.get(index).getTransform().clone(),
+            new Vector4i(transitionStepQueue.get(index).getBackground()),
+            null
+        );
+    }
+
+
+
+
     // /**
     //  * Applies a single animation step.
     //  * @param index The index of the future background and alpha to apply the step to.
