@@ -32,12 +32,10 @@ public class InterpolatedData {
 
     public void apply(@NotNull TransitionStep s) {
         if(s.d.hasTransform() && hasTransform()) {
-            // if(!hasTransform()) transform = new Transform();
             if(s.isAdditive()) transform.interpolate(transform.clone().apply(s.d.getTransform()), s.getFactor());
             else               transform.interpolate(                        s.d.getTransform(),  s.getFactor());
         }
         if(s.d.hasBackground() && hasBackground()) {
-            // if(!hasBackground()) background = new Vector4i(0, 0, 0, 0);
             background.set(Utils.interpolateARGB(background, s.d.getBackground(), s.getFactor()));
         }
         if(s.d.hasOpacity() && hasOpacity()) {

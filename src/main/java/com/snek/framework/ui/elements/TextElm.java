@@ -124,9 +124,9 @@ public class TextElm extends Elm {
     @Override
     protected InterpolatedData __generateInterpolatedData(int index){
         return new InterpolatedData(
-            transitionStepQueue.get(index).getTransform().clone(),
+            futureDataQueue.get(index).getTransform().clone(),
             null,
-            transitionStepQueue.get(index).getOpacity()
+            futureDataQueue.get(index).getOpacity()
         );
     }
 

@@ -137,10 +137,6 @@ public class FancyTextElm extends Elm {
     }
 
 
-    @Override
-    protected void updateAbsPos() {
-        super.updateAbsPos();
-    }
 
 
     @Override
@@ -194,9 +190,9 @@ public class FancyTextElm extends Elm {
     @Override
     protected InterpolatedData __generateInterpolatedData(int index){
         return new InterpolatedData(
-            transitionStepQueue.get(index).getTransform().clone(),
-            new Vector4i(transitionStepQueue.get(index).getBackground()),
-            transitionStepQueue.get(index).getOpacity()
+            futureDataQueue.get(index).getTransform().clone(),
+            new Vector4i(futureDataQueue.get(index).getBackground()),
+            futureDataQueue.get(index).getOpacity()
         );
     }
     // /**

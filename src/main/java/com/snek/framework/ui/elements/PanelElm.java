@@ -112,8 +112,8 @@ public class PanelElm extends Elm {
     @Override
     protected InterpolatedData __generateInterpolatedData(int index){
         return new InterpolatedData(
-            transitionStepQueue.get(index).getTransform().clone(),
-            new Vector4i(transitionStepQueue.get(index).getBackground()),
+            futureDataQueue.get(index).getTransform().clone(),
+            new Vector4i(futureDataQueue.get(index).getBackground()),
             null
         );
     }

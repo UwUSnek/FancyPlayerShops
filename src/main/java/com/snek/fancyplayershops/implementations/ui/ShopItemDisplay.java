@@ -45,8 +45,7 @@ public class ShopItemDisplay extends ItemElm {
     public static final float    LOOP_ROT    = (float)Math.toRadians(120);
 
     public static final Vector3f EDIT_SCALE  = new Vector3f(0.5f);
-    public static final Vector3f EDIT_MOVE   = new Vector3f(-0.25f, 0.25f, 0).mul(1f - 0.5f);
-    public static final Vector3f EDIT_MOVE_2 = new Vector3f(-0.2f, 0, 0);
+    public static final Vector3f EDIT_MOVE   = new Vector3f(0, 0.25f, 0).mul(1f - 0.5f);
 
 
 
@@ -94,9 +93,7 @@ public class ShopItemDisplay extends ItemElm {
         // Setup edit animiations
         enterEditAnimation = new Animation(
             new Transition(Shop.CANVAS_ANIMATION_DELAY, Easings.sineOut)
-            .additiveTransform(new Transform().scale(EDIT_SCALE).move(EDIT_MOVE).rotY(LOOP_ROT / 2)),
-            new Transition(ElmStyle.S_TIME, Easings.sineOut)
-            .additiveTransform(new Transform().move(EDIT_MOVE_2))
+            .additiveTransform(new Transform().scale(EDIT_SCALE).move(EDIT_MOVE).rotY(LOOP_ROT / 2))
         );
     }
 
@@ -154,7 +151,7 @@ public class ShopItemDisplay extends ItemElm {
 
         // Stop loop animation and start unfocus animation
         loopHandler.cancel();
-        transitionStepQueue.clear();
+        futureDataQueue.clear();
         applyAnimation(unfocusAnimation);
 
         // Show custom name after animations end

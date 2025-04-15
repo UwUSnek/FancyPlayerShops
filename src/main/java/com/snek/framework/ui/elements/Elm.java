@@ -6,6 +6,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector2f;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
@@ -25,6 +26,7 @@ import com.snek.framework.data_types.ui.AlignmentY;
 import com.snek.framework.ui.Div;
 import com.snek.framework.ui.interfaces.Hoverable;
 import com.snek.framework.ui.styles.ElmStyle;
+import com.snek.framework.utils.Easing;
 import com.snek.framework.utils.SpaceUtils;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.scheduler.Scheduler;
@@ -64,7 +66,7 @@ public abstract class Elm extends Div {
     // Animation handling
     public    static final int TRANSITION_REFRESH_TIME = 2;                         // The time between transition updates. Measured in ticks
     private   static final @NotNull List<Elm> elmUpdateQueue = new ArrayList<>();   // The list of instances with pending transition steps
-    protected        final @NotNull IndexedArrayDeque<InterpolatedData> transitionStepQueue = new IndexedArrayDeque<>(); // The list of transition steps to apply to this instance in the next ticks. 1 for each update tick
+    protected        final @NotNull IndexedArrayDeque<InterpolatedData> futureDataQueue = new IndexedArrayDeque<>(); // The list of transition steps to apply to this instance in the next ticks. 1 for each update tick
     private boolean isQueued = false;                                               // Whether this instance is queued for updates. Updated manually
 
 
@@ -117,23 +119,27 @@ public abstract class Elm extends Div {
      */
     public void flushStyle() {
         // //FIXME use flagged values for basic alignment, position and size
-        { Flagged<Transform>     f = style.getFlaggedTransform();     if(f.isFlagged()) { entity.setTransformation(__calcTransform().toMinecraftTransform()); f.unflag();}}
-        { Flagged<Float>         f = style.getFlaggedViewRange();     if(f.isFlagged()) { entity.setViewRange     (f.get()                                ); f.unflag(); }}
-        { Flagged<BillboardMode> f = style.getFlaggedBillboardMode(); if(f.isFlagged()) { entity.setBillboardMode (f.get()                                ); f.unflag(); }}
+        { Flagged<Transform>     f = style.getFlaggedTransform();     if(f.isFlagged()) { entity.setTransformation(__calcTransform().toMinecraftTransform()); f.unflag(); }}
+        { Flagged<Float>         f = style.getFlaggedViewRange();     if(f.isFlagged()) { entity.setViewRange     (f.get()                                 ); f.unflag(); }}
+        { Flagged<BillboardMode> f = style.getFlaggedBillboardMode(); if(f.isFlagged()) { entity.setBillboardMode (f.get()                                 ); f.unflag(); }}
     }
 
 
     @Override
     protected void updateAbsPos() {
+        Vector2f oldPos = new Vector2f(getAbsPos());
         super.updateAbsPos();
-        style.editTransform();
+        if(!getAbsPos().equals(oldPos)) style.editTransform();
+        //! This check's sole purpose is to prevent unneeded transform updates and comparisons
     }
 
 
     @Override
     protected void updateZIndex() {
+        int oldZIndex = getZIndex();
         super.updateZIndex();
-        style.editTransform();
+        if(getZIndex() != oldZIndex) style.editTransform();
+        //! This check's sole purpose is to prevent unneeded transform updates and comparisons
     }
 
 
@@ -221,21 +227,39 @@ public abstract class Elm extends Div {
     private int __applyAnimationTransition(@NotNull Transition transition, int shift) {
 
 
-        // Calculate animation steps as a list of steps
+        // Calculate animation as a list of steps
         List<TransitionStep> animationSteps = new ArrayList<>();
         // Transform totTransform = new Transform();       // The sum of all the changes applied by the current and previous steps of the animation
         int time = transition.getDuration();            // The duration of this transition
-        int i = TRANSITION_REFRESH_TIME;
-        for(; i < time + TRANSITION_REFRESH_TIME; i += TRANSITION_REFRESH_TIME) {
+        // int i = TRANSITION_REFRESH_TIME;
+        // System.out.println("{"); //TODO REMOVE
+        Easing e = transition.getEasing();
+        for(int i = 0; i < time; i += TRANSITION_REFRESH_TIME) {
 
             // Calculate interpolation factor and add the new animation step to the list
             // float factor = (float)transition.getEasing().compute(Math.min(1d, (double)i / (double)time));
-            float factor = (float)transition.getEasing().compute(Math.min(1d, (double)i / (double)time));
+            // float factor = (float)(
+            //     e.compute(Math.min(1d, (double)(i + TRANSITION_REFRESH_TIME) / time)) -
+            //     e.compute(Math.min(1d, (double) i                            / time))
+            // );
+            float factor = (float)e.compute(Math.min(1d, (double)(i + TRANSITION_REFRESH_TIME) / time));
             animationSteps.add(transition.createStep(factor));
+            // System.out.println("    " + (animationSteps.get(animationSteps.size() - 1).d.hasTransform() ? animationSteps.get(animationSteps.size() - 1).d.getTransform().getRot().toString() : "null")); //TODO REMOVE
         }
+        // System.out.println("}"); //TODO REMOVE
 
         // // Add padding step //! This makes the actual duration match the duration specified in the transition (or be greater than it, which is not an issue)
         // animationSteps.add(transition.createStep(totTransform, 1));
+
+        // Create the necessary amount of future data before applying the steps
+        futureDataQueue.getOrAdd(
+            shift + animationSteps.size() - 1,
+            () -> {
+                return futureDataQueue.size() == 0 ?
+                __generateInterpolatedData() :
+                __generateInterpolatedData(futureDataQueue.size() - 1);
+            }
+        );
 
 
         // Update existing future steps
@@ -243,23 +267,48 @@ public abstract class Elm extends Div {
         // if(!transitionStepQueue.isEmpty()) {
         TransitionStep step = null;
 
-        // Update existing future steps
+        // Update existing future steps and add new ones if needed
         // for(; j + shift < transitionStepQueue.size() && j < animationSteps.size(); ++j) {
-            for(; j < animationSteps.size(); ++j) {
+        // System.out.println("{"); //TODO REMOVE
+        for(; j < animationSteps.size(); ++j) {
             step = animationSteps.get(j);
-            int k = j + shift;
-            transitionStepQueue.getOrAdd(k, () -> k == 0 ?
-                __generateInterpolatedData() :
-                __generateInterpolatedData(k - 1)
-            ).apply(step);
+            int k = j + shift; //FIXME remove K if not needed
+            // Transform t00 = futureDataQueue.getOrAdd(k, () -> k == 0 ? __generateInterpolatedData() : __generateInterpolatedData(k - 1)).getTransform(); //TODO REMOVE
+            // Vector3f v00 = new Vector3f(); //TODO REMOVE
+            // if(t00 != null) t00.getRot().getEulerAnglesXYZ(v00); //TODO REMOVE
+            // futureDataQueue.getOrAdd(k, () -> k == 0 ? __generateInterpolatedData() : __generateInterpolatedData(k - 1)).apply(step);
+            futureDataQueue.get(k).apply(step);
+            // System.out.println("factor: " + step.getFactor()); //TODO REMOVE
+            // Quaternionf q = (futureDataQueue.get(j + shift).hasTransform() ? futureDataQueue.get(j + shift).getTransform().getRot() : new Quaternionf()); //TODO REMOVE
+            // Quaternionf q0 = step.d.hasTransform() ? step.d.getTransform().getRot() : new Quaternionf(); //TODO REMOVE
+            // Vector3f v = new Vector3f(); //TODO REMOVE
+            // Vector3f v0 = new Vector3f(); //TODO REMOVE
+            // q.getEulerAnglesXYZ(v); //TODO REMOVE
+            // q0.getEulerAnglesXYZ(v0); //TODO REMOVE
+            // System.out.println("    @" + Integer.toHexString(System.identityHashCode(futureDataQueue.get(j + shift))) + " :" + v.y + "        from step rotation " + v0.y * step.getFactor() + "        before: " + v00.y); //TODO REMOVE
+            // System.out.println("    " + (step.d.hasTransform() ? step.d.getTransform().getRot().toString() : "null")); //TODO REMOVE
         }
 
         // If the amount of future steps is larger than the amount of steps, apply the last step to the remaining steps
-        if(j >= animationSteps.size()) {
-            for(; j + shift < transitionStepQueue.size(); ++j) {
-                transitionStepQueue.get(j + shift).apply(step);
-            }
+        // if(j >= animationSteps.size()) {
+        // if(j >= animationSteps.size()) {
+        for(; j + shift < futureDataQueue.size(); ++j) {
+            // Transform t00 = futureDataQueue.get(j + shift).getTransform(); //TODO REMOVE
+            // Vector3f v00 = new Vector3f(); //TODO REMOVE
+            // if(t00 != null) t00.getRot().getEulerAnglesXYZ(v00); //TODO REMOVE
+            futureDataQueue.get(j + shift).apply(step);
+            // System.out.println("factor: " + step.getFactor()); //TODO REMOVE
+            // Quaternionf q = (futureDataQueue.get(j + shift).hasTransform() ? futureDataQueue.get(j + shift).getTransform().getRot() : new Quaternionf()); //TODO REMOVE
+            // Quaternionf q0 = step.d.hasTransform() ? step.d.getTransform().getRot() : new Quaternionf(); //TODO REMOVE
+            // Vector3f v = new Vector3f(); //TODO REMOVE
+            // Vector3f v0 = new Vector3f(); //TODO REMOVE
+            // q.getEulerAnglesXYZ(v); //TODO REMOVE
+            // q0.getEulerAnglesXYZ(v0); //TODO REMOVE
+            // System.out.println("    @" + Integer.toHexString(System.identityHashCode(futureDataQueue.get(j + shift))) + " :" + v.y + "        from step rotation " + v0.y * step.getFactor() + "        before: " + v00.y); //TODO REMOVE
+            // System.out.println("    " + (step.d.hasTransform() ? step.d.getTransform().getRot().toString() : "null")); //TODO REMOVE
         }
+        // System.out.println("}"); //TODO REMOVE
+        // }
         // }
 
 
@@ -317,7 +366,7 @@ public abstract class Elm extends Div {
     }
     protected InterpolatedData __generateInterpolatedData(int index){
         return new InterpolatedData(
-            transitionStepQueue.get(index).getTransform().clone(),
+            futureDataQueue.get(index).getTransform().clone(),
             null,
             null
         );
@@ -404,13 +453,13 @@ public abstract class Elm extends Div {
      */
     protected boolean tick() {
         // style.setTransform(transitionStepQueue.removeFirst());
-        System.out.println("Size: " + transitionStepQueue.size());
-        __applyTransitionStep(transitionStepQueue.removeFirst());
+        // System.out.println("Size: " + transitionStepQueue.size());
+        __applyTransitionStep(futureDataQueue.removeFirst());
         flushStyle();
         entity.setInterpolationDuration(TRANSITION_REFRESH_TIME);
         entity.setStartInterpolation();
 
-        if(transitionStepQueue.isEmpty()) {
+        if(futureDataQueue.isEmpty()) {
             elmUpdateQueue.remove(this);
             isQueued = false;
             return false;
