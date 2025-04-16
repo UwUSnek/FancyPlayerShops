@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.snek.fancyplayershops.implementations.ui.InteractionBlocker;
-import com.snek.fancyplayershops.implementations.ui.ShopPanelElm;
 import com.snek.framework.ui.elements.Elm;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.scheduler.Scheduler;
@@ -38,18 +37,17 @@ import com.snek.framework.utils.scheduler.Scheduler;
 
 
 
-
-
-
-
-
-
-
-
+/**
+ * The main class of the mod FancyPlayerShops.
+ */
 public class FancyPlayerShops implements ModInitializer {
+
+    // Mod ID and console logger
     public static final String MOD_ID = "fancyplayershops";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+
+    // Shop item data
     public static final Item SHOP_ITEM_ID = Items.REDSTONE;
     public static final ItemStack shopItem = new ItemStack(SHOP_ITEM_ID);
     public static final String SHOP_ITEM_NBT_KEY = MOD_ID + ".item.shop_item";
@@ -125,7 +123,6 @@ public class FancyPlayerShops implements ModInitializer {
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
             Elm.onEntityLoad(entity);
             InteractionBlocker.onEntityLoad(entity);
-            ShopPanelElm.onEntityLoad(entity);
         });
 
 
@@ -145,20 +142,27 @@ public class FancyPlayerShops implements ModInitializer {
 
 
     /**
+     * Callback for item use events.
      * Checks if the held item is a shop item. If it is, it spawns a new shop.
      */
     public static ActionResult onItemUse(World world, PlayerEntity player, Hand hand, BlockHitResult hitResult){
         ItemStack stack = player.getStackInHand(hand);
         if (stack.getItem() == SHOP_ITEM_ID && stack.hasNbt() && stack.getNbt().contains(SHOP_ITEM_NBT_KEY)) {
-            if(world instanceof ServerWorld serverWorld) {
-                stack.setCount(stack.getCount() - 1);
+
+            // If the world is a server world and the player is allowed to modify the world
+            if(world instanceof ServerWorld serverWorld && player.getAbilities().allowModifyWorld) {
+
+                // Remove item if the player is not in creative mode
+                if(!player.getAbilities().creativeMode) stack.setCount(stack.getCount() - 1);
+
+                // Calculate block position and create the new shop. Send a feedback message to the player
                 BlockPos blockPos = hitResult.getBlockPos().add(hitResult.getSide().getVector());
                 new Shop(serverWorld, blockPos, player);
                 player.sendMessage(new Txt("New shop created! Right click it to configure.").green().get(), true);
             }
-            else {
-                player.sendMessage(new Txt("You cannot create a shop here!").darkRed().get(), true);
-            }
+
+            // If not, send an error message to the player
+            else player.sendMessage(new Txt("You cannot create a shop here!").darkRed().get(), true);
             return ActionResult.SUCCESS;
         }
         return ActionResult.PASS;

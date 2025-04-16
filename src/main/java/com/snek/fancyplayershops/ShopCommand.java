@@ -12,7 +12,20 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 
 
 
-public class ShopCommand {
+
+
+
+
+/**
+ * A utility class that registers and handles in-game commands.
+ */
+public abstract class ShopCommand {
+    private ShopCommand(){}
+
+
+    /**
+     * Registers the /shop command
+     */
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(LiteralArgumentBuilder.<ServerCommandSource>literal("shop")
@@ -57,10 +70,12 @@ public class ShopCommand {
                     PlayerEntity player = context.getSource().getPlayer();
                     //TODO add colors and styles
                     player.sendMessage(new Txt(
-                        "Craft shop blocks using glass panes, a sign and redstone.\n" +
-                        "You can rotate shops using a wrench or pick them up by shift-rclicking them with it.\n" +
-                        "Right click a shop to configure and restock it. Each shop can contain up to a set amount of the same item.\n" +
-                        "You can see details about your shops and sales history using the command /shop stats."
+                        """
+                        Craft shop blocks using glass panes, a sign and redstone.
+                        You can rotate shops using a wrench or pick them up by shift-rclicking them with it.
+                        Right click a shop to configure and restock it. Each shop can contain up to a set amount of the same item.
+                        You can see details about your shops and sales history using the command /shop stats.
+                        """
                     ).get(), false);
                     return 1;
                 }))

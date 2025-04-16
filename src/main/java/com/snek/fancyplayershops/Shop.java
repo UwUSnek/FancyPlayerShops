@@ -23,10 +23,8 @@ import com.mojang.serialization.JsonOps;
 import com.snek.fancyplayershops.implementations.ui.InteractionBlocker;
 import com.snek.fancyplayershops.implementations.ui.ShopCanvas;
 import com.snek.fancyplayershops.implementations.ui.ShopItemDisplay;
-import com.snek.fancyplayershops.implementations.ui.ShopPanelElm;
 import com.snek.fancyplayershops.implementations.ui.details.DetailsUi;
 import com.snek.fancyplayershops.implementations.ui.edit.EditUi;
-import com.snek.framework.ui.Div;
 import com.snek.framework.utils.MinecraftUtils;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
@@ -64,11 +62,22 @@ import net.minecraft.world.World;
 
 
 // TODO fix broken shops and blocks if they don't exist in the world when the map is loaded
+/**
+ * A placed player shop.
+ */
 public class Shop {
+
+    // Animation data
     public  static final int CANVAS_ANIMATION_DELAY = 5;
+
+
+    // Strings
     public  static final Text EMPTY_SHOP_NAME = new Txt("[Empty]").italic().lightGray().get();
     private static final Text SHOP_EMPTY_TEXT = new Txt("This shop is empty!").lightGray().get();
     private static final Text SHOP_STOCK_TEXT = new Txt("This shop has no items in stock!").lightGray().get();
+
+
+    // Storage files
     private static final Path SHOP_STORAGE_DIR;
     static {
         SHOP_STORAGE_DIR = FabricLoader.getInstance().getConfigDir().resolve(FancyPlayerShops.MOD_ID + "/shops");
@@ -130,7 +139,9 @@ public class Shop {
 
 
 
-
+    /**
+     * Saves the item in its serialized form.
+     */
     private void calcSerializedItem() {
         var result = ItemStack.CODEC.encode(item, JsonOps.INSTANCE, JsonOps.INSTANCE.empty()).result();
         if(result.isEmpty()) {
@@ -140,6 +151,9 @@ public class Shop {
     }
 
 
+    /**
+     * Saves the item in its Item form, reading data from its serialized version.
+     */
     private void calcDeserializedItem() {
         var result = ItemStack.CODEC.decode(JsonOps.INSTANCE, JsonParser.parseString(serializedItem)).result();
         if(result.isEmpty()) {
@@ -149,9 +163,14 @@ public class Shop {
     }
 
 
+    /**
+     * Retrieves the world ID from the ServerWorld value and saves it in worldId.
+     */
     private void calcSerializedWorldId() {
         worldId = world.getRegistryKey().getValue().toString();
     }
+
+
     /**
      * Tries to deserialize the world Identifier and find the ServerWorld it belongs to.
      * @param server The server instance.
@@ -170,20 +189,25 @@ public class Shop {
 
 
 
+
+
+
+
     /**
-     * Creates a new Shop and saves it.
-     * @param world The world the shop had to be created in.
+     * Creates a new Shop and saves it in its own file.
+     * @param world The world the shop has to be created in.
      * @param _pos The position of the new shop.
-     * @param owner The player that owns the shop.
+     * @param owner The player that places the shop.
      */
     public Shop(ServerWorld _world, BlockPos _pos, PlayerEntity owner){
         world = _world;
         ownerUUID = owner.getUuid();
         pos = _pos;
+
+        // Get members from serialized data and calculate shop identifier
         calcSerializedItem();
         calcSerializedWorldId();
         cacheShopIdentifier();
-
 
         // Create and spawn the Item Display entity
         itemDisplay = new ShopItemDisplay(this);
@@ -198,16 +222,28 @@ public class Shop {
 
 
     /**
-     * Sets the shop identifier
-     * @return The shop identifier.
+     * Sets the shop identifier.
      */
     private void cacheShopIdentifier() {
         shopIdentifierCache         = calcShopIdentifier(pos, worldId);
         shopIdentifierCache_noWorld = calcShopIdentifier(pos);
     }
+
+    /**
+     * Calculates a shop identifier from a position and the world ID.
+     * @param _pos The position.
+     * @param worldId The world ID.
+     * @return The generated identifier.
+     */
     private static String calcShopIdentifier(BlockPos _pos, String worldId) {
         return calcShopIdentifier(_pos) + "," + worldId;
     }
+
+    /**
+     * Calculates a shop identifier from the position. This identifier doesn't include the world ID.
+     * @param _pos The position.
+     * @return The generated identifier.
+     */
     private static String calcShopIdentifier(BlockPos _pos) {
         return String.format("%d,%d,%d", _pos.getX(), _pos.getY(), _pos.getZ());
     }
@@ -216,8 +252,7 @@ public class Shop {
 
 
     /**
-     * Saves the shop data of a specific player in the config file.
-     * @param owner The player.
+     * Saves the shop data in its config file.
      */
     private void saveShop() {
 
@@ -250,6 +285,7 @@ public class Shop {
     /**
      * Loads all the player shops into the runtime map.
      * Must be called on server started event (After the worlds are loaded!).
+     * @param server The server instance.
      */
     public static void loadData(MinecraftServer server) {
 
@@ -292,10 +328,21 @@ public class Shop {
     /**
      * Returns the Shop instance present at a certain block position.
      * Returns null if no shop is there.
+     * @param pos The block position.
+     * @param worldId The ID of the world the shop is in.
+     * @return The shop, or null.
     */
     public static Shop findShop(BlockPos pos, String worldId) {
         return shopsByCoords.get(calcShopIdentifier(pos, worldId));
     }
+
+    /**
+     * Returns the Shop instance present at a certain block position.
+     * Returns null if no shop is there.
+     * @param pos The block position.
+     * @param world The world the shop is in.
+     * @return The shop, or null.
+    */
     public static Shop findShop(BlockPos pos, World world) {
         return findShop(pos, world.getRegistryKey().getValue().toString());
     }
@@ -304,7 +351,7 @@ public class Shop {
 
 
     /**
-     * Spawns or removes the focus displays and starts item animations depending on the set next menu status.
+     * Spawns or removes the focus displays and starts item animations depending on the set next focus state.
      */
     public void updateFocusState(){
         if(focusStatus != focusStatusNext) {
@@ -351,7 +398,7 @@ public class Shop {
 
     /**
      * Finds the display entity connected to this shop and saves it to this.itemDisplay.
-     * If this.itemDisplay is null, a new ShopItemDisplay is created.
+     * If no connected entity is found, a new ShopItemDisplay is created.
      * @reutrn the item display.
      */
     private ShopItemDisplay findItemDisplayEntityIfNeeded(){
@@ -524,7 +571,6 @@ public class Shop {
         }
         //TODO actually open the UI
     }
-
 
 
 
