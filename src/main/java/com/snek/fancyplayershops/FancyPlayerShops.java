@@ -116,7 +116,7 @@ public class FancyPlayerShops implements ModInitializer {
 
 
         // Register scheduler
-        ServerTickEvents.END_SERVER_TICK.register(Scheduler::tick);
+        ServerTickEvents.END_SERVER_TICK.register(server -> { Scheduler.tick(); });
 
 
         // Register focus display purge

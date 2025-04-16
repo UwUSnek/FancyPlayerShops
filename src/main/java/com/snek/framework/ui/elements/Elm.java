@@ -420,10 +420,10 @@ public abstract class Elm extends Div {
             if(isHovered != hoverStatusNext) {
                 isHovered = hoverStatusNext;
                 if(isHovered) {
-                    h.onHoverEnter();
+                    h.onHoverEnter(player);
                 }
                 else {
-                    h.onHoverExit();
+                    h.onHoverExit(player);
                 }
             }
         }

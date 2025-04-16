@@ -257,28 +257,46 @@ public class Div {
 
 
 
+    /**
+     * Updates the absolute size of this element and its children, recursively,
+     * using the parent's absolute size and the element's local size.
+     */
+    public void updateAbsSize(){
+        absSize.set(parent == null ? localSize : new Vector2f(parent.getAbsSize()).mul(localSize));
+        for (Div c : children) {
+            c.updateAbsSize();
+        }
+    }
+
+
     public void setSize(@NotNull Vector2f _size) {
         localSize.set(_size);
+        updateAbsSize();
     }
 
     public void setSizeX(float x) {
         localSize.x = x;
+        updateAbsSize();
     }
 
     public void setSizeY(float y) {
         localSize.y = y;
+        updateAbsSize();
     }
 
     public void scale(@NotNull Vector2f _size) {
         localSize.mul(_size);
+        updateAbsSize();
     }
 
     public void scaleX(float x) {
         localSize.x *= x;
+        updateAbsSize();
     }
 
     public void scaleY(float y) {
         localSize.y *= y;
+        updateAbsSize();
     }
 
 
@@ -322,16 +340,16 @@ public class Div {
 
         // Apply horizontal alignment
         float x = switch(alignmentX) {
-            case LEFT   -> p.x - (s.x - localSize.x) / 2;
-            case RIGHT  -> p.x + (s.x - localSize.x) / 2;
+            case LEFT   -> p.x - (s.x - absSize.x) / 2;
+            case RIGHT  -> p.x + (s.x - absSize.x) / 2;
             case CENTER -> p.x;
             case NONE   -> p.x + localPos.x;
         };
 
         // Apply vertical alignment
         float y = switch(alignmentY) {
-            case TOP    -> p.y - (s.y - localSize.y) / 2;
-            case BOTTOM -> p.y + (s.y - localSize.y) / 2;
+            case TOP    -> p.y - (s.y - absSize.y) / 2;
+            case BOTTOM -> p.y + (s.y - absSize.y) / 2;
             case CENTER -> p.y;
             case NONE   -> p.y + localPos.y;
         };
