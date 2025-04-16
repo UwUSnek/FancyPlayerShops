@@ -1,7 +1,5 @@
 package com.snek.framework.ui.elements;
 
-import static com.snek.framework.ui.elements.Elm.ENTITY_CUSTOM_NAME;
-
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 import org.joml.Vector4i;
@@ -9,10 +7,8 @@ import org.joml.Vector4i;
 import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.animations.InterpolatedData;
 import com.snek.framework.data_types.animations.Transform;
-import com.snek.framework.data_types.animations.TransitionStep;
 import com.snek.framework.data_types.animations.Transition;
 import com.snek.framework.data_types.containers.Flagged;
-import com.snek.framework.data_types.containers.IndexedArrayDeque;
 import com.snek.framework.data_types.displays.CustomDisplay;
 import com.snek.framework.data_types.displays.CustomTextDisplay;
 import com.snek.framework.ui.styles.ElmStyle;
@@ -20,7 +16,6 @@ import com.snek.framework.ui.styles.FancyTextElmStyle;
 import com.snek.framework.ui.styles.PanelElmStyle;
 import com.snek.framework.ui.styles.TextElmStyle;
 import com.snek.framework.utils.Txt;
-import com.snek.framework.utils.Utils;
 
 import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
 import net.minecraft.server.world.ServerWorld;
@@ -38,18 +33,10 @@ import net.minecraft.text.Text;
  */
 public class FancyTextElm extends Elm {
 
-    // // Animations
-    // protected final @NotNull IndexedArrayDeque<Vector4i> backgroundQueue = new IndexedArrayDeque<>(); // The list of backgrounds to apply to this instance in the next ticks. 1 for each update tick
-    // protected final @NotNull IndexedArrayDeque<Integer>  alphaQueue      = new IndexedArrayDeque<>(); // The list of opacities   to apply to this instance in the next ticks. 1 for each update tick
-
-
     // In-world data
     private @NotNull CustomDisplay text;
     public CustomTextDisplay getFgEntity() { return (CustomTextDisplay)text; }
     public CustomTextDisplay getBgEntity() { return (CustomTextDisplay)getEntity(); }
-    // private TextElmStyle getStyle() { return (TextElmStyle)style; }
-
-
     private FancyTextElmStyle getStyle() { return (FancyTextElmStyle)style; }
 
 
@@ -58,18 +45,12 @@ public class FancyTextElm extends Elm {
 
 
 
-    // protected FancyTextElm(@NotNull ServerWorld _world, @NotNull CustomDisplay _entity, @NotNull ElmStyle _style) {
 
-    //     // Create element and background element
-    //     super(_world, _entity, _style);
-    //     text = (TextElm)addChild(new TextElm(_world));
-
-    //     // // Copy background color to background element, then make the background transparent
-    //     // ((PanelElmStyle)style).setColor(((TextElmStyle)text.style).getBackground());
-    //     // ((TextElmStyle)text.style).setBackground(new Vector4i(0, 0, 0, 0));
-    // }
-
-
+    /**
+     * Creates a new FancyTextElm using a custom style.
+     * @param _world The world in which to place the element.
+     * @param _style The custom style.
+     */
     protected FancyTextElm(@NotNull ServerWorld _world, @NotNull ElmStyle _style) {
 
         // Create element and background element
@@ -82,6 +63,10 @@ public class FancyTextElm extends Elm {
     }
 
 
+    /**
+     * Creates a new FancyTextElm using the default style.
+     * @param _world The world in which to place the element.
+     */
     public FancyTextElm(@NotNull ServerWorld _world){
         this(_world, new FancyTextElmStyle());
     }
@@ -173,7 +158,6 @@ public class FancyTextElm extends Elm {
         super.__applyTransitionStep(d);
         if(d.hasOpacity   ()) getStyle().setTextOpacity(d.getOpacity   ());
         if(d.hasBackground()) getStyle().setBackground (d.getBackground());
-        // Transform ft = transitionStepQueue.get(
     }
 
 
@@ -195,30 +179,6 @@ public class FancyTextElm extends Elm {
             futureDataQueue.get(index).getOpacity()
         );
     }
-    // /**
-    //  * Applies a single animation step.
-    //  * @param index The index of the future background and alpha to apply the step to.
-    //  * @param step The animation step.
-    //  * @return The modified transform.
-    //  */
-    // @Override
-    // protected @NotNull Transform applyTransitionStep(int index, @NotNull TransitionStep step){
-
-
-    //     if(step) {
-    //         // Calculate subclass step and get queued data
-    //         Vector4i bg = backgroundQueue.getOrAdd(index, () -> new Vector4i(getStyle().getBackground()));
-    //         int       a =      alphaQueue.getOrAdd(index, () ->              getStyle().getTextOpacity());
-
-    //         // Interpolate background and alpha
-    //         bg.set(Utils.interpolateARGB(bg, s.background, step.factor));
-    //         alphaQueue.set(index, Utils.interpolateI(a, s.alpha, step.factor));
-    //     }
-
-
-    //     // Call superclass function
-    //     return super.applyTransitionStep(index, step);
-    // }
 
 
 
@@ -257,24 +217,10 @@ public class FancyTextElm extends Elm {
 
     @Override
     public boolean stepTransition(){
-        // if(!backgroundQueue.isEmpty()) getStyle().setBackground (backgroundQueue.removeFirst());
-        // if(     !alphaQueue.isEmpty()) getStyle().setTextOpacity(     alphaQueue.removeFirst());
-        // //! Update queue not checked as it depends exclusively on transform changes.
-
         boolean r = super.stepTransition();
         getFgEntity().setInterpolationDuration(TRANSITION_REFRESH_TIME);
         getFgEntity().setStartInterpolation();
         getFgEntity().tick();
         return r;
     }
-
-
-
-
-    // // @Override
-    // // public void flushStyle(){
-    //     // ((TextElmStyle)text.style).setBackground(new Vector4i(0, 0, 0, 0));
-    //     // text.flushStyle();
-    //     // super.flushStyle();
-    // // }
 }

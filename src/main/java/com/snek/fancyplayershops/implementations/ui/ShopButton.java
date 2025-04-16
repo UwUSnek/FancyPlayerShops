@@ -46,7 +46,8 @@ public class ShopButton extends FancyTextElm implements Hoverable, Clickable {
 
 
     @Override
-    public void onHoverEnter() {
+    public void onHoverEnter(PlayerEntity player) {
+        if(player != shop.user) return;
 
         // Apply hover animation
         applyAnimation(new Animation(
@@ -58,7 +59,8 @@ public class ShopButton extends FancyTextElm implements Hoverable, Clickable {
 
 
     @Override
-    public void onHoverExit() {
+    public void onHoverExit(PlayerEntity player) {
+        if(player != shop.user) return;
 
         // Apply hover leave animation
         applyAnimation(new Animation(

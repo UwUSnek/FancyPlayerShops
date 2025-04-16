@@ -68,13 +68,12 @@ public class Div {
 
 
 
-
-
-
+    /**
+     * Creates a new Div with size (1,1)
+     */
     public Div() {
         // Empty
     }
-
 
 
 
@@ -134,9 +133,7 @@ public class Div {
      * @param animation The animation to apply.
      */
     public void applyAnimation(@NotNull Animation animation) {
-        // for (Div elm : children) {
-        //     elm.applyAnimation(animation);
-        // }
+        // Empty
     }
 
 
@@ -144,13 +141,10 @@ public class Div {
 
     /**
      * Instantly applies an animation to this element, ignoring transition times and easings.
-     * ! Partial steps at the end of the animation are expanded to cover the entire step.
      * @param animation The animation to apply.
      */
     public void applyAnimationNow(@NotNull Animation animation) {
-        // for (Div elm : children) {
-        //     elm.applyAnimationNow(animation);
-        // }
+        // Empty
     }
 
 
@@ -174,7 +168,6 @@ public class Div {
 
     /**
      * Instantly applies an animation to this element and all of its children, ignoring transition times and easings.
-     * ! Partial steps at the end of the animation are expanded to cover the entire step.
      * @param animation The animation to apply.
      */
     public void applyAnimationNowRecursive(@NotNull Animation animation) {
@@ -223,6 +216,10 @@ public class Div {
 
 
 
+    /**
+     * Spawns the element and its associated entities into the world.
+     * @param pos The position of the spawned entities.
+     */
     public void spawn(Vector3d pos){
         for (Div elm : children) {
             elm.spawn(pos);
@@ -232,6 +229,9 @@ public class Div {
 
 
 
+    /**
+     * Removes the element and its associated entities from the world.
+     */
     public void despawn(){
         for (Div elm : children) {
             elm.despawn();
@@ -241,6 +241,9 @@ public class Div {
 
 
 
+    /**
+     * Instantly removes the entities associated with this element from the world.
+     */
     public void despawnNow(){
         for (Div elm : children) {
             elm.despawnNow();
@@ -254,60 +257,49 @@ public class Div {
 
 
 
-
-    protected void updateAbsSize() {
-        absSize.set(localSize);
-        for (Div e : children) e.updateAbsSize();
-        // size.set(parent == null ? localSize : new Vector2f(localSize).mul(parent.getSize()));
-        //TODO check if an "absolute size" is needed. remove this function if not
-    }
-
     public void setSize(@NotNull Vector2f _size) {
         localSize.set(_size);
-        // for (Div c : children) c.setSize(_size);
-        updateAbsSize();
     }
 
     public void setSizeX(float x) {
         localSize.x = x;
-        // for (Div c : children) c.setSizeX(x);
-        updateAbsSize();
     }
 
     public void setSizeY(float y) {
         localSize.y = y;
-        // for (Div c : children) c.setSizeY(y);
-        updateAbsSize();
     }
 
     public void scale(@NotNull Vector2f _size) {
         localSize.mul(_size);
-        // for (Div c : children) c.scale(_size);
-        updateAbsSize();
     }
 
     public void scaleX(float x) {
         localSize.x *= x;
-        // for (Div c : children) c.scaleX(x);
-        updateAbsSize();
     }
 
     public void scaleY(float y) {
         localSize.y *= y;
-        // for (Div c : children) c.scaleY(y);
-        updateAbsSize();
     }
 
 
 
-
+    /**
+     * Updates the Z-index value of this element and its children, recursively,
+     * using the parent's Z-index and Z-layer count.
+     */
     protected void updateZIndex() {
         zIndex = parent == null ? 0 : parent.zIndex + parent.getLayerCount();
         for (Div c : children) c.updateZIndex();
     }
+
+    /**
+     * Returns the Z-index of this element.
+     * @return The Z-index.
+     */
     public int getZIndex() {
         return zIndex;
     }
+
     /**
      * Returns the amount of Z-Layers occupied by this element.
      * @return The amount of Z-Layers.
@@ -319,6 +311,10 @@ public class Div {
 
 
 
+    /**
+     * Updates the absolute position of this element and its children, recursively,
+     * using the parent's absolute position and the element's local position and alignment.
+     */
     protected void updateAbsPos() {
         // Calculate unrestricted position
         Vector2f p = parent == null ? new Vector2f(0, 0) : parent.getAbsPos();
@@ -349,37 +345,31 @@ public class Div {
     public void setPos(@NotNull Vector2f _pos) {
         localPos.set(_pos);
         updateAbsPos();
-        // for (Div c : children) c.setPos(_pos);
     }
 
     public void setPosX(float x) {
         localPos.x = x;
         updateAbsPos();
-        // for (Div c : children) c.setPosX(x);
     }
 
     public void setPosY(float y) {
         localPos.y = y;
         updateAbsPos();
-        // for (Div c : children) c.setPosY(y);
     }
 
     public void move(@NotNull Vector2f _pos) {
         localPos.add(_pos);
         updateAbsPos();
-        // for (Div c : children) c.move(_pos);
     }
 
     public void moveX(float x) {
         localPos.x += x;
         updateAbsPos();
-        // for (Div c : children) c.moveX(x);
     }
 
     public void moveY(float y) {
         localPos.y += y;
         updateAbsPos();
-        // for (Div c : children) c.moveY(y);
     }
 
 
@@ -398,12 +388,11 @@ public class Div {
 
 
 
+    // Getters
     public @NotNull Vector2f   getLocalSize () { return localSize;  }
     public @NotNull Vector2f   getLocalPos  () { return localPos;   }
-
     public @NotNull Vector2f   getAbsSize   () { return absSize;  }
     public @NotNull Vector2f   getAbsPos    () { return absPos;   }
-
     public @NotNull AlignmentX getAlignmentX() { return alignmentX; }
     public @NotNull AlignmentY getAlignmentY() { return alignmentY; }
 }

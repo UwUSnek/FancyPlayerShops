@@ -18,8 +18,6 @@ public class ItemElmStyle extends ElmStyle {
     private Flagged<ItemStack> item = null;
 
 
-
-
     /**
      * Creates a new default TextElmStyle.
      */

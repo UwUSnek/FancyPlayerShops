@@ -31,7 +31,6 @@ public class PanelElmStyle extends ElmStyle {
 
 
 
-
     /**
      * Creates a new default PanelElmStyle.
      */
@@ -61,10 +60,8 @@ public class PanelElmStyle extends ElmStyle {
 
     @Override
     public Animation getDefaultPrimerAnimation() {
-        // System.out.println("Chosen color: " +  getDefaultColor().toString());
         return new Animation(
             new Transition(ElmStyle.S_TIME, Easings.sineOut)
-            // color.get(),
             .targetBackground(new Vector4i(getDefaultColor().mul(new Vector4i(0, 1, 1, 1))))
             .targetOpacity(0)
         );
@@ -73,10 +70,8 @@ public class PanelElmStyle extends ElmStyle {
 
     @Override
     public Animation getDefaultSpawnAnimation() {
-        // System.out.println("Chosen color: " +  getDefaultColor().toString());
         return new Animation(
             new Transition(ElmStyle.S_TIME, Easings.sineOut)
-            // color.get(),
             .targetBackground(getDefaultColor())
             .targetOpacity(255)
         );
@@ -87,7 +82,6 @@ public class PanelElmStyle extends ElmStyle {
     public Animation getDefaultDespawnAnimation() {
         return new Animation(
             new Transition(ElmStyle.D_TIME, Easings.sineOut)
-            // new Vector4i(0),
             .targetBackground(new Vector4i(getDefaultColor().mul(new Vector4i(0, 1, 1, 1))))
             .targetOpacity(0)
         );
