@@ -5,23 +5,23 @@ import org.joml.Vector4i;
 
 import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.animations.Transform;
-import com.snek.framework.data_types.animations.transitions.TextAdditiveTransition;
-import com.snek.framework.data_types.animations.transitions.Transition;
+import com.snek.framework.data_types.animations.Transition;
 import com.snek.framework.ui.styles.ElmStyle;
+import com.snek.framework.ui.styles.FancyTextElmStyle;
 import com.snek.framework.ui.styles.PanelElmStyle;
 import com.snek.framework.utils.Easings;
 
 
 
 
-public class ShopButtonStyle extends PanelElmStyle {
+public class ShopButtonStyle extends FancyTextElmStyle {
     public ShopButtonStyle() {
         super();
     }
 
 
     @Override
-    public @NotNull Vector4i getDefaultColor () {
-        return new Vector4i(255, 130, 180, 160);
+    public @NotNull Vector4i getDefaultBackground() {
+        return new Vector4i(255, 130, 160, 150);
     }
 }

@@ -8,6 +8,7 @@ import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 import com.snek.framework.utils.Utils;
+import com.snek.framework.utils.scheduler.Scheduler;
 
 import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.decoration.Brightness;

@@ -1,4 +1,4 @@
-package com.snek.framework.ui;
+package com.snek.framework.ui.elements;
 
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2f;
@@ -6,12 +6,10 @@ import org.joml.Vector3d;
 import org.joml.Vector3f;
 import org.joml.Vector4i;
 
+import com.snek.framework.data_types.animations.InterpolatedData;
 import com.snek.framework.data_types.animations.Transform;
-import com.snek.framework.data_types.animations.steps.AnimationStep;
-import com.snek.framework.data_types.animations.steps.TextAnimationStep;
-import com.snek.framework.data_types.animations.transitions.TextAdditiveTransition;
-import com.snek.framework.data_types.animations.transitions.TextTargetTransition;
-import com.snek.framework.data_types.animations.transitions.Transition;
+import com.snek.framework.data_types.animations.TransitionStep;
+import com.snek.framework.data_types.animations.Transition;
 import com.snek.framework.data_types.containers.Flagged;
 import com.snek.framework.data_types.containers.IndexedArrayDeque;
 import com.snek.framework.data_types.containers.Pair;
@@ -20,7 +18,7 @@ import com.snek.framework.data_types.displays.CustomTextDisplay;
 import com.snek.framework.generated.FontSize;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.ui.styles.PanelElmStyle;
-import com.snek.framework.ui.styles.__internal_TextElmStyle;
+import com.snek.framework.ui.styles.TextElmStyle;
 import com.snek.framework.utils.SpaceUtils;
 import com.snek.framework.utils.Utils;
 
@@ -36,22 +34,25 @@ import net.minecraft.text.Text;
 
 
 
-
-public class __internal_TextElm extends Elm {
+/**
+ * An element that can display text.
+ * This class has transparent background. For a text element with background color, use FancyTextElm.
+ */
+public class TextElm extends Elm {
     // private PanelElm bg;
-    private __internal_TextElmStyle getStyle() { return (__internal_TextElmStyle)style; }
+    private TextElmStyle getStyle() { return (TextElmStyle)style; }
 
     // This value identifies the amount of rendered text pixels that fit in a minecraft block
     public static final int TEXT_PIXEL_BLOCK_RATIO = 40;
 
-    // Animations
-    protected final @NotNull IndexedArrayDeque<Vector4i> backgroundQueue = new IndexedArrayDeque<>(); // The list of backgrounds to apply to this instance in the next ticks. 1 for each update tick
-    protected final @NotNull IndexedArrayDeque<Integer>  alphaQueue      = new IndexedArrayDeque<>(); // The list of alpha values to set to this instance's text in the next ticks. 1 for each update tick
+    // // Animations
+    // protected final @NotNull IndexedArrayDeque<Vector4i> backgroundQueue = new IndexedArrayDeque<>(); // The list of backgrounds to apply to this instance in the next ticks. 1 for each update tick
+    // protected final @NotNull IndexedArrayDeque<Integer>  alphaQueue      = new IndexedArrayDeque<>(); // The list of alpha values to set to this instance's text in the next ticks. 1 for each update tick
 
 
 
 
-    protected __internal_TextElm(@NotNull ServerWorld _world, @NotNull CustomDisplay _entity, @NotNull ElmStyle _style) {
+    protected TextElm(@NotNull ServerWorld _world, @NotNull CustomDisplay _entity, @NotNull ElmStyle _style) {
 
         // Create element and background element
         super(_world, _entity, _style);
@@ -63,12 +64,12 @@ public class __internal_TextElm extends Elm {
     }
 
 
-    protected __internal_TextElm(@NotNull ServerWorld _world, @NotNull ElmStyle _style) {
+    protected TextElm(@NotNull ServerWorld _world, @NotNull ElmStyle _style) {
         this(_world, new CustomTextDisplay(_world), _style);
     }
 
-    public __internal_TextElm(@NotNull ServerWorld _world){
-        this(_world, new CustomTextDisplay(_world), new __internal_TextElmStyle());
+    public TextElm(@NotNull ServerWorld _world){
+        this(_world, new CustomTextDisplay(_world), new TextElmStyle());
     }
 
 
@@ -84,52 +85,78 @@ public class __internal_TextElm extends Elm {
         CustomTextDisplay e2 = (CustomTextDisplay)entity;
         { Flagged<Text>     f = getStyle().getFlaggedText();        if(f.isFlagged()) { e2.setText       (f.get()); f.unflag(); }}
         { Flagged<Integer>  f = getStyle().getFlaggedTextOpacity(); if(f.isFlagged()) { e2.setTextOpacity(f.get()); f.unflag(); }}
-        { Flagged<Vector4i> f = getStyle().getFlaggedBackground();  if(f.isFlagged()) { e2.setBackground (f.get()); f.unflag(); }}
+        // { Flagged<Vector4i> f = getStyle().getFlaggedBackground();  if(f.isFlagged()) { e2.setBackground (f.get()); f.unflag(); }}
     }
 
 
 
 
     @Override
-    protected void __applyAnimationTransitionNow(@NotNull Transition transition) {
-        if(transition instanceof TextAdditiveTransition t) {
-            getStyle().setBackground(t.getBackground());
-            getStyle().setTextOpacity(t.getAlpha());
-        }
-        if(transition instanceof TextTargetTransition t) {
-            getStyle().setBackground(t.getBackground());
-            getStyle().setTextOpacity(t.getAlpha());
-        }
-        super.__applyAnimationTransitionNow(transition);
+    protected void __applyAnimationTransitionNow(@NotNull Transition t) {
+        super.__applyAnimationTransitionNow(t);
+        if(t.d.hasOpacity()) getStyle().setTextOpacity(t.d.getOpacity());
+        // if(transition instanceof TextTargetTransition t) {
+            // // getStyle().setBackground(t.getBackground());
+            // getStyle().setTextOpacity(t.getOpacity());
+        // }
     }
 
 
 
 
-    /**
-     * Applies a single animation step.
-     * @param index The index of the future background and alpha to apply the step to.
-     * @param step The animation step.
-     * @return The modified transform.
-     */
     @Override
-    protected @NotNull Transform __applyTransitionStep(int index, @NotNull AnimationStep step){
-
-
-        if(step instanceof TextAnimationStep s) {
-            // Calculate subclass step and get queued data
-            Vector4i bg = backgroundQueue.getOrAdd(index, () -> new Vector4i(getStyle().getBackground()));
-            int       a =      alphaQueue.getOrAdd(index, () ->              getStyle().getTextOpacity());
-
-            // Interpolate background and alpha
-            bg.set(Utils.interpolateARGB(bg, s.background, step.factor));
-            alphaQueue.set(index, Utils.interpolateI(a, s.alpha, step.factor));
-        }
-
-
-        // Call superclass function
-        return super.__applyTransitionStep(index, step);
+    protected void __applyTransitionStep(@NotNull InterpolatedData d){
+        super.__applyTransitionStep(d);
+        if(d.hasOpacity()) getStyle().setTextOpacity(d.getOpacity());
     }
+
+
+
+
+    @Override
+    protected InterpolatedData __generateInterpolatedData(){
+        return new InterpolatedData(
+            getStyle().getTransform().clone(),
+            null,
+            getStyle().getTextOpacity()
+        );
+    }
+    @Override
+    protected InterpolatedData __generateInterpolatedData(int index){
+        return new InterpolatedData(
+            futureDataQueue.get(index).getTransform().clone(),
+            null,
+            futureDataQueue.get(index).getOpacity()
+        );
+    }
+
+
+
+
+    // /**
+    //  * Applies a single animation step.
+    //  * @param index The index of the future background and alpha to apply the step to.
+    //  * @param step The animation step.
+    //  * @return The modified transform.
+    //  */
+    // @Override
+    // protected @NotNull Transform applyTransitionStep(int index, @NotNull TransitionStep step){
+
+
+    //     if(step instanceof TextAnimationStep s) {
+    //         // Calculate subclass step and get queued data
+    //         // Vector4i bg = backgroundQueue.getOrAdd(index, () -> new Vector4i(getStyle().getBackground()));
+    //         int       a =      alphaQueue.getOrAdd(index, () ->              getStyle().getTextOpacity());
+
+    //         // Interpolate background and alpha
+    //         // bg.set(Utils.interpolateARGB(bg, s.background, step.factor));
+    //         alphaQueue.set(index, Utils.interpolateI(a, s.alpha, step.factor));
+    //     }
+
+
+    //     // Call superclass function
+    //     return super.applyTransitionStep(index, step);
+    // }
 
 
 
@@ -148,12 +175,14 @@ public class __internal_TextElm extends Elm {
 
 
     @Override
-    public boolean tick(){
-        if(!backgroundQueue.isEmpty()) getStyle().setBackground (backgroundQueue.removeFirst());
-        if(     !alphaQueue.isEmpty()) getStyle().setTextOpacity(     alphaQueue.removeFirst());
-        //! Update queue not checked as it depends exclusively on transform changes.
+    public boolean stepTransition(){
+        // // if(!backgroundQueue.isEmpty()) getStyle().setBackground (backgroundQueue.removeFirst());
+        // if(!alphaQueue.isEmpty()) getStyle().setTextOpacity(     alphaQueue.removeFirst());
+        // //! Update queue not checked as it depends exclusively on transform changes.
 
-        return super.tick();
+        boolean r = super.stepTransition();
+        ((CustomTextDisplay)entity).tick();
+        return r;
     }
 
 

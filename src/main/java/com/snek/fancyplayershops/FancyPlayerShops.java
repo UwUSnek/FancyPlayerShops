@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import com.snek.fancyplayershops.implementations.ui.InteractionBlocker;
 import com.snek.fancyplayershops.implementations.ui.ShopPanelElm;
-import com.snek.framework.ui.Elm;
+import com.snek.framework.ui.elements.Elm;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.scheduler.Scheduler;
 
@@ -78,7 +78,7 @@ public class FancyPlayerShops implements ModInitializer {
             Shop.loadData(server);
 
             // Schedule UI element update loop
-            Scheduler.loop(0, Elm.TRANSITION_REFRESH_TIME, Elm::processUpdateQueueTick);
+            Scheduler.loop(0, Elm.TRANSITION_REFRESH_TIME, Elm::processUpdateQueue);
 
             // Schedule focus features loop
             Scheduler.loop(0, 2, () -> FocusFeatures.tick(server.getWorlds()));

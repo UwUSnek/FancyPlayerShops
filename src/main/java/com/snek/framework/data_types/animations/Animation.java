@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.snek.framework.data_types.animations.transitions.Transition;
+import com.snek.framework.data_types.animations.Transition;
 
 
 

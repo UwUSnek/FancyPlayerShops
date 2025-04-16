@@ -47,11 +47,11 @@ public class Transform {
         _grot  = new Quaternionf();
     }
 
-    public Transform(@NotNull Vector3f __pos, @NotNull Quaternionf __lrot, @NotNull Vector3f __scale, @NotNull Quaternionf __rrot) {
+    public Transform(@NotNull Vector3f __pos, @NotNull Quaternionf __rot, @NotNull Vector3f __scale, @NotNull Quaternionf __globalRot) {
         _pos   = new Vector3f(__pos);
-        _lrot  = new Quaternionf(__lrot);
+        _lrot  = new Quaternionf(__rot);
         _scale = new Vector3f(__scale);
-        _grot  = new Quaternionf(__rrot);
+        _grot  = new Quaternionf(__globalRot);
     }
 
     @Override
