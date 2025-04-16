@@ -1,13 +1,10 @@
 package com.snek.fancyplayershops.implementations.ui.edit;
 
 import com.snek.fancyplayershops.Shop;
-import com.snek.fancyplayershops.implementations.ui.ShopButton;
 import com.snek.fancyplayershops.implementations.ui.ShopCanvas;
-import com.snek.fancyplayershops.implementations.ui.ShopPanelElm;
 import com.snek.fancyplayershops.implementations.ui.ShopTextElm;
 import com.snek.framework.data_types.ui.AlignmentX;
 import com.snek.framework.ui.Div;
-import com.snek.framework.ui.elements.FancyTextElm;
 
 
 
@@ -15,11 +12,16 @@ import com.snek.framework.ui.elements.FancyTextElm;
 
 
 
-
+/**
+ * A UI that allows the owner of the shop to edit it.
+ */
 public class EditUi extends ShopCanvas {
 
 
-
+    /**
+     * Creates a new EditUi.
+     * @param _shop The target shop.
+     */
     public EditUi(Shop _shop){
         super();
 
@@ -36,7 +38,7 @@ public class EditUi extends ShopCanvas {
         e.moveY(1f - ShopTextElm.LINE_H * 2f);
         e.setAlignmentX(AlignmentX.LEFT);
 
-        e = bg.addChild(new EditUiMaxStockButton(_shop));
+        e = bg.addChild(new EditUiStockLimitButton(_shop));
         e.moveY(1f - ShopTextElm.LINE_H * 3f);
         e.setAlignmentX(AlignmentX.LEFT);
     }
