@@ -255,7 +255,7 @@ public abstract class Elm extends Div {
         futureDataQueue.getOrAdd(
             shift + animationSteps.size() - 1,
             () -> {
-                return futureDataQueue.size() == 0 ?
+                return futureDataQueue.isEmpty() ?
                 __generateInterpolatedData() :
                 __generateInterpolatedData(futureDataQueue.size() - 1);
             }

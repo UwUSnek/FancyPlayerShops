@@ -57,7 +57,15 @@ public class TextElmStyle extends ElmStyle {
 
 
 
-    //TODO split animation between normal and fancy text styles, use new animation type
+    @Override
+    public Animation getDefaultPrimerAnimation() {
+        return new Animation(
+            new Transition(0, Easings.linear)
+            .targetOpacity(0)
+        );
+    }
+
+
     @Override
     public Animation getDefaultSpawnAnimation() {
         return new Animation(

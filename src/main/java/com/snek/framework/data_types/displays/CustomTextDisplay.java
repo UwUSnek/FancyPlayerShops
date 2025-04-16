@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector4i;
 
+import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
 
 import net.minecraft.entity.EntityType;
@@ -24,6 +25,33 @@ import net.minecraft.world.World;
 
 public class CustomTextDisplay extends CustomDisplay {
     public @NotNull TextDisplayEntity getRawDisplay() { return (TextDisplayEntity)heldEntity; }
+
+
+    // Text cache and flag used to remove the text when the opacity value is lower than 26
+    public static final Text EMPTY_TEXT = new Txt("").get();
+    private @NotNull Text textCache = EMPTY_TEXT;
+    private boolean noTextUnderA26 = true;
+    public void setNoTextUnderA26(boolean _noTextUnderA26) { noTextUnderA26 = _noTextUnderA26; }
+
+    // Opacity cache. This is used to understand if the entity is currently interpolating from less than 26 to 26 or more
+    // or vice versa, avoiding making changes until the interpolation is complete.
+    private int[] lastAlpha = new int[3];
+    private boolean lastAlphaInitialized = false;
+    private void shiftLastAlpha(int _new) {
+        if(!lastAlphaInitialized) {
+            lastAlphaInitialized = true;
+            lastAlpha[2] = _new;
+            lastAlpha[1] = _new;
+            lastAlpha[0] = _new;
+        }
+        else {
+            lastAlpha[2] = lastAlpha[1];
+            lastAlpha[1] = lastAlpha[0];
+            lastAlpha[0] = _new;
+        }
+    }
+
+
 
 
     private static Method method_setText;
@@ -65,11 +93,27 @@ public class CustomTextDisplay extends CustomDisplay {
 
 
     public void setText(@NotNull Text text) {
-        Utils.invokeSafe(method_setText, heldEntity, text);
+        if(noTextUnderA26 && lastAlpha[0] < 26 && lastAlpha[1] < 26) {
+            Utils.invokeSafe(method_setText, heldEntity, EMPTY_TEXT);
+            System.out.println("Text set to none: 1");
+        }
+        else {
+            Utils.invokeSafe(method_setText, heldEntity, text);
+        }
+        textCache = text.copy();
     }
 
 
     public @NotNull Text getText() {
+        // return (Text)Utils.invokeSafe(method_getText, heldEntity);
+        return textCache;
+    }
+    /**
+     * Returns the actual text the entity is displaying, as opposed to the cached value.
+     * This method returns an empty Text value when noTextUnderA26 is set to true and the opacity is less than 26.
+     * @return The text value.
+     */
+    public @NotNull Text getTrueText() {
         return (Text)Utils.invokeSafe(method_getText, heldEntity);
     }
 
@@ -87,8 +131,26 @@ public class CustomTextDisplay extends CustomDisplay {
      *     before interpolating, but the raw byte value (0 to 127, -128 to -1) is used instead.
      */
     public void setTextOpacity(int a) {
-        int a2 = Math.max(26, a);
-        Utils.invokeSafe(method_setTextOpacity, getRawDisplay(), (byte)(a2 > 127 ? a2 - 256 : a2));
+        shiftLastAlpha(a);
+        if(a < 26) {
+            if(noTextUnderA26 && lastAlpha[1] < 26) {
+                Utils.invokeSafe(method_setText, heldEntity, EMPTY_TEXT);
+                System.out.println("Text set to none: 2");
+            }
+            else {
+                Utils.invokeSafe(method_setText, heldEntity, textCache);
+                System.out.println("Text ON: 2");
+                a = 26;
+            }
+        }
+        // else if(noTextUnderA26 && getTextOpacity() < 26) {
+        else if(lastAlpha[1] >= 26 && lastAlpha[2] < 26) { //TODO optimize
+            Utils.invokeSafe(method_setText, heldEntity, textCache);
+            System.out.println("Text ON: 3 (" + textCache.getString() + ")");
+        }
+        // int a2 = Math.max(26, a);
+        // Utils.invokeSafe(method_setTextOpacity, getRawDisplay(), (byte)(a2 > 127 ? a2 - 256 : a2));
+        Utils.invokeSafe(method_setTextOpacity, getRawDisplay(), (byte)(a > 127 ? a - 256 : a));
     }
 
 
