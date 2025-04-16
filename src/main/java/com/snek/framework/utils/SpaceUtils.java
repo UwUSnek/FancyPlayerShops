@@ -10,11 +10,11 @@ import org.joml.Vector3f;
 
 
 
-
 /**
  * A utility class providing functions for 2D and 3D Euclidean geometry calculations.
  */
 public abstract class SpaceUtils {
+    private SpaceUtils(){}
 
 
     /**
@@ -52,7 +52,6 @@ public abstract class SpaceUtils {
      * @return True if the line intersects the rectangle, false otherwise.
      */
     public static boolean checkLineRectangleIntersection(Vector3f lineOrigin, Vector3f lineDirection, Vector3f corner1, Vector3f corner2) {
-
 
         // Calculate corner coordinates when projected onto the screen's plane. Use lineOrigin as coordinates origin and lineDirection
         Quaternionf negativeDir = new Quaternionf().rotateTo(lineDirection, new Vector3f(0, 0, -1));

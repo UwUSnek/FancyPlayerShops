@@ -30,7 +30,14 @@ import net.minecraft.world.World;
 
 
 
+/**
+ * A special interaction entity that is used by shops to block unwanted players interactions.
+ *     This stops client-side clicks on blocks and entities behind the shop block
+ *     and client-side item use events, preventing annoying UI flashes and visual artifacts.
+ */
 public class InteractionBlocker {
+
+    // Private methods of InteractionEntity
     private static Method method_setWidth;
     private static Method method_setHeight;
     static {
@@ -45,15 +52,23 @@ public class InteractionBlocker {
     }
 
 
+    // Entity names and command source identifier
     public static final String ENTITY_CUSTOM_NAME               = FancyPlayerShops.MOD_ID + ".ui.interactionblocker";
     public static final String ENTITY_CUSTOM_NAME_UNINITIALIZED = ENTITY_CUSTOM_NAME + ".uninitialized";
     public static final String COMMAND_SOURCE_NAME              = ENTITY_CUSTOM_NAME + ".patch";
+
+
+    // In-world data
     private final InteractionEntity entity;
     private final Shop shop;
 
 
 
 
+    /**
+     * Creates a new InteractionBlocker.
+     * @param _shop The target shop.
+     */
     public InteractionBlocker(Shop _shop) {
         shop = _shop;
         entity = new InteractionEntity(EntityType.INTERACTION, shop.getWorld());
@@ -85,7 +100,13 @@ public class InteractionBlocker {
 
 
 
+    /**
+     * Spawns the interaction entity into the world.
+     * @param pos The coordinates at which to spawn the entity.
+     */
     public void spawn(Vector3d pos) {
+
+        // Spawn the entity, move it to the specified coords and set a temporary name to allow the command to recognize it
         shop.getWorld().spawnEntity(entity);
         entity.setPos(pos.x, pos.y, pos.z);
         entity.setCustomNameVisible(false);
@@ -93,39 +114,47 @@ public class InteractionBlocker {
 
 
         //!  ╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-        //!  │                                                                                                                │
-        //!  │                        Manually update the entity using a vanilla data modify command.                         │
-        //!  │                                Use a custom source to silence command feedback.                                │
-        //!  │                                                                                                                │
-        //!  │            This workaround is used to fix a 1.20.1 issue that makes interactions spawned by the mod            │
-        //!  │                        unable to detect player clicks until their nbt data is modified.                        │
-        //!  │                                                                                                                │
-        //!  │                                                                                                                │
-        /*!  │  */MinecraftServer server = entity.getServer();                                                           //!  │
-        /*!  │  */ServerWorld world = (ServerWorld)entity.getWorld();                                                    //!  │
-        /*!  │  */ServerCommandSource source = new ServerCommandSource(                                                  //!  │
-        /*!  │  */    CommandOutput.DUMMY, Vec3d.ZERO, Vec2f.ZERO, world,                                                //!  │
-        /*!  │  */    4, COMMAND_SOURCE_NAME, new Txt(COMMAND_SOURCE_NAME).get(), server, (Entity)null                   //!  │
-        /*!  │  */);                                                                                                     //!  │
-        /*!  │  */try {                                                                                                  //!  │
-        /*!  │  */    server.getCommandManager().getDispatcher().execute(                                                //!  │
-        /*!  │  */        "execute as @e[type=minecraft:interaction,name=" + ENTITY_CUSTOM_NAME_UNINITIALIZED + "] " +   //!  │
-        /*!  │  */        "run data modify entity @s Air set value 1000",                                                //!  │
-        /*!  │  */        source                                                                                         //!  │
-        /*!  │  */    );                                                                                                 //!  │
-        /*!  │  */} catch (CommandSyntaxException e) {                                                                   //!  │
-        /*!  │  */    e.printStackTrace();                                                                               //!  │
-        /*!  │  */}                                                                                                      //!  │
-        //!  │                                                                                                                │
+        //!  │                                                                                                              //!
+        //!  │                        Manually update the entity using a vanilla data modify command.                       //!
+        //!  │                                Use a custom source to silence command feedback.                              //!
+        //!  │                                                                                                              //!
+        //!  │            This workaround is used to fix a 1.20.1 issue that makes interactions spawned by the mod          //!
+        //!  │                        unable to detect player clicks until their nbt data is modified.                      //!
+        //!  │                                                                                                              //!
+        //!  │                                                                                                              //!
+        /*!  │    // Create the custom command source and use DUMMY as output to silence it                                 //!
+        /*!  │  */MinecraftServer server = entity.getServer();                                                              //!
+        /*!  │  */ServerWorld world = (ServerWorld)entity.getWorld();                                                       //!
+        /*!  │  */ServerCommandSource source = new ServerCommandSource(                                                     //!
+        /*!  │  */    CommandOutput.DUMMY, Vec3d.ZERO, Vec2f.ZERO, world,                                                   //!
+        /*!  │  */    4, COMMAND_SOURCE_NAME, new Txt(COMMAND_SOURCE_NAME).get(), server, (Entity)null                      //!
+        /*!  │  */);                                                                                                        //!
+        //!  │                                                                                                              //!
+        //!  │                                                                                                              //!
+        /*!  │    // Execute the command using the custom command source                                                    //!
+        /*!  │  */try {                                                                                                     //!
+        /*!  │  */    server.getCommandManager().getDispatcher().execute(                                                   //!
+        /*!  │  */        "execute as @e[type=minecraft:interaction,name=" + ENTITY_CUSTOM_NAME_UNINITIALIZED + "] " +      //!
+        /*!  │  */        "run data modify entity @s Air set value 1000",                                                   //!
+        /*!  │  */        source                                                                                            //!
+        /*!  │  */    );                                                                                                    //!
+        /*!  │  */} catch (CommandSyntaxException e) {                                                                      //!
+        /*!  │  */    e.printStackTrace();                                                                                  //!
+        /*!  │  */}                                                                                                         //!
+        //!  │                                                                                                              //!
         //!  ╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
 
 
+        // Replace the temporary name with the actual custom name. This name is the one that will be used to purge stray interactions
         entity.setCustomName(new Txt(ENTITY_CUSTOM_NAME).get());
     }
 
 
 
 
+    /**
+     * Removes the interaction entity from the world
+     */
     public void despawn() {
         entity.remove(RemovalReason.KILLED);
     }

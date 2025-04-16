@@ -15,7 +15,6 @@ import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.ui.styles.ItemElmStyle;
 import com.snek.framework.utils.Easings;
 import com.snek.framework.utils.MinecraftUtils;
-import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.scheduler.Scheduler;
 import com.snek.framework.utils.scheduler.TaskHandler;
 
@@ -30,13 +29,17 @@ import net.minecraft.item.Items;
 
 
 
+/**
+ * An item display that shows the item currently being sold by a shop.
+ * Unconfigured shops show a barrier item.
+ */
 public class ShopItemDisplay extends ItemElm {
-
     Shop targetShop;
 
     // public void setDefaultRotation(float r) { defaultRotation = r; } //FIXME save in shop instance
     // private static       float defaultRotation       = (float) Math.toRadians(45);
 
+    // Task handlers. Used to cancel animations and other visual changes
     private @Nullable TaskHandler loopHandler = null;
     private @Nullable TaskHandler nameToggleHandler = null;
 
@@ -44,11 +47,9 @@ public class ShopItemDisplay extends ItemElm {
     // The Y translation applied by the spawning animation
     public static final float FOCUS_HEIGHT = 0.05f;
 
-
     // Loop animation duration and rotation
     public static final int      LOOP_TIME   = 32;
     public static final float    LOOP_ROT    = (float)Math.toRadians(120);
-
 
     // Edit animation scale and transition
     public static final Vector3f EDIT_SCALE  = new Vector3f(0.5f);
@@ -57,24 +58,30 @@ public class ShopItemDisplay extends ItemElm {
 
 
 
-
+    // Focus and loop animations
     private final @NotNull Animation focusAnimation;
     private final @NotNull Animation unfocusAnimation;
     private final @NotNull Animation loopAnimation;
 
+    // Edit animations
     private final @NotNull Animation enterEditAnimation;
     //! leaveEditAnimation not needed as the unfocus animation uses a target transform
 
 
 
 
+    /**
+     * Creates a new ShopItemDisplay.
+     * @param _targetShop The target shop.
+     * @param _display A CustomItemDisplay to use to display the item.
+     */
     public ShopItemDisplay(@NotNull Shop _targetShop, @NotNull CustomItemDisplay _display) {
         super(_targetShop.getWorld(), _display, new ItemElmStyle());
         targetShop = _targetShop;
         updateDisplay();
 
 
-        // Setup spawn and despawn animations animation
+        // Setup spawn and despawn animations
         focusAnimation = new Animation(
             new Transition(ElmStyle.S_TIME, Easings.sineOut)
             .additiveTransform(
@@ -106,9 +113,19 @@ public class ShopItemDisplay extends ItemElm {
 
 
 
+    /**
+     * Creates a new ShopItemDisplay.
+     * @param _targetShop The target shop.
+     * @param _rawDisplay A vanilla ItemDisplayEntity to use to display the item.
+     */
     public ShopItemDisplay(@NotNull Shop _targetShop, @NotNull ItemDisplayEntity _rawDisplay) {
         this(_targetShop, new CustomItemDisplay(_rawDisplay));
     }
+
+    /**
+     * Creates a new ShopItemDisplay.
+     * @param _targetShop The target shop.
+     */
     public ShopItemDisplay(@NotNull Shop _targetShop) {
         this(_targetShop, new CustomItemDisplay(_targetShop.getWorld()));
     }
@@ -117,28 +134,39 @@ public class ShopItemDisplay extends ItemElm {
 
 
     /**
-     * Updates the displayed values using the current item name, price and stock.
+     * Updates the displayed item reading data from the target shop.
      */
     public void updateDisplay(){
         ItemStack _item = targetShop.getItem();
+
+
+        // If the shop is unconfigured (item is AIR), display a barrier and EMPTY_SHOP_NAME as name
         if(_item.getItem() == Items.AIR) {
             ItemStack noItem = Items.BARRIER.getDefaultStack();
             noItem.setCustomName(Shop.EMPTY_SHOP_NAME);
             ((ItemElmStyle)style).setItem(noItem);
             entity.setCustomName(MinecraftUtils.getItemName(noItem));
         }
+
+
+        // If the shop is configured, display the current item and its name
         else {
             ((ItemElmStyle)style).setItem(_item);
             entity.setCustomName(MinecraftUtils.getItemName(((ItemElmStyle)style).getItem()));
         }
-        entity.setCustomNameVisible(true);
 
+
+        // Turn on custom name and update the entity
+        entity.setCustomNameVisible(true);
         flushStyle();
     }
 
 
 
 
+    /**
+     * Enters the focus state, making the item more visible and starting the loop animation
+     */
     public void enterFocusState(){
 
         // Hide custom name and start focus animation
@@ -153,6 +181,9 @@ public class ShopItemDisplay extends ItemElm {
 
 
 
+    /**
+     * Leaves the focus state.
+     */
     public void leaveFocusState(){
 
         // Stop loop animation and start unfocus animation
@@ -167,6 +198,9 @@ public class ShopItemDisplay extends ItemElm {
 
 
 
+    /**
+     * Enters the edit state
+     */
     public void enterEditState(){
         applyAnimation(enterEditAnimation);
     }
@@ -174,6 +208,9 @@ public class ShopItemDisplay extends ItemElm {
 
 
 
+    /**
+     * Leaves the edit state
+     */
     public void leaveEditState(){
         // Empty
         //! leaveEditAnimation not needed as the unfocus animation uses a target transform
@@ -184,7 +221,6 @@ public class ShopItemDisplay extends ItemElm {
     @Override
     public void spawn(Vector3d pos) {
         super.spawn(new Vector3d(pos).add(0, 0.3f, 0));
-
 
         // Force display update to remove tracking custom name
         updateDisplay();

@@ -8,10 +8,10 @@ import com.snek.framework.data_types.animations.Transform;
 import com.snek.framework.data_types.animations.Transition;
 import com.snek.framework.data_types.containers.Flagged;
 import com.snek.framework.utils.Easings;
-import com.snek.framework.utils.Txt;
 
-import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity.TextAlignment;
-import net.minecraft.text.Text;
+
+
+
 
 
 
@@ -28,7 +28,6 @@ public class FancyTextElmStyle extends TextElmStyle {
     }
 
 
-    //TODO split animation between normal and fancy text styles, use new animation type
     @Override
     public Animation getDefaultPrimerAnimation() {
         return new Animation(
@@ -39,7 +38,6 @@ public class FancyTextElmStyle extends TextElmStyle {
     }
 
 
-    //TODO split animation between normal and fancy text styles, use new animation type
     @Override
     public Animation getDefaultSpawnAnimation() {
         return new Animation(

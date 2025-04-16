@@ -40,7 +40,7 @@ public class IndexedArrayDeque<E> extends AccessibleArrayDeque<E> {
      * If no element is present at the specified index, new elements are added to the queue until the desired size is reached.
      * @param index The index.
      * @param f The supplier function used to create new elements.
-     * @return The element.
+     * @return The element at index <index>.
      */
     public E getOrAdd(int index, Supplier<E> f) {
         while(index >= size()) add(f.get());
@@ -50,9 +50,9 @@ public class IndexedArrayDeque<E> extends AccessibleArrayDeque<E> {
 
 
     /**
-     * Sets the element at index <index>.
+     * Sets a new value to the element at index <index>.
      * @param index The index.
-     * @param value The value.
+     * @param value The new value.
      */
     public void set(int index, E value) {
         if(index < 0 || index >= size()) {

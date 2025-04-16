@@ -6,9 +6,7 @@ import org.joml.Vector3i;
 
 import com.snek.fancyplayershops.Shop;
 import com.snek.fancyplayershops.implementations.ui.ShopTextElm;
-import com.snek.fancyplayershops.implementations.ui.styles.ShopButtonStyle;
 import com.snek.framework.ui.styles.FancyTextElmStyle;
-import com.snek.framework.ui.styles.TextElmStyle;
 import com.snek.framework.utils.MinecraftUtils;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
@@ -23,14 +21,24 @@ import net.minecraft.item.Items;
 
 
 
+/**
+ * The main display of DetailsUi.
+ * It shows informations about the shop.
+ */
 public class DetailsUiDisplay extends ShopTextElm {
 
+    // Colors
     public static final Vector3i C_RGB_PRICE      = new Vector3i(243, 255, 0);
     public static final Vector3f C_HSV_STOCK_HIGH = Utils.RGBtoHSV(new Vector3i(0, 223, 0)); //! Float instead of int for more precision
     public static final Vector3f C_HSV_STOCK_LOW  = Utils.RGBtoHSV(new Vector3i(200, 0, 0)); //! Float instead of int for more precision
 
 
 
+
+    /**
+     * Creates a new DetailsUiDisplay.
+     * @param _shop The target shop.
+     */
     public DetailsUiDisplay(@NotNull Shop _shop){
         super(_shop, 0.5f, ShopTextElm.LINE_H);
         updateDisplay();
@@ -43,6 +51,8 @@ public class DetailsUiDisplay extends ShopTextElm {
      * Updates the displayed values using the current item name, price and stock.
      */
     public void updateDisplay(){
+
+        // Calculate the color of the stock amount
         float factor = 1.0f - shop.getStock() / 1000f;
         Vector3i col = Utils.HSVtoRGB(new Vector3f(C_HSV_STOCK_LOW).add(new Vector3f(C_HSV_STOCK_HIGH).sub(C_HSV_STOCK_LOW).mul(1.0f - (factor * factor))));
 

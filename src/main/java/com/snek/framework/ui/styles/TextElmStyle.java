@@ -1,7 +1,6 @@
 package com.snek.framework.ui.styles;
 
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector4i;
 
 import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.animations.Transform;
@@ -86,31 +85,37 @@ public class TextElmStyle extends ElmStyle {
 
 
 
+    // Default value providers
     public @NotNull Text          getDefaultText         () { return new Txt("").get()            ; }
     public @NotNull TextAlignment getDefaultTextAlignment() { return TextAlignment.CENTER         ; }
     public          int           getDefaultTextOpacity  () { return 255                          ; }
 
 
+    // Reset functions
     public void resetText         () { text          = Flagged.from(getDefaultText()         ); }
     public void resetTextAlignment() { textAlignment = Flagged.from(getDefaultTextAlignment()); }
     public void resetTextOpacity  () { textOpacity   = Flagged.from(getDefaultTextOpacity()  ); }
 
 
+    // Setters
     public void setText         (@NotNull Text          _text         ) { text         .set(_text         ); }
     public void setTextAlignment(@NotNull TextAlignment _textAlignment) { textAlignment.set(_textAlignment); }
     public void setTextOpacity  (         int           _textOpacity  ) { textOpacity  .set(_textOpacity  ); }
 
 
+    // Flagged getters
     public @NotNull Flagged<Text>          getFlaggedText         () { return text;          }
     public @NotNull Flagged<TextAlignment> getFlaggedTextAlignment() { return textAlignment; }
     public @NotNull Flagged<Integer>       getFlaggedTextOpacity  () { return textOpacity;   }
 
 
+    // Getters
     public @NotNull Text          getText         () { return text         .get(); }
     public @NotNull TextAlignment getTextAlignment() { return textAlignment.get(); }
     public          int           getTextOpacity  () { return textOpacity  .get(); }
 
 
+    // Edit getters
     public @NotNull Text     editText          () { return text         .edit(); }
     //!                      editTextAlignment Primitive types cannot be edited
     //!                      editTextOpacity   Primitive types cannot be edited

@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.snek.framework.data_types.animations.Transition;
-
 
 
 
@@ -16,14 +14,17 @@ import com.snek.framework.data_types.animations.Transition;
 
 
 /**
- * This class identifies an animation.
- * The animation is expressed as a list of Transitions.
+ * This class identifies an animation expressed as a list of Transitions.
  */
 public class Animation {
     private final @NotNull List<Transition> transitions = new ArrayList<>();
     private int totalDuration = 0;
 
 
+    /**
+     * Creates a new Animation.
+     * @param _transitions One or more transitions.
+     */
     public Animation(@NotNull Transition... _transitions) {
         for (Transition t : _transitions) {
             transitions.add(t);
@@ -33,7 +34,7 @@ public class Animation {
 
 
     /**
-     * Returns the list of transitions that make up this animation as a read-only list
+     * Returns the list of transitions that make up this animation as a read-only list.
      * @return The translations.
      */
     public List<Transition> getTransitions() {
@@ -41,6 +42,10 @@ public class Animation {
     }
 
 
+    /**
+     * Returns the total duration of this animation, expressed in ticks.
+     * @return The total duration.
+     */
     public int getTotalDuration() {
         return totalDuration;
     }

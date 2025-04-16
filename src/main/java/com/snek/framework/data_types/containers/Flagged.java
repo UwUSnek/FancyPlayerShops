@@ -2,16 +2,39 @@ package com.snek.framework.data_types.containers;
 
 import java.util.Objects;
 
+
+
+
+
+
+
+
+/**
+ * A wrapper class that can track value changes of the contained object.
+ */
 public class Flagged<T> {
     private T value;
     private boolean flag = true;
 
+
+    /**
+     * Creates a new Flagged value.
+     * @param _value The initial value.
+     */
     private Flagged(T _value) {
         this.value = _value;
     }
+
+    /**
+     * Creates a new Flagged value.
+     * @param value The initial value.
+     * @return The newly created Flagged object.
+     */
     public static <T> Flagged<T> from(T value) {
         return new Flagged<>(value);
     }
+
+
 
 
     /**
@@ -46,10 +69,20 @@ public class Flagged<T> {
     }
 
 
+
+
+    /**
+     * Returns the current value of the flag.
+     * @return The flag.
+     */
     public boolean isFlagged() {
         return flag;
     }
 
+
+    /**
+     * Unflags the Flagged object.
+     */
     public void unflag() {
         flag = false;
     }

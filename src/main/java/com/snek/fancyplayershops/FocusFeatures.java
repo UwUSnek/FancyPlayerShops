@@ -27,19 +27,26 @@ import net.minecraft.world.World;
 
 
 /**
- * Utility class containing methods to detect shops players are looking at and display additional informations
+ * Utility class containing methods to detect shops players are looking at and display additional informations.
  */
 public abstract class FocusFeatures {
     private FocusFeatures(){}
+
+    // Ray tracing data
     private static final double MAX_DISTANCE = 5;  // Maximum distance to check
     private static final double STEP_SIZE = 0.2;
+
+    // The list of shops that were targeted in the previous tick
     private static List<Shop> targetedShopsOld = new ArrayList<>();
 
 
 
 
-
-
+    /**
+     * Returns the position of the block targeted by a player.
+     * @param player The player.
+     * @return The position of the targeted block.
+     */
     private static Vec3d getTargetBlockPrecise(PlayerEntity player) {
         World world = player.getEntityWorld();
 

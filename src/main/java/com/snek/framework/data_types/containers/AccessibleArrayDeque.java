@@ -134,7 +134,7 @@ public class AccessibleArrayDeque<E> extends AbstractCollection<E>
      * VMs excel at optimizing simple array loops where indices are
      * incrementing or decrementing over a valid slice, e.g.
      *
-     * for (int i = start; i < end; i++) ... elements[i]
+     *  for (int i = start; i < end; i++) ... elements[i]
      *
      * Because in a circular array, elements are in general stored in
      * two disjoint such slices, we help the VM by writing unusual
@@ -908,7 +908,8 @@ public class AccessibleArrayDeque<E> extends AbstractCollection<E>
         public void forEachRemaining(Consumer<? super E> action) {
             if (action == null)
                 throw new NullPointerException();
-            final int end = getFence(), cursor = this.cursor;
+            final int end = getFence();
+            final int cursor = this.cursor;
             final Object[] es = elements;
             if (cursor != end) {
                 this.cursor = end;

@@ -18,6 +18,9 @@ import net.minecraft.world.World;
 
 
 
+/**
+ * A utility class that handles clicks from players.
+ */
 public abstract class ClickFeatures {
     private ClickFeatures(){}
 

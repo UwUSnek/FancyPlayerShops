@@ -3,18 +3,23 @@ package com.snek.fancyplayershops.implementations.ui.styles;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector4i;
 
-import com.snek.framework.data_types.animations.Animation;
-import com.snek.framework.data_types.animations.Transform;
-import com.snek.framework.data_types.animations.Transition;
-import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.ui.styles.FancyTextElmStyle;
-import com.snek.framework.ui.styles.PanelElmStyle;
-import com.snek.framework.utils.Easings;
 
 
 
 
+
+
+
+
+/**
+ * The style of the generic ShopButton UI element.
+ */
 public class ShopButtonStyle extends FancyTextElmStyle {
+
+    /**
+     * Creates a new ShopButtonStyle.
+     */
     public ShopButtonStyle() {
         super();
     }

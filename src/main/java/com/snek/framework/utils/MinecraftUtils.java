@@ -18,6 +18,8 @@ import net.minecraft.util.math.Vec3i;
  * A utility class providing functions to handle Minecraft classes and data.
  */
 public abstract class MinecraftUtils {
+    private MinecraftUtils(){}
+
 
     /**
      * Returns the custom name of an item. If the item has no custom name, the default name is returned.

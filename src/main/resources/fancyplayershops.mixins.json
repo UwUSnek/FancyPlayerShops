@@ -3,8 +3,6 @@
 	"package": "com.snek.fancyplayershops.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
-		"TextDisplayAccessor",
-		"FancyPlayerShopsMixin",
 		"RecipeModifier"
 	],
 	"injectors": {
