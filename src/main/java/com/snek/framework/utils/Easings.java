@@ -4,7 +4,13 @@ package com.snek.framework.utils;
 
 
 
-public final class Easings {
+
+
+
+/**
+ * A utility class containing a collection of common easing functions.
+ */
+public abstract class Easings {
     private Easings(){}
 
     public static final Easing linear       = new Easing(Easings::_linear      );

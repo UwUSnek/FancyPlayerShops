@@ -15,6 +15,13 @@ public class TaskHandler {
     protected boolean cancelled = false;
 
 
+
+
+    /**
+     * Creates a new TaskHandler.
+     * @param _targetTick The tick the task is scheduled for.
+     * @param _task The task to execute.
+     */
     public TaskHandler(long _targetTick, Runnable _task) {
         targetTick = _targetTick;
         task = _task;
@@ -23,7 +30,7 @@ public class TaskHandler {
 
     /**
      * Marks the task as cancelled.
-     * Calling .exec() on cancelled task doesn't run them.
+     * Calling .exec() on cancelled tasks doesn't run them.
      */
     public void cancel(){
         cancelled = true;
