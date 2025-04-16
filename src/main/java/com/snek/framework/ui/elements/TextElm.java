@@ -116,7 +116,7 @@ public class TextElm extends Elm {
     @Override
     protected InterpolatedData __generateInterpolatedData(){
         return new InterpolatedData(
-            getStyle().getTransform().clone(),
+            getStyle().getTransform().copy(),
             null,
             getStyle().getTextOpacity()
         );
@@ -124,7 +124,7 @@ public class TextElm extends Elm {
     @Override
     protected InterpolatedData __generateInterpolatedData(int index){
         return new InterpolatedData(
-            futureDataQueue.get(index).getTransform().clone(),
+            futureDataQueue.get(index).getTransform().copy(),
             null,
             futureDataQueue.get(index).getOpacity()
         );

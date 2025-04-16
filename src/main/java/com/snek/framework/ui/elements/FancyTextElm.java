@@ -182,7 +182,7 @@ public class FancyTextElm extends Elm {
     @Override
     protected InterpolatedData __generateInterpolatedData(){
         return new InterpolatedData(
-            getStyle().getTransform().clone(),
+            getStyle().getTransform().copy(),
             new Vector4i(getStyle().getBackground()),
             getStyle().getTextOpacity()
         );
@@ -190,7 +190,7 @@ public class FancyTextElm extends Elm {
     @Override
     protected InterpolatedData __generateInterpolatedData(int index){
         return new InterpolatedData(
-            futureDataQueue.get(index).getTransform().clone(),
+            futureDataQueue.get(index).getTransform().copy(),
             new Vector4i(futureDataQueue.get(index).getBackground()),
             futureDataQueue.get(index).getOpacity()
         );

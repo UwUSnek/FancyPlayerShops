@@ -158,7 +158,7 @@ public abstract class Elm extends Div {
      * @return The transform.
      */
     protected Transform __calcTransform() {
-        return style.getTransform().clone()
+        return style.getTransform().copy()
             .move(getAbsPos().x, getAbsPos().y, getZIndex() * 0.001f) //TODO move Z layer spacing to config file
         ;
     }
@@ -363,14 +363,14 @@ public abstract class Elm extends Div {
 
     protected InterpolatedData __generateInterpolatedData(){
         return new InterpolatedData(
-            style.getTransform().clone(),
+            style.getTransform().copy(),
             null,
             null
         );
     }
     protected InterpolatedData __generateInterpolatedData(int index){
         return new InterpolatedData(
-            futureDataQueue.get(index).getTransform().clone(),
+            futureDataQueue.get(index).getTransform().copy(),
             null,
             null
         );
