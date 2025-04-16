@@ -175,12 +175,14 @@ public class TextElm extends Elm {
 
 
     @Override
-    public boolean tick(){
+    public boolean stepTransition(){
         // // if(!backgroundQueue.isEmpty()) getStyle().setBackground (backgroundQueue.removeFirst());
         // if(!alphaQueue.isEmpty()) getStyle().setTextOpacity(     alphaQueue.removeFirst());
         // //! Update queue not checked as it depends exclusively on transform changes.
 
-        return super.tick();
+        boolean r = super.stepTransition();
+        ((CustomTextDisplay)entity).tick();
+        return r;
     }
 
 

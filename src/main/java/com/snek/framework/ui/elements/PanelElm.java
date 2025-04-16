@@ -148,12 +148,12 @@ public class PanelElm extends Elm {
 
 
     @Override
-    public boolean tick(){
+    public boolean stepTransition(){
         // //TODO remove print
         // if(!colorQueue.isEmpty()) getStyle().setColor(colorQueue.removeFirst());
         // //! Update queue not checked as it depends exclusively on transform changes.
 
-        return super.tick();
+        return super.stepTransition();
     }
 
 

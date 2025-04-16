@@ -256,14 +256,15 @@ public class FancyTextElm extends Elm {
 
 
     @Override
-    public boolean tick(){
+    public boolean stepTransition(){
         // if(!backgroundQueue.isEmpty()) getStyle().setBackground (backgroundQueue.removeFirst());
         // if(     !alphaQueue.isEmpty()) getStyle().setTextOpacity(     alphaQueue.removeFirst());
         // //! Update queue not checked as it depends exclusively on transform changes.
 
-        boolean r = super.tick();
+        boolean r = super.stepTransition();
         getFgEntity().setInterpolationDuration(TRANSITION_REFRESH_TIME);
         getFgEntity().setStartInterpolation();
+        getFgEntity().tick();
         return r;
     }
 

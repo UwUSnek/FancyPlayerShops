@@ -7,6 +7,7 @@ import org.joml.Vector4i;
 
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
+import com.snek.framework.utils.scheduler.Scheduler;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity;
@@ -28,16 +29,19 @@ public class CustomTextDisplay extends CustomDisplay {
 
 
     // Text cache and flag used to remove the text when the opacity value is lower than 26
-    public static final Text EMPTY_TEXT = new Txt("").get();
-    private @NotNull Text textCache = EMPTY_TEXT;
-    private boolean noTextUnderA26 = true;
-    public void setNoTextUnderA26(boolean _noTextUnderA26) { noTextUnderA26 = _noTextUnderA26; }
+    public static final @NotNull Text EMPTY_TEXT = new Txt("").get();
+    private             @NotNull Text textCache = EMPTY_TEXT;
+    private final boolean noTextUnderA26;
+
 
     // Opacity cache. This is used to understand if the entity is currently interpolating from less than 26 to 26 or more
     // or vice versa, avoiding making changes until the interpolation is complete.
     private int[] lastAlpha = new int[3];
+    private long lastAlphaUpdate = 0;
     private boolean lastAlphaInitialized = false;
     private void shiftLastAlpha(int _new) {
+        if(lastAlphaUpdate >= Scheduler.getTickNum()) return;
+
         if(!lastAlphaInitialized) {
             lastAlphaInitialized = true;
             lastAlpha[2] = _new;
@@ -48,6 +52,22 @@ public class CustomTextDisplay extends CustomDisplay {
             lastAlpha[2] = lastAlpha[1];
             lastAlpha[1] = lastAlpha[0];
             lastAlpha[0] = _new;
+        }
+    }
+
+    /**
+     * This method flushes the opacity cache and ensures the displayed text doesn't remain
+     * in an incorrect state after safety delays performed during short animations.
+     * Must be called at the end of each animation tick. //FIXME this can cause issues if the transition ticks are not aligned wit the step size.
+     */
+    public void tick(){
+        shiftLastAlpha(getTextOpacity());
+
+        if(noTextUnderA26) {
+            boolean a0 = lastAlpha[0] < 26; //! Always equal to the current (or target) opacity
+            boolean a1 = lastAlpha[1] < 26;
+            boolean a2 = lastAlpha[2] < 26;
+            if(a0 == a1 && a1 != a2) setText(textCache);
         }
     }
 
@@ -82,11 +102,21 @@ public class CustomTextDisplay extends CustomDisplay {
 
 
 
-    public CustomTextDisplay(@NotNull TextDisplayEntity _rawDisplay) {
+    public CustomTextDisplay(@NotNull TextDisplayEntity _rawDisplay, boolean _noTextUnderA26) {
         super(_rawDisplay);
+        noTextUnderA26 = _noTextUnderA26;
+    }
+    public CustomTextDisplay(@NotNull World _world, boolean _noTextUnderA26) {
+        super(new TextDisplayEntity(EntityType.TEXT_DISPLAY, _world));
+        noTextUnderA26 = _noTextUnderA26;
+    }
+
+
+    public CustomTextDisplay(@NotNull TextDisplayEntity _rawDisplay) {
+        this(_rawDisplay, true);
     }
     public CustomTextDisplay(@NotNull World _world) {
-        super(new TextDisplayEntity(EntityType.TEXT_DISPLAY, _world));
+        this(_world, true);
     }
 
 
@@ -95,7 +125,7 @@ public class CustomTextDisplay extends CustomDisplay {
     public void setText(@NotNull Text text) {
         if(noTextUnderA26 && lastAlpha[0] < 26 && lastAlpha[1] < 26) {
             Utils.invokeSafe(method_setText, heldEntity, EMPTY_TEXT);
-            System.out.println("Text set to none: 1");
+            // System.out.println("Text set to none: 1");
         }
         else {
             Utils.invokeSafe(method_setText, heldEntity, text);
@@ -132,21 +162,23 @@ public class CustomTextDisplay extends CustomDisplay {
      */
     public void setTextOpacity(int a) {
         shiftLastAlpha(a);
+        lastAlphaUpdate = Scheduler.getTickNum();
+
         if(a < 26) {
             if(noTextUnderA26 && lastAlpha[1] < 26) {
                 Utils.invokeSafe(method_setText, heldEntity, EMPTY_TEXT);
-                System.out.println("Text set to none: 2");
+                // System.out.println("Text set to none: 2");
             }
             else {
                 Utils.invokeSafe(method_setText, heldEntity, textCache);
-                System.out.println("Text ON: 2");
+                // System.out.println("Text ON: 2");
                 a = 26;
             }
         }
         // else if(noTextUnderA26 && getTextOpacity() < 26) {
         else if(lastAlpha[1] >= 26 && lastAlpha[2] < 26) { //TODO optimize
             Utils.invokeSafe(method_setText, heldEntity, textCache);
-            System.out.println("Text ON: 3 (" + textCache.getString() + ")");
+            // System.out.println("Text ON: 3 (" + textCache.getString() + ")");
         }
         // int a2 = Math.max(26, a);
         // Utils.invokeSafe(method_setTextOpacity, getRawDisplay(), (byte)(a2 > 127 ? a2 - 256 : a2));

@@ -41,9 +41,16 @@ public class ShopItemDisplay extends ItemElm {
     private @Nullable TaskHandler nameToggleHandler = null;
 
 
+    // The Y translation applied by the spawning animation
+    public static final float FOCUS_HEIGHT = 0.05f;
+
+
+    // Loop animation duration and rotation
     public static final int      LOOP_TIME   = 32;
     public static final float    LOOP_ROT    = (float)Math.toRadians(120);
 
+
+    // Edit animation scale and transition
     public static final Vector3f EDIT_SCALE  = new Vector3f(0.5f);
     public static final Vector3f EDIT_MOVE   = new Vector3f(0, 0.25f, 0).mul(1f - 0.5f);
 
@@ -72,8 +79,7 @@ public class ShopItemDisplay extends ItemElm {
             new Transition(ElmStyle.S_TIME, Easings.sineOut)
             .additiveTransform(
                 new Transform()
-                .moveY(ElmStyle.S_HEIGHT)
-                .scale(ElmStyle.S_SCALE)
+                .moveY(FOCUS_HEIGHT)
                 .rotY(LOOP_ROT / 2)
             )
         );

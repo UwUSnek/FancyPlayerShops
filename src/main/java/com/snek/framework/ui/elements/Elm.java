@@ -61,6 +61,8 @@ import net.minecraft.world.World;
  */
 public abstract class Elm extends Div {
     public static final String ENTITY_CUSTOM_NAME = FancyPlayerShops.MOD_ID + ".ui.displayentity";
+    public static final int QUEUE_LINGER_TICKS = 4;
+    // ^ Additional update ticks the element stays in the update queue for after all of its steps have been processed.
 
 
     // Animation handling
@@ -68,6 +70,7 @@ public abstract class Elm extends Div {
     private   static final @NotNull List<Elm> elmUpdateQueue = new ArrayList<>();   // The list of instances with pending transition steps
     protected        final @NotNull IndexedArrayDeque<InterpolatedData> futureDataQueue = new IndexedArrayDeque<>(); // The list of transition steps to apply to this instance in the next ticks. 1 for each update tick
     private boolean isQueued = false;                                               // Whether this instance is queued for updates. Updated manually
+    private int queueLingerTicks = 0;
 
 
     // In-world data
@@ -178,6 +181,7 @@ public abstract class Elm extends Div {
         if(!isQueued) {
             elmUpdateQueue.add(this);
             isQueued = true;
+            queueLingerTicks = QUEUE_LINGER_TICKS;
         }
 
         // Apply each transition one at a time
@@ -448,10 +452,10 @@ public abstract class Elm extends Div {
 
 
     /**
-     * Processes transitions and other tick features of this Elm.
-     * @return true if no action is necessary. false if the element has been removed from the update queue.
+     * Processes the first step of the scheduled transitions of this Elm.
+     * @return false if the element has been removed from the update queue, true otherwise.
      */
-    protected boolean tick() {
+    protected boolean stepTransition() {
         // style.setTransform(transitionStepQueue.removeFirst());
         // System.out.println("Size: " + transitionStepQueue.size());
         __applyTransitionStep(futureDataQueue.removeFirst());
@@ -460,8 +464,13 @@ public abstract class Elm extends Div {
         entity.setStartInterpolation();
 
         if(futureDataQueue.isEmpty()) {
-            elmUpdateQueue.remove(this);
-            isQueued = false;
+            if(queueLingerTicks > 0) {
+                elmUpdateQueue.remove(this);
+                isQueued = false;
+            }
+            else {
+                --queueLingerTicks;
+            }
             return false;
         }
         return true;
@@ -471,13 +480,13 @@ public abstract class Elm extends Div {
 
 
     /**
-     * Processes a single tick of all the queued elements
-     * Must be called at the end of the tick every TRANSITION_REFRESH_TIME ticks.
+     * Processes the first step of the scheduled transitions of all the queued elements
+     * Must be called at the end of the tick every TRANSITION_REFRESH_TIME ticks. //FIXME make unaligned
      */
-    public static void processUpdateQueueTick(){
+    public static void processUpdateQueue(){
 
         for (int i = 0; i < elmUpdateQueue.size();) {
-            if(elmUpdateQueue.get(i).tick()) ++i;
+            if(elmUpdateQueue.get(i).stepTransition()) ++i;
         }
     }
 
