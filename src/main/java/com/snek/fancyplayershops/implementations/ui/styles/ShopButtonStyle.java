@@ -27,6 +27,6 @@ public class ShopButtonStyle extends FancyTextElmStyle {
 
     @Override
     public @NotNull Vector4i getDefaultBackground() {
-        return new Vector4i(255, 130, 160, 150);
+        return new Vector4i(255, 110, 160, 130);
     }
 }

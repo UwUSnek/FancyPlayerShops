@@ -8,6 +8,7 @@ import com.snek.fancyplayershops.Shop;
 import com.snek.fancyplayershops.implementations.ui.ShopFancyTextElm;
 import com.snek.fancyplayershops.implementations.ui.ShopTextElm;
 import com.snek.framework.ui.styles.FancyTextElmStyle;
+import com.snek.framework.ui.styles.TextElmStyle;
 import com.snek.framework.utils.MinecraftUtils;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
@@ -61,7 +62,7 @@ public class DetailsUiDisplay extends ShopTextElm {
         // Empty shop case
         final ItemStack _item = shop.getItem();
         if(_item.getItem() == Items.AIR) {
-            ((FancyTextElmStyle)style).setText(new Txt()
+            ((TextElmStyle)style).setText(new Txt()
             .cat(Shop.EMPTY_SHOP_NAME)
             .cat(new Txt("\nPrice: -"))
             .cat(new Txt("\nStock: -"))
@@ -71,7 +72,7 @@ public class DetailsUiDisplay extends ShopTextElm {
         // Configured shop case
         else {
             double price = shop.getPrice();
-            ((FancyTextElmStyle)style).setText(new Txt()
+            ((TextElmStyle)style).setText(new Txt()
                 .cat(new Txt(MinecraftUtils.getItemName(_item)).get())
                 .cat(new Txt("\nPrice: ")).cat(new Txt(price < 0.005 ? "Free" : Utils.formatPrice(price)).bold().color(C_RGB_PRICE))
                 .cat(new Txt("\nStock: ")).cat(new Txt(Utils.formatAmount(shop.getStock())).bold().color(col))
