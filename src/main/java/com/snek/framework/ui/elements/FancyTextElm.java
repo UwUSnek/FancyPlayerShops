@@ -98,7 +98,7 @@ public class FancyTextElm extends Elm {
                 __calcTransform()
                 .scaleX(PanelElmStyle.ENTITY_BLOCK_RATIO_X * getAbsSize().x)
                 .scaleY(PanelElmStyle.ENTITY_BLOCK_RATIO_Y * getAbsSize().y)
-                .moveX(PanelElmStyle.ENTITY_SHIFT_X)
+                .moveX(PanelElmStyle.ENTITY_SHIFT_X * getAbsSize().x)
                 .toMinecraftTransform()
             );
             f.unflag();

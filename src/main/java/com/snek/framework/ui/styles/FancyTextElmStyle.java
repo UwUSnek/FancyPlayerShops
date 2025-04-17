@@ -21,7 +21,7 @@ public class FancyTextElmStyle extends TextElmStyle {
 
 
     /**
-     * Creates a new default TextElmStyle.
+     * Creates a new default FancyTextElmStyle.
      */
     public FancyTextElmStyle() {
         super();

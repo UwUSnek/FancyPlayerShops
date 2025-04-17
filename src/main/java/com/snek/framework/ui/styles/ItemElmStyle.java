@@ -19,7 +19,7 @@ public class ItemElmStyle extends ElmStyle {
 
 
     /**
-     * Creates a new default TextElmStyle.
+     * Creates a new default ItemElmStyle.
      */
     public ItemElmStyle() {
         super();
