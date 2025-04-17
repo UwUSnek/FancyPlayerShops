@@ -363,12 +363,11 @@ public class Div {
             case NONE   -> p.x + localPos.x;
         };
 
-        //FIXME Y origin is not at the center of the element but aligned to the bottom edge
         // Apply vertical alignment
         float y = switch(alignmentY) {
-            case TOP    -> p.y - (s.y - absSize.y) / 2;
-            case BOTTOM -> p.y + (s.y - absSize.y) / 2;
-            case CENTER -> p.y;
+            case TOP    -> p.y - (s.y - absSize.y);
+            case BOTTOM -> p.y;
+            case CENTER -> p.y + (s.y - absSize.y) / 2;
             case NONE   -> p.y + localPos.y;
         };
 
