@@ -6,11 +6,12 @@ import com.snek.framework.ui.interfaces.Hoverable;
 
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2f;
-import org.joml.Vector4i;
+import org.joml.Vector3d;
 
 import com.snek.fancyplayershops.Shop;
 import com.snek.fancyplayershops.implementations.ui.styles.ShopButtonStyle;
 import com.snek.framework.data_types.animations.Animation;
+import com.snek.framework.data_types.animations.Transform;
 import com.snek.framework.data_types.animations.Transition;
 import com.snek.framework.utils.Easings;
 
@@ -28,8 +29,17 @@ import net.minecraft.util.ClickType;
  * A generic button class with clicking and hovering capabilities.
  */
 public class ShopButton extends FancyTextElm implements Hoverable, Clickable {
-    public static final Vector4i BG_HOVER = new Vector4i(240, 95, 100, 100);
+    // public static final Vector4i BG_HOVER = new Vector4i(240, 95, 100, 100);
+    public static final float UNHOVERED_W = 0.05f;
+
     protected final @NotNull Shop shop;
+
+    // // Animations
+    protected final float initialWidth;
+    // private final Animation hoverEnterAnimation;
+    // private final Animation hoverExitAnimation;
+
+
 
 
     /**
@@ -41,33 +51,48 @@ public class ShopButton extends FancyTextElm implements Hoverable, Clickable {
     public ShopButton(@NotNull Shop _shop, float w, float h) {
         super(_shop.getWorld(), new ShopButtonStyle());
         shop = _shop;
-        setSize(new Vector2f(w, h));
+        // setSize(new Vector2f(w, h));
+        setSize(new Vector2f(UNHOVERED_W, h));
+
+
+        // // Initialize animations
+        initialWidth = w;
+        // hoverEnterAnimation = new Animation(
+        //     new Transition(2, Easings.linear)
+        //     .additiveTransform(new Transform().scaleX(initialWidth))
+        //     // .targetBackground(BG_HOVER)
+        // );
+        // hoverExitAnimation = new Animation(
+        //     new Transition(2, Easings.linear)
+        //     .additiveTransform(new Transform().scaleX(UNHOVERED_W))
+        //     // .targetBackground(((ShopButtonStyle)style).getDefaultBackground())
+        // );
     }
+
+
+
+
+    // @Override
+    // public void spawn(Vector3d pos){
+    //     applyAnimation(hoverExitAnimation);
+    //     setSizeX();
+    //     super.spawn(pos);
+    // }
 
 
     @Override
     public void onHoverEnter(PlayerEntity player) {
         if(player != shop.user) return;
-
-        // Apply hover animation
-        applyAnimation(new Animation(
-            new Transition(2, Easings.linear)
-            .targetBackground(BG_HOVER)
-            .targetOpacity(255)
-        ));
+        // applyAnimation(hoverEnterAnimation);
+        setSizeX(initialWidth);
     }
 
 
     @Override
     public void onHoverExit(PlayerEntity player) {
         if(player != shop.user) return;
-
-        // Apply hover leave animation
-        applyAnimation(new Animation(
-            new Transition(2, Easings.linear)
-            .targetBackground(((ShopButtonStyle)style).getDefaultBackground())
-            .targetOpacity(255)
-        ));
+        // applyAnimation(hoverExitAnimation);
+        setSizeX(UNHOVERED_W);
     }
 
 

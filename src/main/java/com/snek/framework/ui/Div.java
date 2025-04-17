@@ -258,14 +258,22 @@ public class Div {
 
 
     /**
+     * Updates the absolute size of this element
+     * using the parent's absolute size and the element's local size.
+     */
+    public void updateAbsSizeSelf(){
+        absSize.set(parent == null ? localSize : new Vector2f(parent.getAbsSize()).mul(localSize));
+        updateAbsPosSelf();
+    }
+
+
+    /**
      * Updates the absolute size of this element and its children, recursively,
      * using the parent's absolute size and the element's local size.
      */
     public void updateAbsSize(){
-        absSize.set(parent == null ? localSize : new Vector2f(parent.getAbsSize()).mul(localSize));
-        for (Div c : children) {
-            c.updateAbsSize();
-        }
+        updateAbsSizeSelf();
+        for (Div c : children) c.updateAbsSize();
     }
 
 
@@ -302,11 +310,19 @@ public class Div {
 
 
     /**
+     * Updates the Z-index value of this element
+     * using the parent's Z-index and Z-layer count.
+     */
+    protected void updateZIndexSelf() {
+        zIndex = parent == null ? 0 : parent.zIndex + parent.getLayerCount();
+    }
+
+    /**
      * Updates the Z-index value of this element and its children, recursively,
      * using the parent's Z-index and Z-layer count.
      */
     protected void updateZIndex() {
-        zIndex = parent == null ? 0 : parent.zIndex + parent.getLayerCount();
+        updateZIndexSelf();
         for (Div c : children) c.updateZIndex();
     }
 
@@ -330,10 +346,11 @@ public class Div {
 
 
     /**
-     * Updates the absolute position of this element and its children, recursively,
+     * Updates the absolute position of this element
      * using the parent's absolute position and the element's local position and alignment.
      */
-    protected void updateAbsPos() {
+    protected void updateAbsPosSelf() {
+
         // Calculate unrestricted position
         Vector2f p = parent == null ? new Vector2f(0, 0) : parent.getAbsPos();
         Vector2f s = parent == null ? new Vector2f(1, 1) : parent.getAbsSize();
@@ -346,6 +363,7 @@ public class Div {
             case NONE   -> p.x + localPos.x;
         };
 
+        //FIXME Y origin is not at the center of the element but aligned to the bottom edge
         // Apply vertical alignment
         float y = switch(alignmentY) {
             case TOP    -> p.y - (s.y - absSize.y) / 2;
@@ -354,8 +372,17 @@ public class Div {
             case NONE   -> p.y + localPos.y;
         };
 
-        // Update the value and run the function on all children
+        // Update the value
         absPos.set(x, y);
+    }
+
+
+    /**
+     * Updates the absolute position of this element and its children, recursively,
+     * using the parent's absolute position and the element's local position and alignment.
+     */
+    protected void updateAbsPos() {
+        updateAbsPosSelf();
         for (Div c : children) c.updateAbsPos();
     }
 

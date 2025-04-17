@@ -111,19 +111,25 @@ public abstract class Elm extends Div {
 
 
     @Override
-    protected void updateAbsPos() {
+    protected void updateAbsPosSelf() {
         Vector2f oldPos = new Vector2f(getAbsPos());
-        super.updateAbsPos();
-        if(!getAbsPos().equals(oldPos)) style.editTransform();
+        super.updateAbsPosSelf();
+        if(!getAbsPos().equals(oldPos)) {
+            style.editTransform();
+            flushStyle();
+        }
         //! This check's sole purpose is to prevent unneeded transform updates and comparisons
     }
 
 
     @Override
-    protected void updateZIndex() {
+    protected void updateZIndexSelf() {
         int oldZIndex = getZIndex();
-        super.updateZIndex();
-        if(getZIndex() != oldZIndex) style.editTransform();
+        super.updateZIndexSelf();
+        if(getZIndex() != oldZIndex) {
+            style.editTransform();
+            flushStyle();
+        }
         //! This check's sole purpose is to prevent unneeded transform updates and comparisons
     }
 
