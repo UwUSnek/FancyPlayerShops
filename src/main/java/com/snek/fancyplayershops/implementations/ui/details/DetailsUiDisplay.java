@@ -5,9 +5,9 @@ import org.joml.Vector3f;
 import org.joml.Vector3i;
 
 import com.snek.fancyplayershops.Shop;
-import com.snek.fancyplayershops.implementations.ui.ShopFancyTextElm;
 import com.snek.fancyplayershops.implementations.ui.ShopTextElm;
-import com.snek.framework.ui.styles.FancyTextElmStyle;
+import com.snek.framework.data_types.ui.AlignmentX;
+import com.snek.framework.data_types.ui.AlignmentY;
 import com.snek.framework.ui.styles.TextElmStyle;
 import com.snek.framework.utils.MinecraftUtils;
 import com.snek.framework.utils.Txt;
@@ -29,11 +29,6 @@ import net.minecraft.item.Items;
  */
 public class DetailsUiDisplay extends ShopTextElm {
 
-    // Colors
-    public static final Vector3i C_RGB_PRICE      = new Vector3i(243, 255, 0);
-    public static final Vector3f C_HSV_STOCK_HIGH = Utils.RGBtoHSV(new Vector3i(0, 223, 0)); //! Float instead of int for more precision
-    public static final Vector3f C_HSV_STOCK_LOW  = Utils.RGBtoHSV(new Vector3i(200, 0, 0)); //! Float instead of int for more precision
-
 
 
 
@@ -42,7 +37,7 @@ public class DetailsUiDisplay extends ShopTextElm {
      * @param _shop The target shop.
      */
     public DetailsUiDisplay(@NotNull Shop _shop){
-        super(_shop, 1f, ShopFancyTextElm.LINE_H * 3);
+        super(_shop, 1, DetailsUi.BACKGROUND_HEIGHT);
         updateDisplay();
     }
 
@@ -56,7 +51,7 @@ public class DetailsUiDisplay extends ShopTextElm {
 
         // Calculate the color of the stock amount
         float factor = 1.0f - shop.getStock() / 1000f;
-        Vector3i col = Utils.HSVtoRGB(new Vector3f(C_HSV_STOCK_LOW).add(new Vector3f(C_HSV_STOCK_HIGH).sub(C_HSV_STOCK_LOW).mul(1.0f - (factor * factor))));
+        Vector3i col = Utils.HSVtoRGB(new Vector3f(DetailsUi.C_HSV_STOCK_LOW).add(new Vector3f(DetailsUi.C_HSV_STOCK_HIGH).sub(DetailsUi.C_HSV_STOCK_LOW).mul(1.0f - (factor * factor))));
 
 
         // Empty shop case
@@ -74,7 +69,7 @@ public class DetailsUiDisplay extends ShopTextElm {
             double price = shop.getPrice();
             ((TextElmStyle)style).setText(new Txt()
                 .cat(new Txt(MinecraftUtils.getItemName(_item)).get())
-                .cat(new Txt("\nPrice: ")).cat(new Txt(price < 0.005 ? "Free" : Utils.formatPrice(price)).bold().color(C_RGB_PRICE))
+                .cat(new Txt("\nPrice: ")).cat(new Txt(price < 0.005 ? "Free" : Utils.formatPrice(price)).bold().color(DetailsUi.C_RGB_PRICE))
                 .cat(new Txt("\nStock: ")).cat(new Txt(Utils.formatAmount(shop.getStock())).bold().color(col))
             .get());
         }

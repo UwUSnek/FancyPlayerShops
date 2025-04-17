@@ -6,7 +6,7 @@ import org.joml.Vector3i;
 import com.snek.fancyplayershops.Shop;
 import com.snek.fancyplayershops.implementations.ui.ShopFancyTextElm;
 import com.snek.fancyplayershops.implementations.ui.ShopTextInput;
-import com.snek.fancyplayershops.implementations.ui.details.DetailsUiDisplay;
+import com.snek.fancyplayershops.implementations.ui.details.DetailsUi;
 import com.snek.fancyplayershops.implementations.ui.styles.ShopButtonStyle;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
@@ -24,7 +24,6 @@ import net.minecraft.text.Text;
  * A button that allows the owner of the shop to change its stock limit.
  */
 public class EditUiStockLimitButton extends ShopTextInput {
-    private static Vector3i RGB_STOCK_COLOR = Utils.HSVtoRGB(DetailsUiDisplay.C_HSV_STOCK_HIGH);
 
     public EditUiStockLimitButton(@NotNull Shop _shop) {
         super(_shop, 0.75f, ShopFancyTextElm.LINE_H, new Txt("Send the new stock limit in chat!").green().get());
@@ -35,7 +34,7 @@ public class EditUiStockLimitButton extends ShopTextInput {
     @Override
     public void updateDisplay(Text textOverride) {
         ((ShopButtonStyle)style).setText(textOverride != null ? textOverride : new Txt()
-            .cat(new Txt(Utils.formatAmount(shop.getMaxStock(), true, true)).color(RGB_STOCK_COLOR))
+            .cat(new Txt(Utils.formatAmount(shop.getMaxStock(), true, true)).color(EditUi.RGB_STOCK_COLOR))
         .get());
         flushStyle();
     }

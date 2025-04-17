@@ -2,6 +2,7 @@ package com.snek.framework.ui.elements;
 
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
+import org.joml.Vector4i;
 
 import com.snek.framework.data_types.animations.InterpolatedData;
 import com.snek.framework.data_types.animations.Transition;
@@ -44,6 +45,7 @@ public class TextElm extends Elm {
      */
     protected TextElm(@NotNull ServerWorld _world, @NotNull CustomDisplay _entity, @NotNull ElmStyle _style) {
         super(_world, _entity, _style);
+        ((CustomTextDisplay)entity).setBackground(new Vector4i(0, 0, 0, 0));
     }
 
 

@@ -103,11 +103,13 @@ public abstract class Elm extends Div {
      * Flushes changeable style values to the entity.
      * This does not start an interpolation.
      */
-    public void flushStyle() {
+    protected void flushStyle() {
         { Flagged<Transform>     f = style.getFlaggedTransform();     if(f.isFlagged()) { entity.setTransformation(__calcTransform().toMinecraftTransform()); f.unflag(); }}
         { Flagged<Float>         f = style.getFlaggedViewRange();     if(f.isFlagged()) { entity.setViewRange     (f.get()                                 ); f.unflag(); }}
         { Flagged<BillboardMode> f = style.getFlaggedBillboardMode(); if(f.isFlagged()) { entity.setBillboardMode (f.get()                                 ); f.unflag(); }}
     }
+
+
 
 
     @Override

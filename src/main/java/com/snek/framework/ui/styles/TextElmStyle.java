@@ -20,7 +20,7 @@ import net.minecraft.text.Text;
 
 
 public class TextElmStyle extends ElmStyle {
-    public static final float DEFAULT_TEXT_SCALE = 0.35f;
+    public static final float DEFAULT_TEXT_SCALE = 0.3f;
 
     private Flagged<Text>          text          = null;
     private Flagged<TextAlignment> textAlignment = null;

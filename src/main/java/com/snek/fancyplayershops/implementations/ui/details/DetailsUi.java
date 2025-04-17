@@ -1,9 +1,14 @@
 package com.snek.fancyplayershops.implementations.ui.details;
 
+import org.joml.Vector3f;
+import org.joml.Vector3i;
+
 import com.snek.fancyplayershops.Shop;
 import com.snek.fancyplayershops.implementations.ui.ShopCanvas;
 import com.snek.framework.data_types.ui.AlignmentX;
+import com.snek.framework.data_types.ui.AlignmentY;
 import com.snek.framework.ui.Div;
+import com.snek.framework.utils.Utils;
 
 
 
@@ -17,6 +22,16 @@ import com.snek.framework.ui.Div;
  */
 public class DetailsUi extends ShopCanvas {
 
+    // Colors
+    public static final Vector3i C_RGB_PRICE      = new Vector3i(243, 255, 0);
+    public static final Vector3f C_HSV_STOCK_HIGH = Utils.RGBtoHSV(new Vector3i(0, 223, 0)); //! Float instead of int for more precision
+    public static final Vector3f C_HSV_STOCK_LOW  = Utils.RGBtoHSV(new Vector3i(200, 0, 0)); //! Float instead of int for more precision
+
+    // Layout
+    public static final float BACKGROUND_HEIGHT = 0.4f;
+
+
+
 
     /**
      * Creates a new DetailsUi.
@@ -27,10 +42,13 @@ public class DetailsUi extends ShopCanvas {
         Div bg;
         Div e;
 
+        // Add background
         bg = addChild(new DetailsUiBackground(_shop));
+        bg.setPosY(1 - DetailsUi.BACKGROUND_HEIGHT);
 
+        // Add details display
         e = bg.addChild(new DetailsUiDisplay(_shop));
-        e.moveY(0.6f);
         e.setAlignmentX(AlignmentX.CENTER);
+        e.setAlignmentY(AlignmentY.CENTER);
     }
 }

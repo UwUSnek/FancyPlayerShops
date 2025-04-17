@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import com.snek.fancyplayershops.Shop;
 import com.snek.fancyplayershops.implementations.ui.ShopFancyTextElm;
 import com.snek.fancyplayershops.implementations.ui.ShopTextElm;
-import com.snek.framework.ui.styles.FancyTextElmStyle;
 import com.snek.framework.ui.styles.TextElmStyle;
 import com.snek.framework.utils.MinecraftUtils;
 import com.snek.framework.utils.Txt;

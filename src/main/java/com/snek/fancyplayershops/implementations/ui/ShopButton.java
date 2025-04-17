@@ -34,7 +34,7 @@ public abstract class ShopButton extends FancyTextElm implements Hoverable, Clic
     public static final float UNHOVERED_W = 0.05f;
     protected final @NotNull Shop shop;
 
-    // Animations
+    // Animations //FIXME MOVE TO STYLE
     private final Animation hoverEnterAnimation;
     private final Animation hoverExitAnimation;
 

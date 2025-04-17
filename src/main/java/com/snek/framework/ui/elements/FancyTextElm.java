@@ -82,6 +82,7 @@ public class FancyTextElm extends Elm {
     public void flushStyle() {
         //! super.flushStyle() not called as it unflags style data but only applies it to the background element.
         //! The transform also needs to be applied differently because of the Z-Layer size of fancy text elements.
+        //! View range and billboard mode need custom handling as well.
 
         // Alias entities
         CustomTextDisplay fg = getFgEntity();
@@ -119,7 +120,7 @@ public class FancyTextElm extends Elm {
         }
 
 
-        // Handle the other values normally
+        // Handle the other Elm values normally, applying them to both entities
         {Flagged<Float> f = style.getFlaggedViewRange();
         if(f.isFlagged()) {
             fg.setViewRange(f.get());
@@ -133,6 +134,8 @@ public class FancyTextElm extends Elm {
             f.unflag();
         }}
 
+
+        // Handle TextElm values
         { Flagged<Text>     f = getStyle().getFlaggedText();        if(f.isFlagged()) { fg.setText       (f.get()); f.unflag(); }}
         { Flagged<Integer>  f = getStyle().getFlaggedTextOpacity(); if(f.isFlagged()) { fg.setTextOpacity(f.get()); f.unflag(); }}
         { Flagged<Vector4i> f = getStyle().getFlaggedBackground();  if(f.isFlagged()) { bg.setBackground (f.get()); f.unflag(); }}

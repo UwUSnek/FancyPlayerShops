@@ -34,10 +34,7 @@ import net.minecraft.item.Items;
  * Unconfigured shops show a barrier item.
  */
 public class ShopItemDisplay extends ItemElm {
-    Shop targetShop;
-
-    // public void setDefaultRotation(float r) { defaultRotation = r; } //FIXME save in shop instance
-    // private static       float defaultRotation       = (float) Math.toRadians(45);
+    Shop shop;
 
     // Task handlers. Used to cancel animations and other visual changes
     private @Nullable TaskHandler loopHandler = null;
@@ -52,8 +49,8 @@ public class ShopItemDisplay extends ItemElm {
     public static final float    LOOP_ROT    = (float)Math.toRadians(120);
 
     // Edit animation scale and transition
-    public static final Vector3f EDIT_SCALE  = new Vector3f(0.5f);
-    public static final Vector3f EDIT_MOVE   = new Vector3f(0, 0.25f, 0).mul(1f - 0.5f);
+    public static final Vector3f EDIT_SCALE  = new Vector3f(0.25f);
+    public static final Vector3f EDIT_MOVE   = new Vector3f(0, 0.25f, 0.25f).mul(1f - 0.5f);
 
 
 
@@ -72,12 +69,12 @@ public class ShopItemDisplay extends ItemElm {
 
     /**
      * Creates a new ShopItemDisplay.
-     * @param _targetShop The target shop.
+     * @param _shop The target shop.
      * @param _display A CustomItemDisplay to use to display the item.
      */
-    public ShopItemDisplay(@NotNull Shop _targetShop, @NotNull CustomItemDisplay _display) {
-        super(_targetShop.getWorld(), _display, new ItemElmStyle());
-        targetShop = _targetShop;
+    public ShopItemDisplay(@NotNull Shop _shop, @NotNull CustomItemDisplay _display) {
+        super(_shop.getWorld(), _display, new ItemElmStyle());
+        shop = _shop;
         updateDisplay();
 
 
@@ -106,7 +103,12 @@ public class ShopItemDisplay extends ItemElm {
         // Setup edit animiations
         enterEditAnimation = new Animation(
             new Transition(Shop.CANVAS_ANIMATION_DELAY, Easings.sineOut)
-            .additiveTransform(new Transform().scale(EDIT_SCALE).move(EDIT_MOVE).rotY(LOOP_ROT / 2))
+            .targetTransform(
+                new Transform()
+                .scale(EDIT_SCALE)
+                .move(EDIT_MOVE)
+                .rotY(LOOP_ROT / 2)
+            )
         );
     }
 
@@ -137,7 +139,7 @@ public class ShopItemDisplay extends ItemElm {
      * Updates the displayed item reading data from the target shop.
      */
     public void updateDisplay(){
-        ItemStack _item = targetShop.getItem();
+        ItemStack _item = shop.getItem();
 
 
         // If the shop is unconfigured (item is AIR), display a barrier and EMPTY_SHOP_NAME as name
@@ -157,8 +159,18 @@ public class ShopItemDisplay extends ItemElm {
 
 
         // Turn on custom name and update the entity
-        entity.setCustomNameVisible(true);
+        if(!shop.isFocused()) entity.setCustomNameVisible(true);
         flushStyle();
+    }
+
+
+
+
+    @Override
+    protected Transform __calcTransform() {
+        return super.__calcTransform()
+            .rotY(shop.getDefaultRotation())
+        ;
     }
 
 
@@ -169,12 +181,19 @@ public class ShopItemDisplay extends ItemElm {
      */
     public void enterFocusState(){
 
-        // Hide custom name and start focus animation
+        // Hide custom name
         if(nameToggleHandler != null) nameToggleHandler.cancel();
         entity.setCustomNameVisible(false);
-        applyAnimation(focusAnimation);
 
-        // Queue loop animation
+        // Start animations
+        applyAnimation(focusAnimation);
+        startLoopAnimation();
+    }
+
+    /**
+     * Starts the loop animation.
+     */
+    public void startLoopAnimation() {
         loopHandler = Scheduler.loop(0, loopAnimation.getTotalDuration(), () -> applyAnimation(loopAnimation));
     }
 
@@ -187,12 +206,19 @@ public class ShopItemDisplay extends ItemElm {
     public void leaveFocusState(){
 
         // Stop loop animation and start unfocus animation
-        loopHandler.cancel();
-        futureDataQueue.clear();
+        stopLoopAnimation();
         applyAnimation(unfocusAnimation);
 
         // Show custom name after animations end
         nameToggleHandler = Scheduler.schedule(unfocusAnimation.getTotalDuration(), () -> entity.setCustomNameVisible(true));
+    }
+
+    /**
+     * Stops the loop animation.
+     */
+    public void stopLoopAnimation() {
+        loopHandler.cancel();
+        futureDataQueue.clear();
     }
 
 
@@ -202,6 +228,10 @@ public class ShopItemDisplay extends ItemElm {
      * Enters the edit state
      */
     public void enterEditState(){
+
+        // Stop loop animation and start edit animation
+        loopHandler.cancel();
+        futureDataQueue.clear();
         applyAnimation(enterEditAnimation);
     }
 

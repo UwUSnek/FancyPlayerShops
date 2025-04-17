@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import com.snek.fancyplayershops.Shop;
 import com.snek.fancyplayershops.implementations.ui.ShopFancyTextElm;
 import com.snek.fancyplayershops.implementations.ui.ShopTextInput;
-import com.snek.fancyplayershops.implementations.ui.details.DetailsUiDisplay;
+import com.snek.fancyplayershops.implementations.ui.details.DetailsUi;
 import com.snek.fancyplayershops.implementations.ui.styles.ShopButtonStyle;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
@@ -37,7 +37,7 @@ public class EditUiPriceButton extends ShopTextInput {
     @Override
     public void updateDisplay(Text textOverride) {
         ((ShopButtonStyle)style).setText(textOverride != null ? textOverride : new Txt()
-            .cat(new Txt(Utils.formatPrice(shop.getPrice())).color(DetailsUiDisplay.C_RGB_PRICE))
+            .cat(new Txt(Utils.formatPrice(shop.getPrice())).color(DetailsUi.C_RGB_PRICE))
         .get());
         flushStyle();
     }
