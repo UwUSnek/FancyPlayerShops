@@ -54,15 +54,57 @@ public class Transition {
         additive = false;
         return this;
     }
-
-
     /**
      * Specifies that a certain transform value has to be applied to the transform of the element this transition is applied to.
      * @param _transform The transform value.
      * @return This transition.
      */
-    public Transition additiveTransform(Transform _transfor) {
-        d.setTransform(_transfor);
+    public Transition additiveTransform(Transform _transform) {
+        d.setTransform(_transform);
+        additive = true;
+        return this;
+    }
+
+
+    /**
+     * Specifies that the foreground transform of the element this transition is applied to needs to reach a certain value.
+     * @param _transform The transform value.
+     * @return This transition.
+     */
+    public Transition targetTransformFg(Transform _transform) {
+        d.setTransformFg(_transform);
+        additive = false;
+        return this;
+    }
+    /**
+     * Specifies that a certain transform value has to be applied to the foreground transform of the element this transition is applied to.
+     * @param _transform The transform value.
+     * @return This transition.
+     */
+    public Transition additiveTransformFg(Transform _transform) {
+        d.setTransformFg(_transform);
+        additive = true;
+        return this;
+    }
+
+
+    /**
+     * Specifies that the background transform of the element this transition is applied to needs to reach a certain value.
+     * @param _transform The transform value.
+     * @return This transition.
+     */
+    public Transition targetTransformBg(Transform _transform) {
+        d.setTransformBg(_transform);
+        additive = false;
+        return this;
+    }
+    /**
+     * Specifies that a certain transform value has to be applied to the background transform of the element this transition is applied to.
+     * @param _transform The transform value.
+     * @return This transition.
+     */
+    public Transition additiveTransformBg(Transform _transform) {
+        d.setTransformBg(_transform);
         additive = true;
         return this;
     }

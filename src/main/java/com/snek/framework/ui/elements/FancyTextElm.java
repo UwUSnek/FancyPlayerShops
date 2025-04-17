@@ -83,26 +83,43 @@ public class FancyTextElm extends Elm {
         //! super.flushStyle() not called as it unflags style data but only applies it to the background element.
         //! The transform also needs to be applied differently because of the Z-Layer size of fancy text elements.
 
+        // Alias entities
         CustomTextDisplay fg = getFgEntity();
         CustomTextDisplay bg = getBgEntity();
 
-        {Flagged<Transform> f = style.getFlaggedTransform();
-        if(f.isFlagged()) {
-            fg.setTransformation(
-                __calcTransform()
-                .moveZ((getZIndex() + 1) * 0.001f) //TODO move Z layer spacing to config file
-                .scale(TextElmStyle.DEFAULT_TEXT_SCALE)
-                .toMinecraftTransform()
-            );
-            bg.setTransformation(
-                __calcTransform()
-                .scaleX(PanelElmStyle.ENTITY_BLOCK_RATIO_X * getAbsSize().x)
-                .scaleY(PanelElmStyle.ENTITY_BLOCK_RATIO_Y * getAbsSize().y)
-                .moveX(PanelElmStyle.ENTITY_SHIFT_X * getAbsSize().x)
-                .toMinecraftTransform()
-            );
-            f.unflag();
-        }}
+
+        // Handle transforms
+        {
+            Flagged<Transform> f = style.getFlaggedTransform();
+            Flagged<Transform> fFg = getStyle().getFlaggedTransformFg();
+            if(f.isFlagged() || fFg.isFlagged()) {
+                fg.setTransformation(
+                    __calcTransform()
+                    .apply(getStyle().getTransformFg())
+                    .moveZ((getZIndex() + 1) * 0.001f) //TODO move Z layer spacing to config file
+                    .scale(TextElmStyle.DEFAULT_TEXT_SCALE)
+                    .toMinecraftTransform()
+                );
+                f.unflag();
+                fFg.unflag();
+            }
+            Flagged<Transform> fBg = getStyle().getFlaggedTransformBg();
+            if(f.isFlagged() || fBg.isFlagged()) {
+                bg.setTransformation(
+                    __calcTransform()
+                    .apply(getStyle().getTransformBg())
+                    .scaleX(PanelElmStyle.ENTITY_BLOCK_RATIO_X * getAbsSize().x)
+                    .scaleY(PanelElmStyle.ENTITY_BLOCK_RATIO_Y * getAbsSize().y)
+                    .moveX(PanelElmStyle.ENTITY_SHIFT_X * getAbsSize().x)
+                    .toMinecraftTransform()
+                );
+                f.unflag();
+                fBg.unflag();
+            }
+        }
+
+
+        // Handle the other values normally
         {Flagged<Float> f = style.getFlaggedViewRange();
         if(f.isFlagged()) {
             fg.setViewRange(f.get());
@@ -146,8 +163,10 @@ public class FancyTextElm extends Elm {
     @Override
     protected void __applyAnimationTransitionNow(@NotNull Transition t) {
         super.__applyAnimationTransitionNow(t);
-        if(t.d.hasOpacity   ()) getStyle().setTextOpacity(t.d.getOpacity());
-        if(t.d.hasBackground()) getStyle().setBackground(t.d.getBackground());
+        if(t.d.hasOpacity    ()) getStyle().setTextOpacity(t.d.getOpacity    ());
+        if(t.d.hasBackground ()) getStyle().setBackground (t.d.getBackground ());
+        if(t.d.hasTransformFg()) getStyle().setTransformFg(t.d.getTransformFg());
+        if(t.d.hasTransformBg()) getStyle().setTransformBg(t.d.getTransformBg());
     }
 
 
@@ -156,8 +175,10 @@ public class FancyTextElm extends Elm {
     @Override
     protected void __applyTransitionStep(@NotNull InterpolatedData d){
         super.__applyTransitionStep(d);
-        if(d.hasOpacity   ()) getStyle().setTextOpacity(d.getOpacity   ());
-        if(d.hasBackground()) getStyle().setBackground (d.getBackground());
+        if(d.hasOpacity    ()) getStyle().setTextOpacity(d.getOpacity    ());
+        if(d.hasBackground ()) getStyle().setBackground (d.getBackground ());
+        if(d.hasTransformFg()) getStyle().setTransformFg(d.getTransformFg());
+        if(d.hasTransformBg()) getStyle().setTransformBg(d.getTransformBg());
     }
 
 
@@ -168,7 +189,9 @@ public class FancyTextElm extends Elm {
         return new InterpolatedData(
             getStyle().getTransform().copy(),
             new Vector4i(getStyle().getBackground()),
-            getStyle().getTextOpacity()
+            getStyle().getTextOpacity(),
+            getStyle().getTransformFg().copy(),
+            getStyle().getTransformBg().copy()
         );
     }
     @Override
@@ -176,7 +199,9 @@ public class FancyTextElm extends Elm {
         return new InterpolatedData(
             futureDataQueue.get(index).getTransform().copy(),
             new Vector4i(futureDataQueue.get(index).getBackground()),
-            futureDataQueue.get(index).getOpacity()
+            futureDataQueue.get(index).getOpacity(),
+            futureDataQueue.get(index).getTransformFg().copy(),
+            futureDataQueue.get(index).getTransformBg().copy()
         );
     }
 

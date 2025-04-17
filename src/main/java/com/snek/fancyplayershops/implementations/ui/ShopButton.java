@@ -34,10 +34,10 @@ public class ShopButton extends FancyTextElm implements Hoverable, Clickable {
 
     protected final @NotNull Shop shop;
 
-    // // Animations
+    // Animations
     protected final float initialWidth;
-    // private final Animation hoverEnterAnimation;
-    // private final Animation hoverExitAnimation;
+    private final Animation hoverEnterAnimation;
+    private final Animation hoverExitAnimation;
 
 
 
@@ -51,48 +51,44 @@ public class ShopButton extends FancyTextElm implements Hoverable, Clickable {
     public ShopButton(@NotNull Shop _shop, float w, float h) {
         super(_shop.getWorld(), new ShopButtonStyle());
         shop = _shop;
-        // setSize(new Vector2f(w, h));
-        setSize(new Vector2f(UNHOVERED_W, h));
+        setSize(new Vector2f(w, h));
 
 
-        // // Initialize animations
+        // Initialize animations
         initialWidth = w;
-        // hoverEnterAnimation = new Animation(
-        //     new Transition(2, Easings.linear)
-        //     .additiveTransform(new Transform().scaleX(initialWidth))
-        //     // .targetBackground(BG_HOVER)
-        // );
-        // hoverExitAnimation = new Animation(
-        //     new Transition(2, Easings.linear)
-        //     .additiveTransform(new Transform().scaleX(UNHOVERED_W))
-        //     // .targetBackground(((ShopButtonStyle)style).getDefaultBackground())
-        // );
+        hoverEnterAnimation = new Animation(
+            new Transition(2, Easings.linear)
+            .additiveTransformBg(new Transform().scaleX(initialWidth / UNHOVERED_W))
+            // .targetBackground(BG_HOVER)
+        );
+        hoverExitAnimation = new Animation(
+            new Transition(2, Easings.linear)
+            .additiveTransformBg(new Transform().scaleX(UNHOVERED_W))
+            // .targetBackground(((ShopButtonStyle)style).getDefaultBackground())
+        );
     }
 
 
 
 
-    // @Override
-    // public void spawn(Vector3d pos){
-    //     applyAnimation(hoverExitAnimation);
-    //     setSizeX();
-    //     super.spawn(pos);
-    // }
+    @Override
+    public void spawn(Vector3d pos){
+        applyAnimation(hoverExitAnimation);
+        super.spawn(pos);
+    }
 
 
     @Override
     public void onHoverEnter(PlayerEntity player) {
         if(player != shop.user) return;
-        // applyAnimation(hoverEnterAnimation);
-        setSizeX(initialWidth);
+        applyAnimation(hoverEnterAnimation);
     }
 
 
     @Override
     public void onHoverExit(PlayerEntity player) {
         if(player != shop.user) return;
-        // applyAnimation(hoverExitAnimation);
-        setSizeX(UNHOVERED_W);
+        applyAnimation(hoverExitAnimation);
     }
 
 
