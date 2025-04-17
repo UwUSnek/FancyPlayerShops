@@ -3,6 +3,7 @@ package com.snek.fancyplayershops.implementations.ui;
 import org.jetbrains.annotations.NotNull;
 
 import com.snek.fancyplayershops.Shop;
+import com.snek.fancyplayershops.implementations.ui.styles.ShopPanelElmStyle;
 import com.snek.framework.ui.elements.PanelElm;
 
 
@@ -24,7 +25,7 @@ public class ShopPanelElm extends PanelElm {
      * @param _shop The target shop.
      */
     protected ShopPanelElm(@NotNull Shop _shop) {
-        super(_shop.getWorld());
+        super(_shop.getWorld(), new ShopPanelElmStyle());
         shop = _shop;
     }
 }

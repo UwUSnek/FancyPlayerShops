@@ -86,9 +86,9 @@ public class TextElmStyle extends ElmStyle {
 
 
     // Default value providers
-    public @NotNull Text          getDefaultText         () { return new Txt("").get()            ; }
-    public @NotNull TextAlignment getDefaultTextAlignment() { return TextAlignment.CENTER         ; }
-    public          int           getDefaultTextOpacity  () { return 255                          ; }
+    public @NotNull Text          getDefaultText         () { return new Txt().get()     ; }
+    public @NotNull TextAlignment getDefaultTextAlignment() { return TextAlignment.CENTER; }
+    public          int           getDefaultTextOpacity  () { return 255                 ; }
 
 
     // Reset functions

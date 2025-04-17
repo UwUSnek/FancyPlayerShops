@@ -5,6 +5,7 @@ import org.joml.Vector3f;
 import org.joml.Vector3i;
 
 import com.snek.fancyplayershops.Shop;
+import com.snek.fancyplayershops.implementations.ui.ShopFancyTextElm;
 import com.snek.fancyplayershops.implementations.ui.ShopTextElm;
 import com.snek.framework.ui.styles.FancyTextElmStyle;
 import com.snek.framework.utils.MinecraftUtils;
@@ -40,7 +41,7 @@ public class DetailsUiDisplay extends ShopTextElm {
      * @param _shop The target shop.
      */
     public DetailsUiDisplay(@NotNull Shop _shop){
-        super(_shop, 0.5f, ShopTextElm.LINE_H);
+        super(_shop, 1f, ShopFancyTextElm.LINE_H * 3);
         updateDisplay();
     }
 
@@ -60,10 +61,10 @@ public class DetailsUiDisplay extends ShopTextElm {
         // Empty shop case
         final ItemStack _item = shop.getItem();
         if(_item.getItem() == Items.AIR) {
-            ((FancyTextElmStyle)style).setText(new Txt(" ")
-            .cat(Shop.EMPTY_SHOP_NAME).cat(" ")
-            .cat(new Txt("\n Price: -")).cat(" ")
-            .cat(new Txt("\n Stock: -")).cat(" ")
+            ((FancyTextElmStyle)style).setText(new Txt()
+            .cat(Shop.EMPTY_SHOP_NAME)
+            .cat(new Txt("\nPrice: -"))
+            .cat(new Txt("\nStock: -"))
             .get());
         }
 
@@ -71,9 +72,9 @@ public class DetailsUiDisplay extends ShopTextElm {
         else {
             double price = shop.getPrice();
             ((FancyTextElmStyle)style).setText(new Txt()
-                .cat(new Txt(MinecraftUtils.getItemName(_item)).get()).cat(" ")
-                .cat(new Txt("\n Price: ")).cat(new Txt(price < 0.005 ? "Free" : Utils.formatPrice(price)).bold().color(C_RGB_PRICE)).cat(" ")
-                .cat(new Txt("\n Stock: ")).cat(new Txt(Utils.formatAmount(shop.getStock())).bold().color(col)).cat(" ")
+                .cat(new Txt(MinecraftUtils.getItemName(_item)).get())
+                .cat(new Txt("\nPrice: ")).cat(new Txt(price < 0.005 ? "Free" : Utils.formatPrice(price)).bold().color(C_RGB_PRICE))
+                .cat(new Txt("\nStock: ")).cat(new Txt(Utils.formatAmount(shop.getStock())).bold().color(col))
             .get());
         }
 

@@ -32,7 +32,7 @@ public class CustomTextDisplay extends CustomDisplay {
 
 
     // Text cache and flag used to remove the text when the opacity value is lower than 26
-    public static final @NotNull Text EMPTY_TEXT = new Txt("").get();
+    public static final @NotNull Text EMPTY_TEXT = new Txt().get();
     private             @NotNull Text textCache = EMPTY_TEXT;
     private final boolean noTextUnderA26;
 

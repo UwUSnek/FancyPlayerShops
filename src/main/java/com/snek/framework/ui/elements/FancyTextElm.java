@@ -58,7 +58,7 @@ public class FancyTextElm extends Elm {
         text = new CustomTextDisplay(_world);
 
         // Initialize permanent entity values
-        getBgEntity().setText(new Txt("").get());
+        getBgEntity().setText(new Txt().get());
         getFgEntity().setBackground(new Vector4i(0, 0, 0, 0));
     }
 

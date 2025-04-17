@@ -57,8 +57,8 @@ public abstract class Scheduler {
      * @param task The task to run.
      * @return The handler of the newly created task schedule.
      */
-    public static TaskHandler loop(long delay, long interval, Runnable task) {
-        TaskHandler handler = new LoopTaskHandler(tickNum + delay, interval, task);
+    public static LoopTaskHandler loop(long delay, long interval, Runnable task) {
+        LoopTaskHandler handler = new LoopTaskHandler(tickNum + delay, interval, task);
         taskQueue.add(handler);
         return handler;
     }

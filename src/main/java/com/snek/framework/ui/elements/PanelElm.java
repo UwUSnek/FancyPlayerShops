@@ -42,7 +42,7 @@ public class PanelElm extends Elm {
      */
     protected PanelElm(@NotNull ServerWorld _world, @NotNull CustomDisplay _entity, @NotNull ElmStyle _style) {
         super(_world, _entity, _style);
-        getPanelEntity().setText(new Txt("").get());
+        getPanelEntity().setText(new Txt().get());
     }
 
 
