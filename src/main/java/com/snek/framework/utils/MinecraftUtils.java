@@ -18,6 +18,8 @@ import net.minecraft.util.math.Vec3i;
  * A utility class providing functions to handle Minecraft classes and data.
  */
 public abstract class MinecraftUtils {
+    private MinecraftUtils(){}
+
 
     /**
      * Returns the custom name of an item. If the item has no custom name, the default name is returned.
@@ -44,5 +46,4 @@ public abstract class MinecraftUtils {
         int z = pos.z < 0 ? (int)(Math.floor(pos.z) - 0.1) : (int) pos.z;
         return new Vec3i(x, y, z);
     }
-
 }

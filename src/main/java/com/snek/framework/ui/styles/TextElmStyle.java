@@ -1,11 +1,11 @@
 package com.snek.framework.ui.styles;
 
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector4i;
 
 import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.animations.Transform;
-import com.snek.framework.data_types.animations.transitions.TextAdditiveTransition;
+import com.snek.framework.data_types.animations.Transition;
+import com.snek.framework.data_types.containers.Flagged;
 import com.snek.framework.utils.Easings;
 import com.snek.framework.utils.Txt;
 
@@ -20,11 +20,19 @@ import net.minecraft.text.Text;
 
 
 public class TextElmStyle extends ElmStyle {
+    public static final float DEFAULT_TEXT_SCALE = 0.35f;
 
-    private @NotNull TextAlignment alignment;
-    private @NotNull Vector4i      background;
-    private @NotNull Text          text;
-    private @NotNull int           textOpacity;
+    private Flagged<Text>          text          = null;
+    private Flagged<TextAlignment> textAlignment = null;
+    private Flagged<Integer>       textOpacity   = null;
+
+
+
+
+    @Override
+    public @NotNull Transform getDefaultTransform () {
+        return new Transform().scale(DEFAULT_TEXT_SCALE);
+    }
 
 
 
@@ -33,43 +41,82 @@ public class TextElmStyle extends ElmStyle {
      * Creates a new default TextElmStyle.
      */
     public TextElmStyle() {
-
-        // Set values
         super();
-        alignment   = TextAlignment.CENTER;
-        background  = new Vector4i(230, 37, 40, 40);
-        text        = new Txt("").get();
-        textOpacity = 255;
+    }
 
 
-        // Set default spawning animation
-        setSpawnAnimation(new Animation(new TextAdditiveTransition(new Transform(),
-            ElmStyle.S_TIME,
-            Easings.sineOut,
-            background,
-            255
-        )));
-
-
-        // Set default despawning animation
-        setDespawnAnimation(new Animation(new TextAdditiveTransition(new Transform(),
-            ElmStyle.D_TIME,
-            Easings.sineOut,
-            new Vector4i(0),
-            0
-        )));
+    @Override
+    public void resetAll(){
+        resetText();
+        resetTextAlignment();
+        resetTextOpacity();
+        super.resetAll();
     }
 
 
 
 
-    public TextElmStyle setAlignment  (TextAlignment _alignment  ) { alignment   = _alignment;   return this; }
-    public TextElmStyle setBackground (Vector4i      _background ) { background  = _background;  return this; }
-    public TextElmStyle setText       (Text          _text       ) { text        = _text;        return this; }
-    public TextElmStyle setTextOpacity(int           _textOpacity) { textOpacity = _textOpacity; return this; }
+    @Override
+    public Animation getDefaultPrimerAnimation() {
+        return new Animation(
+            new Transition(0, Easings.linear)
+            .targetOpacity(0)
+        );
+    }
 
-    public TextAlignment getAlignment  () { return alignment;   }
-    public Vector4i      getBackground () { return background;  }
-    public Text          getText       () { return text;        }
-    public int           getTextOpacity() { return textOpacity; }
+
+    @Override
+    public Animation getDefaultSpawnAnimation() {
+        return new Animation(
+            new Transition(ElmStyle.S_TIME, Easings.sineOut)
+            .targetOpacity(255)
+        );
+    }
+
+
+    @Override
+    public Animation getDefaultDespawnAnimation() {
+        return new Animation(
+            new Transition(ElmStyle.D_TIME, Easings.sineOut)
+            .targetOpacity(0)
+        );
+    }
+
+
+
+
+    // Default value providers
+    public @NotNull Text          getDefaultText         () { return new Txt("").get()            ; }
+    public @NotNull TextAlignment getDefaultTextAlignment() { return TextAlignment.CENTER         ; }
+    public          int           getDefaultTextOpacity  () { return 255                          ; }
+
+
+    // Reset functions
+    public void resetText         () { text          = Flagged.from(getDefaultText()         ); }
+    public void resetTextAlignment() { textAlignment = Flagged.from(getDefaultTextAlignment()); }
+    public void resetTextOpacity  () { textOpacity   = Flagged.from(getDefaultTextOpacity()  ); }
+
+
+    // Setters
+    public void setText         (@NotNull Text          _text         ) { text         .set(_text         ); }
+    public void setTextAlignment(@NotNull TextAlignment _textAlignment) { textAlignment.set(_textAlignment); }
+    public void setTextOpacity  (         int           _textOpacity  ) { textOpacity  .set(_textOpacity  ); }
+
+
+    // Flagged getters
+    public @NotNull Flagged<Text>          getFlaggedText         () { return text;          }
+    public @NotNull Flagged<TextAlignment> getFlaggedTextAlignment() { return textAlignment; }
+    public @NotNull Flagged<Integer>       getFlaggedTextOpacity  () { return textOpacity;   }
+
+
+    // Getters
+    public @NotNull Text          getText         () { return text         .get(); }
+    public @NotNull TextAlignment getTextAlignment() { return textAlignment.get(); }
+    public          int           getTextOpacity  () { return textOpacity  .get(); }
+
+
+    // Edit getters
+    public @NotNull Text     editText          () { return text         .edit(); }
+    //!                      editTextAlignment Primitive types cannot be edited
+    //!                      editTextOpacity   Primitive types cannot be edited
 }

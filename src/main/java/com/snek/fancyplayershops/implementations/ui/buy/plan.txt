@@ -1,9 +1,21 @@
 
 
 
-[ +1000 ]            [ -1000 ]
-[  +100 ] 1232 items [  -100 ]
-[   +10 ]  $8984.70  [   -10 ]
-[    +1 ]            [    -1 ]
-[   +64 ] [CONFIRM]  [   -64 ]
+      Buying: <item name>
+             x54
+          $100,000.20
 
+[  16 ]            [  chat   ]         <---------- chat input button becomes "confirm" after inputting an amount. clicking any other button resets it
+[  15 ]  [      ]  [  input  ]
+[ ... ]  | item |
+[   3 ]  [      ]  [ 1000x   ]
+[   2 ]
+[   1 ]            [ 1 stack ]
+
+
+
+amount buttons are stacked on top of each other to make it look like a bar that fills as you hover over higher amounts.
+clicking instantly buys the item without closing the menu. there is no confirmation, but you can undo your purchases.
+amounts higher than the available items are grayed out.
+
+//TODO add personal item stash system accessible via /shop stash

@@ -9,9 +9,12 @@ import net.minecraft.text.Text;
 
 
 
+
+
+
+
 /**
  * A simpler but more readable minecraft.text.MutableText.
- * Supports .clone().
  * Use .get() to create a MutableText from this object's data.
  */
 public class Txt {
@@ -35,8 +38,8 @@ public class Txt {
         rawText = s.copy();
         style = rawText.getStyle();
     }
-    @Override
-    public Txt clone(){
+
+    public Txt copy(){
         rawText.setStyle(style);
         return new Txt(rawText.copy());
     }

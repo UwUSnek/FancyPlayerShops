@@ -12,11 +12,13 @@ import net.minecraft.util.ClickType;
 
 
 
+/**
+ * An interface that provides a click callback method.
+ */
 public interface Clickable {
 
     /**
-     * Processes a click event using the player's view angle and current children.
-     * Reach distance is not accounted for.
+     * Processes a click event.
      * Calling this method on an element that hasn't been spawned yet is allowed and has no effect.
      *
      * NOTICE: Click detection is only available for elements with Fixed billboard mode.

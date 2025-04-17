@@ -3,7 +3,6 @@ package com.snek.framework.utils.scheduler;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 
-import net.minecraft.server.MinecraftServer;
 
 
 
@@ -11,8 +10,11 @@ import net.minecraft.server.MinecraftServer;
 
 
 
-
+/**
+ * A utility class that can store tasks and execute them after a specified delay.
+ */
 public abstract class Scheduler {
+    private Scheduler(){}
     private static long tickNum = 0;
     private static final PriorityQueue<TaskHandler> taskQueue = new PriorityQueue<>(Comparator.comparingLong(e -> e.getTargetTick()));
 
@@ -27,12 +29,11 @@ public abstract class Scheduler {
 
 
 
-
     /*
      * The tick function of the scheduler.
      * Must be called exactly one time at the end of every server tick.
      */
-    public static void tick(MinecraftServer server) {
+    public static void tick() {
         while(taskQueue.peek() != null && taskQueue.peek().getTargetTick() <= tickNum) {
             TaskHandler handler = taskQueue.poll();
             handler.compute();
@@ -52,7 +53,7 @@ public abstract class Scheduler {
     /**
      * Runs a task on the main thread every <interval> ticks after a specified delay.
      * @param delay The initial delay, expressed in server ticks.
-     * @param delay The time interval between calls, expressed in server ticks.
+     * @param interval The time interval between calls, expressed in server ticks.
      * @param task The task to run.
      * @return The handler of the newly created task schedule.
      */
