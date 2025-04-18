@@ -39,13 +39,11 @@ public class DetailsUi extends ShopCanvas {
      * @param _shop The target shop.
      */
     public DetailsUi(Shop _shop){
-        super();
-        Div bg;
-        Div e;
 
-        // Add background
-        bg = addChild(new DetailsUiBackground(_shop));
+        // Call superconstructo and add background
+        super(new DetailsUiBackground(_shop));
         bg.setPosY(1 - DetailsUi.BACKGROUND_HEIGHT);
+        Div e;
 
         // Add details display
         e = bg.addChild(new DetailsUiDisplay(_shop));

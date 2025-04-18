@@ -25,10 +25,7 @@ import com.snek.fancyplayershops.implementations.ui.ShopItemDisplay;
 import com.snek.fancyplayershops.implementations.ui.details.DetailsUi;
 import com.snek.fancyplayershops.implementations.ui.edit.EditUi;
 import com.snek.fancyplayershops.implementations.ui.misc.InteractionBlocker;
-import com.snek.framework.data_types.animations.Animation;
-import com.snek.framework.data_types.animations.Transform;
-import com.snek.framework.data_types.animations.Transition;
-import com.snek.framework.utils.Easings;
+import com.snek.framework.ui.Div;
 import com.snek.framework.utils.MinecraftUtils;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
@@ -138,6 +135,7 @@ public class Shop {
     public @NotNull BlockPos        getPos            () { return pos;             }
     public @NotNull ItemStack       getItem           () { return item;            }
     public @NotNull ShopItemDisplay getItemDisplay    () { return findItemDisplayEntityIfNeeded(); }
+    public @NotNull ShopCanvas      getActiveCanvas   () { return activeCanvas;    }
     public          double          getPrice          () { return price;           }
     public          int             getStock          () { return stock;           }
     public          int             getMaxStock       () { return maxStock;        }
@@ -369,8 +367,8 @@ public class Shop {
                 // Create details canvas
                 if(activeCanvas != null) activeCanvas.despawnNow();
                 activeCanvas = new DetailsUi(this);
-                activeCanvas.menuAnimationInitial = null;
-                activeCanvas.menuAnimationIn = null;
+                // activeCanvas.menuAnimationInitial = null; //TODO REMOVE
+                // activeCanvas.menuAnimationIn = null; //TODO REMOVE
                 activeCanvas.spawn(calcDisplayPos());
 
                 // Create interaction blocker
@@ -383,7 +381,7 @@ public class Shop {
             else {
 
                 // Despawn active canvas
-                activeCanvas.menuAnimationOut = null;
+                // activeCanvas.menuAnimationOut = null; //TODO REMOVE
                 activeCanvas.despawn();
                 activeCanvas = null;
 
@@ -409,7 +407,7 @@ public class Shop {
      * If no connected entity is found, a new ShopItemDisplay is created.
      * @reutrn the item display.
      */
-    private @NotNull ShopItemDisplay findItemDisplayEntityIfNeeded(){
+    public @NotNull ShopItemDisplay findItemDisplayEntityIfNeeded(){
         if(itemDisplay == null) {
             ItemDisplayEntity rawItemDisplay = (ItemDisplayEntity)(world.getEntity(itemDisplayUUID));
             if(rawItemDisplay == null) {
@@ -546,12 +544,19 @@ public class Shop {
      * @param canvas The new canvas.
      */
     public void changeCanvas(ShopCanvas canvas) {
-        if(activeCanvas != null) activeCanvas.despawn();
+        // if(activeCanvas != null) for (Div e : activeCanvas.getChildren().get(0).getChildren()) {
+        //     e.despawn();
+        // }
+        // if(activeCanvas != null) activeCanvas.despawnNow();
         activeCanvas = canvas;
+        canvas.spawn(calcDisplayPos());
+        // if(canvas != null) activeCanvas.spawn(calcDisplayPos());
 
-        Scheduler.schedule(CANVAS_ANIMATION_DELAY, () -> {
-            if(activeCanvas != null) activeCanvas.spawn(calcDisplayPos());
-        });
+        // Scheduler.schedule(CANVAS_ANIMATION_DELAY, () -> {
+        //     if(activeCanvas != null) activeCanvas.despawnNow();
+        //     activeCanvas = canvas;
+        //     if(activeCanvas != null) activeCanvas.spawn(calcDisplayPos());
+        // });
     }
 
 

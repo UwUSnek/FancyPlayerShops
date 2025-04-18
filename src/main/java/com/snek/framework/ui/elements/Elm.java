@@ -305,6 +305,7 @@ public abstract class Elm extends Div {
 
     @Override
     public void spawn(Vector3d pos) {
+        if(isSpawned) return;
 
         // Flush previous changes to the entity to avoid bad interpolations and spawn the entity into the world
         flushStyle();
@@ -337,6 +338,9 @@ public abstract class Elm extends Div {
 
     @Override
     public void despawn() {
+        if(!isSpawned) return;
+
+        // Call superclass spawn and set spawned flag to false
         super.despawn();
         isSpawned = false;
 

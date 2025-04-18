@@ -68,11 +68,11 @@ public class EditUiRotateButton extends ShopButton {
             shop.addDefaultRotation(rotation);
 
             // Animate the item display to show the new rotation
-            shop.getItemDisplay().applyAnimation(new Animation(
+            shop.findItemDisplayEntityIfNeeded().applyAnimation(new Animation(
                 new Transition(2, Easings.sineInOut)
                 .additiveTransform(new Transform().rotY(-rotation))
             ));
-            shop.getItemDisplay().applyAnimation(new Animation(
+            shop.findItemDisplayEntityIfNeeded().applyAnimation(new Animation(
                 new Transition(ROTATION_ANIMATION_TIME, Easings.sineInOut)
                 .additiveTransform(new Transform().rotY(rotation))
             ));
@@ -86,7 +86,7 @@ public class EditUiRotateButton extends ShopButton {
         super.onHoverEnter(player);
 
         // Handle item display animations
-        ShopItemDisplay itemDisplay = shop.getItemDisplay();
+        ShopItemDisplay itemDisplay = shop.findItemDisplayEntityIfNeeded();
         itemDisplay.stopLoopAnimation();
         itemDisplay.applyAnimation(new Animation(
             new Transition(ROTATION_ANIMATION_TIME, Easings.sineOut)
@@ -105,6 +105,6 @@ public class EditUiRotateButton extends ShopButton {
         super.onHoverExit(player);
 
         // Handle item display animations
-        shop.getItemDisplay().startLoopAnimation();
+        shop.findItemDisplayEntityIfNeeded().startLoopAnimation();
     }
 }
