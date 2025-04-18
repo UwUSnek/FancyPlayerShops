@@ -71,5 +71,8 @@ public class EditUi extends ShopCanvas {
         e.move(new Vector2f(-ROTATE_BUTTON_CENTER_SHIFT, ROTATE_BUTTON_CENTER_Y));
         e = bg.addChild(new EditUiRotateButton(_shop, +ROTATE_BUTTON_AMOUNT, new Txt("▶").get()));
         e.move(new Vector2f(+ROTATE_BUTTON_CENTER_SHIFT, ROTATE_BUTTON_CENTER_Y));
+
+        // Add bottom border
+        //TODO
     }
 }

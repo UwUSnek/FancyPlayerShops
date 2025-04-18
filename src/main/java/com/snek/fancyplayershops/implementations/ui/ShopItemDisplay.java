@@ -49,7 +49,7 @@ public class ShopItemDisplay extends ItemElm {
     public static final float    LOOP_ROT    = (float)Math.toRadians(120);
 
     // Edit animation scale and transition
-    public static final Vector3f EDIT_SCALE  = new Vector3f(0.25f);
+    public static final Vector3f EDIT_SCALE  = new Vector3f(0.5f);
     public static final Vector3f EDIT_MOVE   = new Vector3f(0, 0.25f, 0.25f).mul(1f - 0.5f);
 
 
@@ -103,7 +103,7 @@ public class ShopItemDisplay extends ItemElm {
         // Setup edit animiations
         enterEditAnimation = new Animation(
             new Transition(Shop.CANVAS_ANIMATION_DELAY, Easings.sineOut)
-            .targetTransform(
+            .additiveTransform(
                 new Transform()
                 .scale(EDIT_SCALE)
                 .move(EDIT_MOVE)
@@ -189,7 +189,6 @@ public class ShopItemDisplay extends ItemElm {
         applyAnimation(focusAnimation);
         startLoopAnimation();
     }
-
     /**
      * Starts the loop animation.
      */
@@ -212,7 +211,6 @@ public class ShopItemDisplay extends ItemElm {
         // Show custom name after animations end
         nameToggleHandler = Scheduler.schedule(unfocusAnimation.getTotalDuration(), () -> entity.setCustomNameVisible(true));
     }
-
     /**
      * Stops the loop animation.
      */
@@ -228,10 +226,6 @@ public class ShopItemDisplay extends ItemElm {
      * Enters the edit state
      */
     public void enterEditState(){
-
-        // Stop loop animation and start edit animation
-        loopHandler.cancel();
-        futureDataQueue.clear();
         applyAnimation(enterEditAnimation);
     }
 

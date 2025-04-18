@@ -11,9 +11,11 @@ import com.snek.framework.data_types.containers.Pair;
 import com.snek.framework.data_types.displays.CustomDisplay;
 import com.snek.framework.data_types.displays.CustomTextDisplay;
 import com.snek.framework.generated.FontSize;
+import com.snek.framework.ui.Div;
 import com.snek.framework.ui.styles.ElmStyle;
 import com.snek.framework.ui.styles.TextElmStyle;
 
+import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 
@@ -143,38 +145,44 @@ public class TextElm extends Elm {
 
 
     /**
-     * Calculates the height of the associated TextDisplay entity.
+     * Calculates the in-world height of the TextDisplay entity associated with a TextDisplay or FancyTextDisplay.
      * NOTICE: The height can be inaccurate as a lot of assumptions are made to calculate it.
      *     The returned value is the best possible approximation.
      * NOTICE: This operation is fairly expensive. The result should be cached whenever possible.
      * NOTICE: Wrapped lines are counted as one.
      * @return The height in blocks.
      */
-    public float calcHeight(){
+    public static float calcHeight(Elm elm){
+        if(!(elm instanceof TextElm || elm instanceof FancyTextElm)) {
+            throw new RuntimeException("calcHeight used on incompatible Elm type: " + elm.getClass().getName());
+        }
 
         // Retrieve the current text as a string and count the number of lines
-        final float lineNum = ((CustomTextDisplay)entity).getText().getString().split("\n").length;
+        final float lineNum = ((CustomTextDisplay)elm.entity).getText().getString().split("\n").length;
         if(lineNum == 0) return 0;
 
         // Calculate their height and return it
-        return ((lineNum == 1 ? 0 : lineNum - 1) * 2 + lineNum * FontSize.getHeight()) / TEXT_PIXEL_BLOCK_RATIO * style.getTransform().getScale().y;
+        return ((lineNum == 1 ? 0 : lineNum - 1) * 2 + lineNum * FontSize.getHeight()) / TEXT_PIXEL_BLOCK_RATIO * elm.style.getTransform().getScale().y;
     }
 
 
 
 
     /**
-     * Calculates the width of the associated TextDisplay entity.
+     * Calculates the in-world width of the TextDisplay entity associated with a TextDisplay or FancyTextDisplay.
      * NOTICE: The width can be inaccurate as a lot of assumptions are made to calculate it.
      *     The returned value is the best possible approximation.
      * NOTICE: This operation is fairly expensive. The result should be cached whenever possible.
      * NOTICE: Wrapped lines are counted as one.
      * @return The width in blocks.
      */
-    public float calcWidth(){
+    public static float calcWidth(Elm elm){
+        if(!(elm instanceof TextElm || elm instanceof FancyTextElm)) {
+            throw new RuntimeException("calcWidth used on incompatible Elm type: " + elm.getClass().getName());
+        }
 
         // Retrieve the current text as a string
-        final String[] lines = ((CustomTextDisplay)entity).getText().getString().split("\n");
+        final String[] lines = ((CustomTextDisplay)elm.entity).getText().getString().split("\n");
         if(lines.length == 0) {
             return 0;
         }
@@ -190,6 +198,6 @@ public class TextElm extends Elm {
         }
 
         // Calculate its length and return it
-        return (float)FontSize.getWidth(line.first) / TEXT_PIXEL_BLOCK_RATIO * style.getTransform().getScale().x;
+        return (float)FontSize.getWidth(line.first) / TEXT_PIXEL_BLOCK_RATIO * elm.style.getTransform().getScale().x;
     }
 }

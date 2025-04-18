@@ -6,6 +6,7 @@ import org.joml.Vector3i;
 
 import com.snek.fancyplayershops.Shop;
 import com.snek.fancyplayershops.implementations.ui.ShopTextElm;
+import com.snek.framework.ui.elements.TextElm;
 import com.snek.framework.ui.styles.TextElmStyle;
 import com.snek.framework.utils.MinecraftUtils;
 import com.snek.framework.utils.Txt;
@@ -37,7 +38,7 @@ public class DetailsUiDisplay extends ShopTextElm {
     public DetailsUiDisplay(@NotNull Shop _shop){
         super(_shop, 1, DetailsUi.BACKGROUND_HEIGHT);
         updateDisplay();
-        setSizeY(calcHeight());
+        setSizeY(TextElm.calcHeight(this));
         flushStyle();
     }
 

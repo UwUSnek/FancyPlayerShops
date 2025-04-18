@@ -39,7 +39,7 @@ public abstract class ShopTextInput extends ShopButton {
      * @param _clickFeedbackMessage The message to show to the player when they click the element.
      */
     protected ShopTextInput(@NotNull Shop _shop, float w, float h, Text _clickFeedbackMessage) {
-        super(_shop, w, h);
+        super(_shop, w, h, 1);
         clickFeedbackMessage = _clickFeedbackMessage;
     }
 

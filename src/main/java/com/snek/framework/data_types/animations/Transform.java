@@ -159,6 +159,7 @@ public class Transform {
     public Transform setPosY      (float y                  ) { _pos.y = y;                         return this; }
     public Transform setPosZ      (float z                  ) { _pos.z = z;                         return this; }
     public Transform setPos       (float x, float y, float z) { setPosX(x); setPosY(y); setPosZ(z); return this; }
+    public Transform setPos       (Vector3f s               ) { _pos.set(s);                        return this; }
 
 
 
@@ -176,6 +177,7 @@ public class Transform {
     public Transform setScaleZ    (float z                  ) { _scale.z = z;                             return this; }
     public Transform setScale     (float x, float y, float z) { setScaleX(x); setScaleY(y); setScaleZ(z); return this; }
     public Transform setScale     (float n                  ) { setScale(n, n, n);                        return this; }
+    public Transform setScale     (Vector3f s               ) { _scale.set(s);                            return this; }
 
 
 

@@ -134,14 +134,15 @@ public class Shop {
 
 
     // Accessors
-    public @NotNull ServerWorld getWorld          () { return world;           }
-    public @NotNull BlockPos    getPos            () { return pos;             }
-    public @NotNull ItemStack   getItem           () { return item;            }
-    public          double      getPrice          () { return price;           }
-    public          int         getStock          () { return stock;           }
-    public          int         getMaxStock       () { return maxStock;        }
-    public          float       getDefaultRotation() { return defaultRotation; }
-    public          boolean     isFocused         () { return focusStatus;     }
+    public @NotNull ServerWorld     getWorld          () { return world;           }
+    public @NotNull BlockPos        getPos            () { return pos;             }
+    public @NotNull ItemStack       getItem           () { return item;            }
+    public @NotNull ShopItemDisplay getItemDisplay    () { return findItemDisplayEntityIfNeeded(); }
+    public          double          getPrice          () { return price;           }
+    public          int             getStock          () { return stock;           }
+    public          int             getMaxStock       () { return maxStock;        }
+    public          float           getDefaultRotation() { return defaultRotation; }
+    public          boolean         isFocused         () { return focusStatus;     }
 
 
 
@@ -408,7 +409,7 @@ public class Shop {
      * If no connected entity is found, a new ShopItemDisplay is created.
      * @reutrn the item display.
      */
-    private ShopItemDisplay findItemDisplayEntityIfNeeded(){
+    private @NotNull ShopItemDisplay findItemDisplayEntityIfNeeded(){
         if(itemDisplay == null) {
             ItemDisplayEntity rawItemDisplay = (ItemDisplayEntity)(world.getEntity(itemDisplayUUID));
             if(rawItemDisplay == null) {
@@ -649,12 +650,5 @@ public class Shop {
         // Add value to default rotation and save the shop
         defaultRotation += _rotation;
         saveShop();
-
-
-        // Animate the item display to show the new rotation
-        itemDisplay.applyAnimation(new Animation(
-            new Transition(8, Easings.sineInOut)
-            .additiveTransform(new Transform().rotY(_rotation))
-        ));
     }
 }
