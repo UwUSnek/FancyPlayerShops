@@ -90,8 +90,7 @@ public class FancyTextElm extends Elm {
 
 
         // Handle transforms
-        {
-            Flagged<Transform> f = style.getFlaggedTransform();
+        {Flagged<Transform> f = style.getFlaggedTransform();
             Flagged<Transform> fFg = getStyle().getFlaggedTransformFg();
             if(f.isFlagged() || fFg.isFlagged()) {
                 fg.setTransformation(
@@ -101,7 +100,6 @@ public class FancyTextElm extends Elm {
                     .scale(TextElmStyle.DEFAULT_TEXT_SCALE)
                     .toMinecraftTransform()
                 );
-                f.unflag();
                 fFg.unflag();
             }
             Flagged<Transform> fBg = getStyle().getFlaggedTransformBg();
@@ -114,10 +112,9 @@ public class FancyTextElm extends Elm {
                     .moveX(PanelElmStyle.ENTITY_SHIFT_X * getAbsSize().x)
                     .toMinecraftTransform()
                 );
-                f.unflag();
                 fBg.unflag();
             }
-        }
+        if(f.isFlagged()) f.unflag();}
 
 
         // Handle the other Elm values normally, applying them to both entities

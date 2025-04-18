@@ -1,11 +1,18 @@
 package com.snek.fancyplayershops.implementations.ui.edit;
 
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
 
 import com.snek.fancyplayershops.Shop;
 import com.snek.fancyplayershops.implementations.ui.ShopFancyTextElm;
 import com.snek.fancyplayershops.implementations.ui.styles.EditUiTitleStyle;
+import com.snek.framework.data_types.animations.Animation;
+import com.snek.framework.data_types.animations.Transform;
+import com.snek.framework.data_types.animations.Transition;
 import com.snek.framework.ui.styles.TextElmStyle;
+import com.snek.framework.utils.Easing;
+import com.snek.framework.utils.Easings;
 import com.snek.framework.utils.MinecraftUtils;
 import com.snek.framework.utils.Txt;
 

@@ -86,4 +86,13 @@ public abstract class ShopTextInput extends ShopButton {
      */
     protected abstract boolean messageCallback(String s);
     public abstract void updateDisplay(@Nullable Text textOverride);
+
+
+
+
+    @Override
+    public void onHoverExit(@Nullable PlayerEntity player) {
+        exitInputState();
+        if(player != null) ChatInput.removeCallback(player);
+    }
 }

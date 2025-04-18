@@ -46,13 +46,13 @@ public class ShopCanvas extends Div {
      * Creates a new ShopCanvas
      * @param _bg The background element
      */
-    public ShopCanvas(Elm _bg) {
+    public ShopCanvas(@NotNull Elm _bg) {
         super();
         addChild(_bg);
         bg = _bg;
 
         // menuAnimationInitial = new Animation(
-        //     new Transition(0, Easings.linear)
+        //     new Transition()
         //     .additiveTransform(
         //         new Transform()
         //         .move(new Vector3f(ANIMATION_MOVE_IN).negate())

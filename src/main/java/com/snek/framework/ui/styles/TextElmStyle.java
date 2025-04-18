@@ -59,7 +59,7 @@ public class TextElmStyle extends ElmStyle {
     @Override
     public Animation getDefaultPrimerAnimation() {
         return new Animation(
-            new Transition(0, Easings.linear)
+            new Transition()
             .targetOpacity(0)
         );
     }

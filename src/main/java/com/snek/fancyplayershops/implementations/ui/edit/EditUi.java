@@ -72,7 +72,7 @@ public class EditUi extends ShopCanvas {
         bg.setSizeY(1);
         bg.setPosY(0);
         bg.applyAnimationNow(new Animation(
-            new Transition(0, Easings.linear)
+            new Transition()
             .additiveTransform(new Transform().scaleY(DetailsUi.BACKGROUND_HEIGHT).moveY(1 - DetailsUi.BACKGROUND_HEIGHT))
         ));
 

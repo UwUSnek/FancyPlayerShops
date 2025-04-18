@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Vector4i;
 
 import com.snek.framework.utils.Easing;
+import com.snek.framework.utils.Easings;
 
 
 
@@ -39,6 +40,14 @@ public class Transition {
 
         additive   = false;
         d = new InterpolatedData(null, null, null);
+    }
+
+
+    /**
+     * Creates a new Transition with 0 duration and linear easing.
+     */
+    public Transition() {
+        this(0, Easings.linear);
     }
 
 

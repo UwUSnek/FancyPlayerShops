@@ -30,7 +30,7 @@ public class EditUiBackgroundStyle extends ShopPanelElmStyle {
     @Override
     public Animation getDefaultPrimerAnimation(){
         return new Animation(
-            new Transition(0, Easings.linear)
+            new Transition()
             .additiveTransform(new Transform().scaleY(DetailsUi.BACKGROUND_HEIGHT).moveY(1 - DetailsUi.BACKGROUND_HEIGHT))
         );
     }

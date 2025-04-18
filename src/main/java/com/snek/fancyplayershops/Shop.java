@@ -131,16 +131,16 @@ public class Shop {
 
 
     // Accessors
-    public @NotNull ServerWorld     getWorld          () { return world;           }
-    public @NotNull BlockPos        getPos            () { return pos;             }
-    public @NotNull ItemStack       getItem           () { return item;            }
-    public @NotNull ShopItemDisplay getItemDisplay    () { return findItemDisplayEntityIfNeeded(); }
-    public @NotNull ShopCanvas      getActiveCanvas   () { return activeCanvas;    }
-    public          double          getPrice          () { return price;           }
-    public          int             getStock          () { return stock;           }
-    public          int             getMaxStock       () { return maxStock;        }
-    public          float           getDefaultRotation() { return defaultRotation; }
-    public          boolean         isFocused         () { return focusStatus;     }
+    public @NotNull  ServerWorld     getWorld          () { return world;           }
+    public @NotNull  BlockPos        getPos            () { return pos;             }
+    public @NotNull  ItemStack       getItem           () { return item;            }
+    public @NotNull  ShopItemDisplay getItemDisplay    () { return findItemDisplayEntityIfNeeded(); }
+    public @Nullable ShopCanvas      getActiveCanvas   () { return activeCanvas;    }
+    public           double          getPrice          () { return price;           }
+    public           int             getStock          () { return stock;           }
+    public           int             getMaxStock       () { return maxStock;        }
+    public           float           getDefaultRotation() { return defaultRotation; }
+    public           boolean         isFocused         () { return focusStatus;     }
 
 
 

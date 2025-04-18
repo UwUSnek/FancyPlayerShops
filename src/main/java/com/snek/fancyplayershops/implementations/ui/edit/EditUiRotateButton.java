@@ -48,7 +48,7 @@ public class EditUiRotateButton extends ShopButton {
 
         // Adjust arrow size
         applyAnimationNow(new Animation(
-            new Transition(0, Easings.linear)
+            new Transition()
             .additiveTransformFg(new Transform().scale(EditUi.SQUARE_BUTTON_SIZE * 10))
         ));
     }

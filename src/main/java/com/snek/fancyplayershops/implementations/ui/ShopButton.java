@@ -77,7 +77,7 @@ public abstract class ShopButton extends FancyTextElm implements Hoverable, Clic
 
 
     @Override
-    public void onHoverEnter(PlayerEntity player) {
+    public void onHoverEnter(@NotNull PlayerEntity player) {
         if(player != shop.user) return;
         final Animation animation = ((ShopButtonStyle)style).getHoverEnterAnimation();
         if(animation != null) {
@@ -87,7 +87,7 @@ public abstract class ShopButton extends FancyTextElm implements Hoverable, Clic
 
 
     @Override
-    public void onHoverExit(PlayerEntity player) { //TODO RENAME TO LEAVE
+    public void onHoverExit(@Nullable PlayerEntity player) {
         if(player != shop.user) return;
         final Animation animation = ((ShopButtonStyle)style).getHoverLeaveAnimation();
         if(animation != null) {
