@@ -365,7 +365,7 @@ public class Div {
 
         // Apply vertical alignment
         float y = switch(alignmentY) {
-            case TOP    -> p.y - (s.y - absSize.y);
+            case TOP    -> p.y + (s.y - absSize.y);
             case BOTTOM -> p.y;
             case CENTER -> p.y + (s.y - absSize.y) / 2;
             case NONE   -> p.y + localPos.y;

@@ -1,4 +1,4 @@
-package com.snek.fancyplayershops.implementations.ui;
+package com.snek.fancyplayershops.implementations.ui.misc;
 
 import java.lang.reflect.Method;
 

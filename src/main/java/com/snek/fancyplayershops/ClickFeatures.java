@@ -1,6 +1,6 @@
 package com.snek.fancyplayershops;
 
-import com.snek.fancyplayershops.implementations.ui.InteractionBlocker;
+import com.snek.fancyplayershops.implementations.ui.misc.InteractionBlocker;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.InteractionEntity;

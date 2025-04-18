@@ -8,7 +8,9 @@ import com.snek.fancyplayershops.implementations.ui.ShopCanvas;
 import com.snek.fancyplayershops.implementations.ui.ShopFancyTextElm;
 import com.snek.fancyplayershops.implementations.ui.ShopItemDisplay;
 import com.snek.fancyplayershops.implementations.ui.details.DetailsUi;
+import com.snek.fancyplayershops.implementations.ui.misc.ShopUiBorder;
 import com.snek.framework.data_types.ui.AlignmentX;
+import com.snek.framework.data_types.ui.AlignmentY;
 import com.snek.framework.ui.Div;
 import com.snek.framework.utils.Txt;
 import com.snek.framework.utils.Utils;
@@ -73,6 +75,7 @@ public class EditUi extends ShopCanvas {
         e.move(new Vector2f(+ROTATE_BUTTON_CENTER_SHIFT, ROTATE_BUTTON_CENTER_Y));
 
         // Add bottom border
-        //TODO
+        e = bg.addChild(new ShopUiBorder(_shop));
+        e.setAlignmentY(AlignmentY.BOTTOM);
     }
 }

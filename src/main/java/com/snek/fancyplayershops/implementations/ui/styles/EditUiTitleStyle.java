@@ -12,7 +12,7 @@ import com.snek.framework.ui.styles.FancyTextElmStyle;
 
 
 /**
- * The stlye of the EditUiTitle element.
+ * The stlye of the EditUiTitle UI element.
  */
 public class EditUiTitleStyle extends FancyTextElmStyle {
 
@@ -26,6 +26,6 @@ public class EditUiTitleStyle extends FancyTextElmStyle {
 
     @Override
     public Vector4i getDefaultBackground(){
-        return new Vector4i(255, 38, 38, 40);
+        return new Vector4i(ShopUiBorderStyle.COLOR);
     }
 }

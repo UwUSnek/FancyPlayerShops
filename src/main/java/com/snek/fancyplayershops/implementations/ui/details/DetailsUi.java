@@ -5,6 +5,7 @@ import org.joml.Vector3i;
 
 import com.snek.fancyplayershops.Shop;
 import com.snek.fancyplayershops.implementations.ui.ShopCanvas;
+import com.snek.fancyplayershops.implementations.ui.misc.ShopUiBorder;
 import com.snek.framework.data_types.ui.AlignmentX;
 import com.snek.framework.data_types.ui.AlignmentY;
 import com.snek.framework.ui.Div;
@@ -50,5 +51,11 @@ public class DetailsUi extends ShopCanvas {
         e = bg.addChild(new DetailsUiDisplay(_shop));
         e.setAlignmentX(AlignmentX.CENTER);
         e.setAlignmentY(AlignmentY.CENTER);
+
+        // Add borders
+        e = bg.addChild(new ShopUiBorder(_shop));
+        e.setAlignmentY(AlignmentY.BOTTOM);
+        e = bg.addChild(new ShopUiBorder(_shop));
+        e.setAlignmentY(AlignmentY.TOP);
     }
 }

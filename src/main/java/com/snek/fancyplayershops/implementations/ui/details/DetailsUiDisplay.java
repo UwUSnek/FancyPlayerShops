@@ -5,7 +5,7 @@ import org.joml.Vector3f;
 import org.joml.Vector3i;
 
 import com.snek.fancyplayershops.Shop;
-import com.snek.fancyplayershops.implementations.ui.ShopTextElm;
+import com.snek.fancyplayershops.implementations.ui.misc.ShopTextElm;
 import com.snek.framework.ui.elements.TextElm;
 import com.snek.framework.ui.styles.TextElmStyle;
 import com.snek.framework.utils.MinecraftUtils;

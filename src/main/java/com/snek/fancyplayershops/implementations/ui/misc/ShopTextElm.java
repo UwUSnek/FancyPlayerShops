@@ -1,4 +1,4 @@
-package com.snek.fancyplayershops.implementations.ui;
+package com.snek.fancyplayershops.implementations.ui.misc;
 
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2f;
