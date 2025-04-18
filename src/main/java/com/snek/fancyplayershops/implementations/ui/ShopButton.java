@@ -1,5 +1,6 @@
 package com.snek.fancyplayershops.implementations.ui;
 
+import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.ui.elements.FancyTextElm;
 import com.snek.framework.ui.interfaces.Clickable;
 import com.snek.framework.ui.interfaces.Hoverable;
@@ -11,10 +12,6 @@ import org.joml.Vector3d;
 
 import com.snek.fancyplayershops.Shop;
 import com.snek.fancyplayershops.implementations.ui.styles.ShopButtonStyle;
-import com.snek.framework.data_types.animations.Animation;
-import com.snek.framework.data_types.animations.Transform;
-import com.snek.framework.data_types.animations.Transition;
-import com.snek.framework.utils.Easings;
 import com.snek.framework.utils.scheduler.Scheduler;
 
 import net.minecraft.entity.player.PlayerEntity;
@@ -32,42 +29,38 @@ import net.minecraft.util.ClickType;
  * A generic button class with clicking and hovering capabilities and a configurable cooldown time.
  */
 public abstract class ShopButton extends FancyTextElm implements Hoverable, Clickable {
-    public static final float UNHOVERED_W = 0.05f;
-
     protected final @NotNull Shop shop;
     private         long lastClickTime = 0;
     private   final int clickCooldown;
-
-    // Animations //FIXME MOVE TO STYLE
-    private final Animation hoverEnterAnimation;
-    private final Animation hoverExitAnimation;
 
 
 
 
     /**
-     * Creates a new ShopButton.
+     * Creates a new ShopButton using a custom style.
+     * @param _shop The target shop.
+     * @param w The width of the button, expressed in blocks.
+     * @param h The height of the button, expressed in blocks.
+     * @param clickCooldown The amount of ticks before the button becomes clickable again after being clicked.
+     * @param _style The custom style.
+     */
+    protected ShopButton(@NotNull Shop _shop, float w, float h, int _clickCooldown, ShopButtonStyle _style) {
+        super(_shop.getWorld(), _style);
+        shop = _shop;
+        setSize(new Vector2f(w, h));
+        clickCooldown = _clickCooldown;
+    }
+
+
+    /**
+     * Creates a new ShopButton using the default style.
      * @param _shop The target shop.
      * @param w The width of the button, expressed in blocks.
      * @param h The height of the button, expressed in blocks.
      * @param clickCooldown The amount of ticks before the button becomes clickable again after being clicked.
      */
     protected ShopButton(@NotNull Shop _shop, float w, float h, int _clickCooldown) {
-        super(_shop.getWorld(), new ShopButtonStyle());
-        shop = _shop;
-        setSize(new Vector2f(w, h));
-        clickCooldown = _clickCooldown;
-
-
-        // Initialize animations
-        hoverEnterAnimation = new Animation(
-            new Transition(6, Easings.cubicOut)
-            .additiveTransformBg(new Transform().scaleX(1f / UNHOVERED_W))
-        );
-        hoverExitAnimation = new Animation(
-            new Transition(6, Easings.cubicOut)
-            .additiveTransformBg(new Transform().scaleX(UNHOVERED_W))
-        );
+        this(_shop, w, h, _clickCooldown, new ShopButtonStyle());
     }
 
 
@@ -75,7 +68,10 @@ public abstract class ShopButton extends FancyTextElm implements Hoverable, Clic
 
     @Override
     public void spawn(Vector3d pos){
-        applyAnimation(hoverExitAnimation);
+        final Animation animation = ((ShopButtonStyle)style).getHoverPrimerAnimation();
+        if(animation != null) {
+            applyAnimationNow(animation);
+        }
         super.spawn(pos);
     }
 
@@ -83,14 +79,20 @@ public abstract class ShopButton extends FancyTextElm implements Hoverable, Clic
     @Override
     public void onHoverEnter(PlayerEntity player) {
         if(player != shop.user) return;
-        applyAnimation(hoverEnterAnimation);
+        final Animation animation = ((ShopButtonStyle)style).getHoverEnterAnimation();
+        if(animation != null) {
+            applyAnimation(animation);
+        }
     }
 
 
     @Override
-    public void onHoverExit(PlayerEntity player) {
+    public void onHoverExit(PlayerEntity player) { //TODO RENAME TO LEAVE
         if(player != shop.user) return;
-        applyAnimation(hoverExitAnimation);
+        final Animation animation = ((ShopButtonStyle)style).getHoverLeaveAnimation();
+        if(animation != null) {
+            applyAnimation(animation);
+        }
     }
 
 

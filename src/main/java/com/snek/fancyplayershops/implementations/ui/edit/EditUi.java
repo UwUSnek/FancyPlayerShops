@@ -30,7 +30,7 @@ public class EditUi extends ShopCanvas {
     public static final Vector3i RGB_STOCK_COLOR = Utils.HSVtoRGB(DetailsUi.C_HSV_STOCK_HIGH);
 
     // Layout
-    public static final float SQUARE_BUTTON_SIZE         = 0.2f;
+    public static final float SQUARE_BUTTON_SIZE         = 0.12f;
     public static final float ROTATE_BUTTON_CENTER_Y     = 0.4f - SQUARE_BUTTON_SIZE / 2 + ShopItemDisplay.FOCUS_HEIGHT;
     public static final float ROTATE_BUTTON_CENTER_SHIFT = 0.3f;
 

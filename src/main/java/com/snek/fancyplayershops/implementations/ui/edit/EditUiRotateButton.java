@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import com.snek.fancyplayershops.Shop;
 import com.snek.fancyplayershops.implementations.ui.ShopButton;
 import com.snek.fancyplayershops.implementations.ui.ShopItemDisplay;
+import com.snek.fancyplayershops.implementations.ui.styles.EditUiRotateButtonStyle;
 import com.snek.fancyplayershops.implementations.ui.styles.ShopButtonStyle;
 import com.snek.framework.data_types.animations.Animation;
 import com.snek.framework.data_types.animations.Transform;
@@ -40,10 +41,16 @@ public class EditUiRotateButton extends ShopButton {
      * @param _buttonText The text to display on the button.
      */
     public EditUiRotateButton(Shop _shop, float _rotation, Text _buttonText){
-        super(_shop, EditUi.SQUARE_BUTTON_SIZE, EditUi.SQUARE_BUTTON_SIZE, ROTATION_ANIMATION_TIME);
+        super(_shop, EditUi.SQUARE_BUTTON_SIZE, EditUi.SQUARE_BUTTON_SIZE, ROTATION_ANIMATION_TIME, new EditUiRotateButtonStyle());
         rotation = _rotation;
         buttonText = _buttonText;
         updateDisplay(null);
+
+        // Adjust arrow size
+        applyAnimationNow(new Animation(
+            new Transition(0, Easings.linear)
+            .additiveTransformFg(new Transform().scale(EditUi.SQUARE_BUTTON_SIZE * 10))
+        ));
     }
 
 
